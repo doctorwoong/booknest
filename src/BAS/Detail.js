@@ -3,19 +3,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import '../CSS/style/style.css'
 import { useEffect } from "react";
-import reservation from "./Reservation";
+import { formatDate } from "../Util/utils";
 
 const Detail = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { state } = location || {};
+
     console.log(state);
-    const { title, content, img,checkInDate ,checkOutDate ,adults ,children } = state || {}; // 전달된 데이터
+    const { room_number, images ,adults, price ,checkInDate, checkOutDate} = state || {}; // 전달된 데이터
 
     useEffect(() => {
         // Kakao 지도 API 스크립트 로드
         const script = document.createElement("script");
-        //script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=04ad74e0900c6882ee7b6466c6cc258b&autoload=false"; // local
         script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=04ad74e0900c6882ee7b6466c6cc258b&libraries=services&autoload=false"; // local
         script.async = true;
 
@@ -26,7 +26,7 @@ const Detail = () => {
                 const container = document.getElementById("map"); // 지도를 표시할 div
                 const options = {
                     center: new window.kakao.maps.LatLng(33.450701, 126.570667), // 중심 좌표
-                    level: 3, // 확대 레벨
+                    level: 4, // 확대 레벨
                 };
 
                 const map = new window.kakao.maps.Map(container, options); // 지도 생성
@@ -49,11 +49,6 @@ const Detail = () => {
                             map: map,
                         });
 
-                        // 마커에 정보 창 추가
-                        const infowindow = new window.kakao.maps.InfoWindow({
-                            content: `<div style="padding:5px; width: 180px">동작구 만양로14마길 25</div>`,
-                        });
-                        infowindow.open(map, marker); // 정보 창 열기
                     } else {
                         console.error("주소 검색에 실패했습니다.");
                     }
@@ -70,13 +65,16 @@ const Detail = () => {
     }, []);
 
     const handleReservation = () => {
-        const hotelData = { title, content, img ,checkInDate ,checkOutDate ,adults ,children }; // 숙소 정보
+        const hotelData = { room_number, images ,checkInDate ,checkOutDate ,adults, price }; // 숙소 정보
         const confirmReservation = window.confirm("해당 숙소를 예약하시겠습니까?");
 
         if (confirmReservation) {
             navigate("/reservation-form", { state: hotelData }); // 예약 페이지로 이동하며 숙소 데이터 전달
         }
     };
+
+    let PreCheckInDate = formatDate(checkInDate);
+    let url = `/resource/img/${room_number}/`
 
     return (
         <div className="container">
@@ -85,15 +83,14 @@ const Detail = () => {
                     {/* Carousel */}
                     <div id="carouselExample" className="carousel slide">
                         <div className="carousel-inner">
-                            <div className="carousel-item active">
-                                <img src={img[0]} className="d-block w-100" alt="..."/>
-                            </div>
-                            <div className="carousel-item">
-                                <img src={img[1]} className="d-block w-100" alt="..."/>
-                            </div>
-                            <div className="carousel-item">
-                                <img src={img[2]} className="d-block w-100" alt="..."/>
-                            </div>
+                            {images.map((image, index) => (
+                                <div
+                                    className={`carousel-item ${index === 0 ? "active" : ""}`}
+                                    key={index}
+                                >
+                                    <img src={url+image} className="d-block w-100" alt={`Slide ${index + 1}`}/>
+                                </div>
+                            ))}
                         </div>
                         <button
                             className="carousel-control-prev"
@@ -117,9 +114,9 @@ const Detail = () => {
                     {/* Hotel Info */}
                     <div>
                         <p>일반 호텔</p>
-                        <h2>{title}</h2>
-                        <p>{content}</p>
-                        <p>{checkInDate}</p>
+                        <h2>{room_number}</h2>
+                        <p></p>
+                        <p>체크인 날짜 : {PreCheckInDate}</p>
                         <b>간략한 위치 설명 / 소개</b><br/>
                         <span>인천공항에서 지하철 9호선을 이용하여 노량진역까지 오실 수 있으며 노량진역에서 걸어서 10분거리에 있습니다. 전용 욕실, 전용 주방 및 전용 세탁기가 있습니다.  숙소 가는 길에 다양한 식당, 카페, 편의점이 있는 활기찬 동네이지만 숙소는 조용합니다.</span><br/><br/>
 
@@ -131,13 +128,12 @@ const Detail = () => {
 
                         <b>예약 알림을 받을 이메일 : </b><span>bakho2@naver.com</span><br/><br/>
 
-                        <b>위치 : 서울특별시 동작구 만양로14마길 25 (서울특별시 동작구 노량진동 206-33)</b>
                         <div
                             id="map"
                             className="map"
                             style={{
-                                width: "80%",
-                                height: "400px",
+                                width: "100%",
+                                height: "500px",
                             }}
                         ></div>
                     </div>

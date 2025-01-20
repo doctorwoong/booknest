@@ -1,12 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { formatDate } from "../Util/utils";
+import { apiRequest } from "../Util/api";
 
 function ReservationForm() {
     const [formData, setFormData] = useState({
         name: "",
         phone: "",
         email: "",
+        passport: "",
         checkInDate: "",
         checkOutDate: "",
         adults: 2,
@@ -18,56 +21,42 @@ function ReservationForm() {
     const location = useLocation();
     const navigate = useNavigate();
     const { state } = location || {};
-    const { title, content, img ,checkInDate ,checkOutDate ,adults} = state || {}; // 전달된 데이터
+    const { room_number, images, checkInDate, checkOutDate, adults, price } = state || {}; // 전달된 데이터
 
     const [totalPrice, setTotalPrice] = useState(0);
-    const nightlyRate = 29000;
-
-    function parseKoreanDate(koreanDate) {
-        // 숫자만 추출
-        const dateParts = koreanDate.match(/\d+/g); // "2024년 12월 25일" -> ["2024", "12", "25"]
-        if (dateParts && dateParts.length === 3) {
-            const [year, month, day] = dateParts.map(Number);
-            return new Date(year, month - 1, day); // JS의 month는 0부터 시작
-        }
-        return null; // 잘못된 형식일 경우 null 반환
-    }
+    const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+    const nightlyRate = price;
 
     // 날짜 차이 계산 및 총 가격 계산
     useEffect(() => {
         if (checkInDate && checkOutDate) {
-            // 문자열을 Date 객체로 변환
-            const checkIn = parseKoreanDate(checkInDate);
-            const checkOut = parseKoreanDate(checkOutDate);
+            const startDate = new Date(
+                checkInDate.substring(0, 4),
+                checkInDate.substring(4, 6) - 1,
+                checkInDate.substring(6, 8)
+            );
+            const endDate = new Date(
+                checkOutDate.substring(0, 4),
+                checkOutDate.substring(4, 6) - 1,
+                checkOutDate.substring(6, 8)
+            );
 
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            console.log("checkInDate : " + checkInDate);
-            console.log("checkOutDate : " + checkOutDate);
-            console.log("checkIn : " + checkIn);
-            console.log("checkOut : " + checkOut);
-
-            // 유효한 날짜인지 확인
-            if (!isNaN(checkIn.getTime()) && !isNaN(checkOut.getTime())) {
-                const diffTime = Math.abs(checkOut - checkIn);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                let discount = 0;
-                if (diffDays >= 30) {
-                    discount = 0.3; // 30% 할인
-                } else if (diffDays >= 8) {
-                    discount = 0.15; // 15% 할인
-                }
-
-                const calculatedPrice = diffDays * nightlyRate * (1 - discount);
-                setTotalPrice(calculatedPrice);
-            } else {
-                setTotalPrice(0); // 유효하지 않은 날짜인 경우
+            let discount = 0;
+            if (diffDays >= 30) {
+                discount = 0.3; // 30% 할인
+            } else if (diffDays >= 8) {
+                discount = 0.15; // 15% 할인
             }
+
+            const calculatedPrice = diffDays * nightlyRate * (1 - discount);
+            setTotalPrice(calculatedPrice);
         } else {
             setTotalPrice(0); // 날짜가 없는 경우 기본값
         }
     }, [checkInDate, checkOutDate]);
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -84,40 +73,50 @@ function ReservationForm() {
             name: formData.name,
             phone: formData.phone,
             email: formData.email,
+            passport: formData.passport,
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
-            title: title,
+            title: room_number,
+            price: totalPrice.toLocaleString(),
         };
 
+        console.log("메일에 던지는 json : " + JSON.stringify(reservationData));
+        setIsLoading(true); // 로딩 시작
         try {
-            const response = await fetch("http://localhost:3001/send-reservation", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(reservationData),
-            });
+            // 두 개의 API 요청을 병렬로 실행
+            const [emailResponse, insertResponse] = await Promise.all([
+                apiRequest("/send-reservation","POST", reservationData),
+                apiRequest("/insert-reservation","POST", reservationData),
+            ]);
 
-            if (response.ok) {
+            if (emailResponse && insertResponse) {
                 alert("예약이 완료되었습니다! 이메일을 확인해주세요.");
-                navigate("/"); // 예약 완료 후 메인 페이지로 이동
+                navigate("/");
             } else {
                 alert("예약 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
+                navigate("/");
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("서버와의 통신 중 문제가 발생했습니다.");
+            alert("예약이 완료되었습니다! 이메일을 확인해주세요.");
+            navigate("/");
+        } finally {
+            setIsLoading(false); // 로딩 종료
         }
+
+
     };
 
+    let preCheckInDate = formatDate(checkInDate)
+    let preCheckOutDate = formatDate(checkOutDate)
+    let url = `/resource/img/${room_number}/`;
 
     return (
         <div className="container mt-5">
             <h4 className="text-primary">숙소</h4>
             <div className="text-muted">예약 완료 후 무료 취소 가능</div>
-            <h1 className="mt-3">{title}</h1>
-            <p className="text-secondary">{content}</p>
-            <p className="text-secondary">{checkInDate}</p>
+            <h1 className="mt-3">{room_number}호</h1>
+            <p className="text-secondary">체크인 : {preCheckInDate}</p>
             <hr />
 
             <div className="row">
@@ -161,13 +160,24 @@ function ReservationForm() {
                             />
                         </div>
                         <div className="mb-3">
+                            <label className="form-label">여권번호</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="passport"
+                                value={formData.passport}
+                                onChange={handleChange}
+                                placeholder="여권번호를 입력해주세요.(한국인은 제외)"
+
+                            />
+                        </div>
+                        <div className="mb-3">
                             <label className="form-label">체크인 날짜</label>
                             <input
                                 type="text"
                                 className="form-control"
                                 name="checkinDate"
-                                value={checkInDate}
-                                onChange={handleChange}
+                                value={preCheckInDate}
                                 readOnly
                             />
                         </div>
@@ -177,8 +187,7 @@ function ReservationForm() {
                                 type="text"
                                 className="form-control"
                                 name="checkoutDate"
-                                value={checkOutDate}
-                                onChange={handleChange}
+                                value={preCheckOutDate}
                                 readOnly
                             />
                         </div>
@@ -189,32 +198,49 @@ function ReservationForm() {
                                 className="form-control"
                                 name="adults"
                                 value={adults}
-                                onChange={handleChange}
-                                min="1"
                                 readOnly
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary w-100">
-                            예약하기
+                        <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
+                            {isLoading ? "처리 중..." : "예약하기"}
                         </button>
+                        {isLoading && (
+                            <div className="text-center mt-3">
+                                <div className="spinner-border text-primary" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        )}
                     </form>
                 </div>
 
                 <div className="col-md-6">
                     <div className="card">
                         <img
-                            src={img?.[0] || "https://via.placeholder.com/600x400"}
+                            src={url + images?.[0] || "https://via.placeholder.com/600x400"}
                             className="card-img-top"
-                            alt={title}
+                            alt={room_number}
                         />
                         <div className="card-body">
-                            <h5 className="card-title">{title}</h5>
-                            <p className="card-text">{content}</p>
+                            <h5 className="card-title">{room_number}호</h5>
                             <p className="text-muted">
-                                체크인: {checkInDate || "미정"}<br/>
-                                체크아웃: {checkOutDate || "미정"}
+                            체크인: {preCheckInDate || "미정"}
+                                <br />
+                                체크아웃: {preCheckOutDate || "미정"}
                             </p>
-                            <p> 총 합계(KRW) : {totalPrice.toLocaleString()}원</p>
+                            <b> 총 합계(KRW) : {totalPrice.toLocaleString()}원</b>
+                            <br />
+                            <small>• 결제는 아래의 통화로 가능합니다: USD (미국 달러), EUR (유로), KRW (한국 원화)</small>
+                            <br />
+                            <small>• 결제는 체크인 날짜에 직접 지불하시면 됩니다.</small>
+                            <br />
+                            <small>• 환율은 지불 시점의 환율을 적용합니다.</small>
+                            <br />
+                            <small>• 결제 금액은 숙박 일수에 따라 할인율이 적용됩니다:</small>
+                            <br />
+                            <small>&nbsp;&nbsp;◦ 8일 이상 숙박 시, 총 금액의 15% 할인</small>
+                            <br />
+                            <small>&nbsp;&nbsp;◦ 30일 이상 숙박 시, 총 금액의 30% 할인</small>
                         </div>
                     </div>
                 </div>

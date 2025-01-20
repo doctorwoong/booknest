@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css'; // 기본 스타일
-import '../CSS/style/CalendarStyles.css';
-import {useNavigate} from "react-router-dom"; // 커스텀 스타일
+import '../CSS/style/CalendarStyles.css'; // 커스텀 스타일
+import { useNavigate } from "react-router-dom";
+import { formatDateToYYYYMMDD , formatDate } from "../Util/utils"; // 유틸리티 함수 가져오기
 
-function ReservationCalendar({ onConfirm }) {
+function ReservationCalendar() {
     const [dates, setDates] = useState([]); // 기존 예약된 날짜 배열
     const [checkInDate, setCheckInDate] = useState(null); // 체크인 날짜
     const [checkOutDate, setCheckOutDate] = useState(null); // 체크아웃 날짜
     const [isFormVisible, setFormVisible] = useState(false); // 예약 폼 표시 여부
+    const [isValidStay, setIsValidStay] = useState(true); // 최소 3박 유효성 체크
 
     const navigate = useNavigate();
 
@@ -25,12 +27,22 @@ function ReservationCalendar({ onConfirm }) {
             setCheckInDate(date);
             setCheckOutDate(null);
             setFormVisible(true);
+            setIsValidStay(true);
         } else {
             if (date < checkInDate) {
                 alert("체크아웃 날짜는 체크인 날짜 이후여야 합니다.");
                 return;
             }
             setCheckOutDate(date);
+
+            // 최소 3박 유효성 검사
+            const nights = Math.ceil((date - checkInDate) / (1000 * 60 * 60 * 24));
+            if (nights < 3) {
+                alert("최소 3박 이상 예약 가능합니다.");
+                setIsValidStay(false);
+            } else {
+                setIsValidStay(true);
+            }
         }
     };
 
@@ -41,10 +53,15 @@ function ReservationCalendar({ onConfirm }) {
             return;
         }
 
-        const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-        const formattedData = `${checkInDate.getFullYear()}년 ${checkInDate.getMonth() + 1}월 ${checkInDate.getDate()}일 ~ ${checkOutDate.getFullYear()}년 ${checkOutDate.getMonth() + 1}월 ${checkOutDate.getDate()}일`;
+        if (!isValidStay) {
+            alert("최소 3박 이상 예약 가능합니다.");
+            return;
+        }
 
-        navigate("/", { state: { checkInDate , checkOutDate } });
+        const formattedCheckIn = formatDateToYYYYMMDD(checkInDate);
+        const formattedCheckOut = formatDateToYYYYMMDD(checkOutDate);
+
+        navigate("/", { state: { checkInDate: formattedCheckIn, checkOutDate: formattedCheckOut } });
 
         setFormVisible(false);
         setCheckInDate(null);
@@ -56,6 +73,7 @@ function ReservationCalendar({ onConfirm }) {
         setCheckInDate(null);
         setCheckOutDate(null);
         setFormVisible(false);
+        setIsValidStay(true);
     };
 
     // 예약된 날짜 스타일 및 과거 날짜 처리
@@ -94,29 +112,21 @@ function ReservationCalendar({ onConfirm }) {
             {isFormVisible && (
                 <div>
                     <h3>예약 정보</h3>
-                    {checkInDate && <p>체크인 날짜: {checkInDate.toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    })}</p>}
-                    {checkOutDate && <p>체크아웃 날짜: {checkOutDate.toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    })}</p>}
-                    {checkInDate && checkOutDate && (
-                        <p>
-                            예약 기간: {checkInDate.getFullYear()}년 {checkInDate.getMonth() + 1}월 {checkInDate.getDate()}일
-                            ~ {checkOutDate.getFullYear()}년 {checkOutDate.getMonth() + 1}월 {checkOutDate.getDate()}일
-                        </p>
-                    )}
+                    {checkInDate && <p>체크인 날짜: {formatDate(formatDateToYYYYMMDD(checkInDate))}</p>}
+                    {checkOutDate && <p>체크아웃 날짜: {formatDate(formatDateToYYYYMMDD(checkOutDate))}</p>}
                     {checkInDate && checkOutDate && (
                         <p>
                             총 {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24))}박 {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1}일
                         </p>
                     )}
-                    <button className="btn btn-primary" onClick={handleConfirm}>확인</button>
-                    <button className="btn btn-secondary" onClick={handleReset} style={{marginLeft: '10px'}}>초기화</button>
+                    <button
+                        className="btn btn-primary"
+                        onClick={handleConfirm}
+                        disabled={!isValidStay} // 최소 3박이 안 되면 비활성화
+                    >
+                        확인
+                    </button>
+                    <button className="btn btn-secondary" onClick={handleReset} style={{ marginLeft: '10px' }}>초기화</button>
                 </div>
             )}
             <style>{`
@@ -133,12 +143,10 @@ function ReservationCalendar({ onConfirm }) {
                     background-color: rgba(135, 206, 250, 0.3); 
                     color: black;
                 }
-                
                 .selected-checkin {
                     background-color: #00aaff;
                     color: white;
                 }
-                
                 .selected-checkout {
                     background-color: #ffaa00;
                     color: white;
@@ -146,7 +154,10 @@ function ReservationCalendar({ onConfirm }) {
                 .saturday {
                     color: blue;
                 }
-
+                .btn:disabled {
+                    background-color: grey;
+                    cursor: not-allowed;
+                }
             `}</style>
         </div>
     );
