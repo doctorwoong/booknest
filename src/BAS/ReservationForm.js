@@ -160,14 +160,14 @@ function ReservationForm() {
                             />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label">여권번호</label>
+                            <label className="form-label">여권번호 / 주민번호 / ID</label>
                             <input
                                 type="text"
                                 className="form-control"
                                 name="passport"
                                 value={formData.passport}
                                 onChange={handleChange}
-                                placeholder="여권번호를 입력해주세요.(한국인은 제외)"
+                                placeholder="여권번호/주민번호/ID 중 하나를 입력하세요"
 
                             />
                         </div>

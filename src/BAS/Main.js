@@ -204,8 +204,8 @@ const Main = () => {
                                     <h5 className="mb-1">{room.room_number}</h5>
                                     <p className="mb-1"></p>
                                     <p className="mb-1">
-                                        ★ {room.rating} <span style={{cursor: "pointer"}}
-                                                              onClick={() => handleReview(room)}>({room.reviewNum} 리뷰)</span>
+                                        ★ {room.rating} <button style={{cursor: "pointer"}}
+                                                              onClick={() => handleReview(room)}>({room.reviewNum} 리뷰)</button>
                                     </p>
                                     <p className="mb-0"><strong>1박 기준: {room.price} ~</strong></p>
                                 </div>
@@ -230,14 +230,8 @@ const Main = () => {
                     <ul className="list-group">
                         {checkRooms.map((checkRoom) => (
                             <li key={checkRoom.customer_id} className="list-group-item d-flex align-items-center">
-                                <img
-                                    src={`${url}/${checkRoom.reserved_room_number}/${checkRoom.img[0]}`}
-                                    alt={`Hotel ${checkRoom.reserved_room_number}`}
-                                    className="img-thumbnail me-3"
-                                    style={{width: "150px", height: "100px", objectFit: "cover"}}
-                                />
                                 <div>
-                                    <h5 className="mb-1">{checkRoom.reserved_room_number}호</h5>
+                                    <h5 className="mb-1">{checkRoom.reserved_room_number}호</h5><span>{checkRoom.name}</span>
                                     <p>
                                         <span>예약일 : </span>
                                         <span>{formatDate(checkRoom.check_in)}</span> ~ <span>{formatDate(checkRoom.check_out)}</span>
@@ -274,12 +268,6 @@ const Main = () => {
                     <ul className="list-group">
                         {reviews.map((review) => (
                             <li key={review.customer_id} className="list-group-item d-flex align-items-center">
-                                <img
-                                    src={`${url}/${review.reserved_room_number}/${review.img[0]}`}
-                                    alt={`Hotel ${review.reserved_room_number}`}
-                                    className="img-thumbnail me-3"
-                                    style={{width: "150px", height: "100px", objectFit: "cover"}}
-                                />
                                 <div>
                                     <h4>{review.name}</h4>
                                     <h5 className="mb-1">{review.reserved_room_number}호</h5>

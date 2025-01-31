@@ -74,6 +74,7 @@ const Detail = () => {
     };
 
     let PreCheckInDate = formatDate(checkInDate);
+    let PreCheckOutDate = formatDate(checkOutDate);
     let url = `/resource/img/${room_number}/`
 
     return (
@@ -88,7 +89,7 @@ const Detail = () => {
                                     className={`carousel-item ${index === 0 ? "active" : ""}`}
                                     key={index}
                                 >
-                                    <img src={url+image} className="d-block w-100" alt={`Slide ${index + 1}`}/>
+                                    <img src={url + image} className="d-block w-100" alt={`Slide ${index + 1}`}/>
                                 </div>
                             ))}
                         </div>
@@ -115,8 +116,6 @@ const Detail = () => {
                     <div>
                         <p>일반 호텔</p>
                         <h2>{room_number}</h2>
-                        <p></p>
-                        <p>체크인 날짜 : {PreCheckInDate}</p>
                         <b>간략한 위치 설명 / 소개</b><br/>
                         <span>인천공항에서 지하철 9호선을 이용하여 노량진역까지 오실 수 있으며 노량진역에서 걸어서 10분거리에 있습니다. 전용 욕실, 전용 주방 및 전용 세탁기가 있습니다.  숙소 가는 길에 다양한 식당, 카페, 편의점이 있는 활기찬 동네이지만 숙소는 조용합니다.</span><br/><br/>
 
@@ -136,12 +135,17 @@ const Detail = () => {
                                 height: "500px",
                             }}
                         ></div>
+
+                        <p>여행 날짜 : {PreCheckInDate} ~ {PreCheckOutDate}</p>
+                        <b>총 금액 : {price}</b><br/>
+                        <span>숙박비는 도착 후 현금(KRW , USD , EUR)으로 지급 바랍니다.</span>
                     </div>
                 </div>
             ) : (
                 <p>선택된 호텔 정보가 없습니다.</p>
             )}
             <br/><br/>
+
             <div className="container-reservation">
                 <button onClick={handleReservation}>예약하기</button>
             </div>
