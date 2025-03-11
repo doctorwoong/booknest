@@ -1,4 +1,4 @@
-.review-write-container {width: 100%;max-width: 600px;margin: 0 auto;padding: 20px;background-color: #f9f9f9;border-radius: 10px;box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);}
+.review-write{margin-top: 20px}
 .review-title {font-size: 24px;font-weight: bold;text-align: center;margin-bottom: 20px;}
 .review-room-info {font-size: 18px;margin-bottom: 20px;}
 .review-rating {display: flex;align-items: center;gap: 10px;margin-bottom: 20px;}
@@ -6,7 +6,15 @@
 .star.selected {color: #f5c518;}
 .review-text textarea {width: 100%;border: 1px solid #ccc;border-radius: 5px;padding: 10px;font-size: 16px;resize: none;}
 .review-buttons {display: flex;justify-content: space-between;gap: 10px;}
-button {flex: 1;padding: 10px 20px;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;}
+button {flex: 1;padding: 10px 20px;border: none;font-size: 16px;cursor: pointer;border-radius: 5px;}
 .save-button {background-color: #4caf50;color: white;}
 .delete-button {background-color: #f44336;color: white;}
 .cancel-button {background-color: #9e9e9e;color: white;}
+.button-section {margin: 30px 0}
+.button-section button{padding: 10px 80px;}
+.btn-save{margin-right: 13px}
+.btn-delete{margin-right: 13px}
+.react-calendar__month-view__days button{border-radius: 0;}
+
+.info {display: flex;align-items: center;gap: 25vh;margin: 40px 0;}
+.info b{font-size: 24px}

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../CSS/style/style.css";
 import { formatDate } from "../Util/utils";
 import { apiRequest } from "../Util/api";
+import {useTranslation} from "react-i18next";
 
 function ReservationForm() {
     const [formData, setFormData] = useState({
@@ -21,11 +23,12 @@ function ReservationForm() {
     const location = useLocation();
     const navigate = useNavigate();
     const { state } = location || {};
-    const { room_number, images, checkInDate, checkOutDate, adults, price } = state || {}; // 전달된 데이터
+    const { room_number, checkInDate, checkOutDate, price } = state || {}; // 전달된 데이터
 
     const [totalPrice, setTotalPrice] = useState(0);
     const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
     const nightlyRate = price;
+    const { t } = useTranslation();
 
     // 날짜 차이 계산 및 총 가격 계산
     useEffect(() => {
@@ -77,28 +80,22 @@ function ReservationForm() {
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
             title: room_number,
-            price: totalPrice.toLocaleString(),
+            price: totalPrice,
         };
 
-        console.log("메일에 던지는 json : " + JSON.stringify(reservationData));
         setIsLoading(true); // 로딩 시작
         try {
-            // 두 개의 API 요청을 병렬로 실행
-            const [emailResponse, insertResponse] = await Promise.all([
-                apiRequest("/send-reservation","POST", reservationData),
-                apiRequest("/insert-reservation","POST", reservationData),
-            ]);
+            const insertResponse = await apiRequest("/insertReservation", "POST", reservationData);
 
-            if (emailResponse && insertResponse) {
-                alert("예약이 완료되었습니다! 이메일을 확인해주세요.");
+            if (insertResponse) {
+                alert(t("66"));
                 navigate("/");
             } else {
-                alert("예약 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
+                alert(t("67"));
                 navigate("/");
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("예약이 완료되었습니다! 이메일을 확인해주세요.");
             navigate("/");
         } finally {
             setIsLoading(false); // 로딩 종료
@@ -109,100 +106,76 @@ function ReservationForm() {
 
     let preCheckInDate = formatDate(checkInDate)
     let preCheckOutDate = formatDate(checkOutDate)
-    let url = `/resource/img/${room_number}/`;
 
     return (
         <div className="container mt-5">
-            <h4 className="text-primary">숙소</h4>
-            <div className="text-muted">예약 완료 후 무료 취소 가능</div>
-            <h1 className="mt-3">{room_number}호</h1>
-            <p className="text-secondary">체크인 : {preCheckInDate}</p>
-            <hr />
+            <h1 className="mt-3">{room_number}{t("9")}</h1>
+            <div className="text-muted">{t("68")}</div>
+            <div className="checkDate2">
+                <div>
+                    <p>{t("69")}</p>
+                    <b>{preCheckInDate}</b>
+                </div>
+                <div>
+                    <p>{t("70")}</p>
+                    <b>{preCheckOutDate}</b>
+                </div>
+            </div>
+            <hr/>
+            <div className="checkCost">
+                <div>
+                    <span>{t("71")}(KRW)</span>
+                </div>
+                <div>
+                    <b>₩{totalPrice.toLocaleString()}</b>
+                </div>
+            </div>
 
+            <div className="discription">
+                <small>• {t("72")}</small>
+                <br/>
+                <small>• {t("73")}</small>
+                <br/>
+                <small>• {t("74")}</small>
+                <br/>
+                <small>• {t("75")}:</small>
+                <br/>
+                <small>&nbsp;&nbsp;◦ {t("76")}</small>
+                <br/>
+                <small>&nbsp;&nbsp;◦ {t("77")}</small>
+            </div>
+            <hr/><br/>
             <div className="row">
-                <div className="col-md-6">
-                    <h5>예약 요청</h5>
+                <div className="col-md-12">
+                    <h3><b>{t("78")}</b></h3>
                     <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label className="form-label">이름</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder="예약자의 이름을 입력해주세요"
-                                required
-                            />
+                        <div className="row">
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">{t("79")}</label>
+                                <input type="text" className="form-control" name="name" value={formData.name}
+                                       onChange={handleChange} placeholder={t("80")} required/>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">{t("81")}</label>
+                                <input type="tel" className="form-control" name="phone" value={formData.phone}
+                                       onChange={handleChange} placeholder={t("82")} required/>
+                            </div>
                         </div>
-                        <div className="mb-3">
-                            <label className="form-label">전화번호</label>
-                            <input
-                                type="tel"
-                                className="form-control"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                placeholder="예약자의 전화번호를 입력해주세요"
-                                required
-                            />
+                        <div className="row">
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">{t("83")}</label>
+                                <input type="email" className="form-control" name="email" value={formData.email}
+                                       onChange={handleChange} placeholder={t("84")} required/>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">{t("85")}</label>
+                                <input type="text" className="form-control" name="passport" value={formData.passport}
+                                       onChange={handleChange} placeholder={t("86")}/>
+                            </div>
                         </div>
-                        <div className="mb-3">
-                            <label className="form-label">이메일</label>
-                            <input
-                                type="email"
-                                className="form-control"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="예약자의 이메일을 입력해주세요"
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">여권번호 / 주민번호 / ID</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="passport"
-                                value={formData.passport}
-                                onChange={handleChange}
-                                placeholder="여권번호/주민번호/ID 중 하나를 입력하세요"
-
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">체크인 날짜</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="checkinDate"
-                                value={preCheckInDate}
-                                readOnly
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">체크아웃 날짜</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="checkoutDate"
-                                value={preCheckOutDate}
-                                readOnly
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">성인 인원</label>
-                            <input
-                                type="number"
-                                className="form-control"
-                                name="adults"
-                                value={adults}
-                                readOnly
-                            />
-                        </div>
-                        <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
-                            {isLoading ? "처리 중..." : "예약하기"}
+                        <br/>
+                        <button type="submit" className="reverseBtn2" disabled={isLoading}>
+                            {isLoading ? t("87") + "..." : t("88")}
                         </button>
                         {isLoading && (
                             <div className="text-center mt-3">
@@ -212,37 +185,6 @@ function ReservationForm() {
                             </div>
                         )}
                     </form>
-                </div>
-
-                <div className="col-md-6">
-                    <div className="card">
-                        <img
-                            src={url + images?.[0] || "https://via.placeholder.com/600x400"}
-                            className="card-img-top"
-                            alt={room_number}
-                        />
-                        <div className="card-body">
-                            <h5 className="card-title">{room_number}호</h5>
-                            <p className="text-muted">
-                            체크인: {preCheckInDate || "미정"}
-                                <br />
-                                체크아웃: {preCheckOutDate || "미정"}
-                            </p>
-                            <b> 총 합계(KRW) : {totalPrice.toLocaleString()}원</b>
-                            <br />
-                            <small>• 결제는 아래의 통화로 가능합니다: USD (미국 달러), EUR (유로), KRW (한국 원화)</small>
-                            <br />
-                            <small>• 결제는 체크인 날짜에 직접 지불하시면 됩니다.</small>
-                            <br />
-                            <small>• 환율은 지불 시점의 환율을 적용합니다.</small>
-                            <br />
-                            <small>• 결제 금액은 숙박 일수에 따라 할인율이 적용됩니다:</small>
-                            <br />
-                            <small>&nbsp;&nbsp;◦ 8일 이상 숙박 시, 총 금액의 15% 할인</small>
-                            <br />
-                            <small>&nbsp;&nbsp;◦ 30일 이상 숙박 시, 총 금액의 30% 할인</small>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

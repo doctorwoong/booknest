@@ -9,39 +9,41 @@ import Review from "./BAS/Review";
 import Footer from "./COMPONENT/BASIC/Footer";
 import Admin from "./SYS/Admin";
 import ReviewDetail from "./BAS/ReviewDetail";
-import {useState} from "react";
+import React, {useState} from "react";
+import {useTranslation} from "react-i18next";
 
 function App() {
 
     const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+    const { t } = useTranslation();
 
     const authenticateAdmin = (password) => {
         if (password === "1234") {
             setIsAdminAuthenticated(true);
             return true;
         }
-        alert("비밀번호가 틀렸습니다.");
+        alert(t("148"));
         return false;
     };
 
     return (
         <div className="app-container">
-            <Header />
+            <Header/>
             <div className="content-container">
                 <Routes>
-                    <Route path="/" element={<Main />} />
-                    <Route path="/reservation-calendar" element={<ReservationCalendar />} />
-                    <Route path="/reservation-form" element={<ReservationForm />} />
-                    <Route path="/detail" element={<Detail />} />
-                    <Route path="/review" element={<Review />} />
-                    <Route path="/reviewWrite" element={<ReviewDetail />} />
+                    <Route path="/" element={<Main/>}/>
+                    <Route path="/reservation-calendar" element={<ReservationCalendar/>}/>
+                    <Route path="/reservation-form" element={<ReservationForm/>}/>
+                    <Route path="/detail" element={<Detail/>}/>
+                    <Route path="/review" element={<Review/>}/>
+                    <Route path="/reviewWrite" element={<ReviewDetail/>}/>
                     <Route
                         path="/admin"
                         element={
                             isAdminAuthenticated ? (
-                                <Admin />
+                                <Admin/>
                             ) : (
-                                <PasswordPopup onAuthenticate={authenticateAdmin} />
+                                <PasswordPopup onAuthenticate={authenticateAdmin}/>
                             )
                         }
                     />
@@ -52,8 +54,9 @@ function App() {
     );
 }
 
-const PasswordPopup = ({ onAuthenticate }) => {
+const PasswordPopup = ({onAuthenticate}) => {
     const [password, setPassword] = useState("");
+    const { t } = useTranslation();
 
     const handleSubmit = () => {
         if (onAuthenticate(password)) {
@@ -61,18 +64,29 @@ const PasswordPopup = ({ onAuthenticate }) => {
         }
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            handleSubmit();
+        }
+    };
+
     return (
         <div className="password-popup">
             <div className="popup-content">
-                <h3>비밀번호 입력</h3>
-                <p>관리자만 접근 가능합니다.</p>
+                <h3><b>{t("149")}</b></h3>
+                <p>{t("150")}</p>
                 <input
                     type="password"
                     value={password}
+                    onKeyDown={handleKeyDown}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="비밀번호 입력"
+                    placeholder=""
                 />
-                <button onClick={handleSubmit}>확인</button>
+                <div className="checkBtn">
+                    <button onClick={handleSubmit}>{t("14")}</button>
+                    <button>{t("15")}</button>
+                </div>
             </div>
         </div>
     );

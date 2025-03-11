@@ -3,6 +3,8 @@ import "../CSS/style/style.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { apiRequest } from "../Util/api";
 import { formatDate } from "../Util/utils";
+import { FaCalendarAlt, FaUser } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 let url = "/resource/img/";
 
@@ -21,6 +23,11 @@ const Main = () => {
     const [checkRooms, setCheckRooms] = useState([]);
     const [reviews, setReviews] = useState([]);
 
+    const [showContainer, setShowContainer] = useState(false);
+    const [showContainer2, setShowContainer2] = useState(false);
+    const [showContainer3, setShowContainer3] = useState(false);
+    const { t } = useTranslation();
+
     const [filters, setFilters] = useState({
         startDate: checkInDate || null,
         endDate: checkOutDate || null,
@@ -30,55 +37,53 @@ const Main = () => {
     const [names,setNames] = useState({name:""});
 
     if (!checkInDate) {
-        checkDate = "날짜 선택";
+        checkDate = t("21");
     } else {
-        checkDate = `${checkInDate.slice(0, 4)}년 ${checkInDate.slice(4, 6)}월 ${checkInDate.slice(6)}일 ~ ` +
-            `${checkOutDate.slice(0, 4)}년 ${checkOutDate.slice(4, 6)}월 ${checkOutDate.slice(6)}일`;
+        checkDate = `${checkInDate.slice(0, 4)}`+t("22") + `${checkInDate.slice(4, 6)}`+t("23") + `${checkInDate.slice(6)}`+t("24") +
+            ` ~ ${checkOutDate.slice(0, 4)}`+t("22") + `${checkOutDate.slice(4, 6)}` +t("23") + `${checkOutDate.slice(6)}`+t("24");
     }
     useEffect(() => {
-        console.log("###리뷰데이터 조회###");
         try {
             const fetchData = async () => {
                 const data = await apiRequest("/review", "POST");
-                console.log("검색 결과:", data);
+                console.log("리뷰 : " ,data);
+                if(data.length > 0){
+                    setShowContainer3(true);
+                }
                 setReviews(data); // 상태 업데이트
             };
             fetchData();
         } catch (error) {
             console.error("검색 중 오류 발생:", error);
         }
+
+        handleSearch();
     }, []);
 
 
     const handleSearch = async () => {
-        console.log("필터 데이터 : ", JSON.stringify(filters));
-
         if (filters.startDate && filters.endDate) {
             try {
                 const data = await apiRequest("/MainSearch", "POST", filters);
-                console.log("검색 결과:", data);
-                setRooms(data); // 검색 결과를 상태에 저장
+                setRooms(data);
+                if(data.length > 0) {setShowContainer(true);}
             } catch (error) {
                 console.error("검색 중 오류 발생:", error);
             }
-        } else {
-            alert("날짜를 입력해주세요.");
         }
     };
 
     const handleSearch2 = async () => {
-        console.log("필터 데이터 : ", JSON.stringify(names));
-
         if (names.name) {
             try {
                 const data = await apiRequest("/check", "POST", names);
-                console.log("검색 결과:", data);
+                if(data.length > 0) {setShowContainer2(true);}
                 setCheckRooms(data); // 검색 결과를 상태에 저장
             } catch (error) {
                 console.error("검색 중 오류 발생:", error);
             }
         } else {
-            alert("이름을 입력해주세요.");
+            alert(t("26"));
         }
     };
 
@@ -108,22 +113,20 @@ const Main = () => {
     };
 
     const handleConfirm = async () => {
-        console.log("입력한 전화번호: " + inputPhone);
-        console.log("세팅 전화번호: " + selectedReservation.phone_number);
         if (inputPhone === selectedReservation.phone_number) {
             try {
                 await apiRequest("/delete-reservation", "POST", { id: selectedReservation.customer_id });
-                alert(`"${selectedReservation.reserved_room_number}" 예약이 취소되었습니다.`);
+                alert("${selectedReservation.reserved_room_number}"+t("27"));
                 setCheckRooms((prev) => prev.filter((item) => item.customer_id !== selectedReservation.customer_id));
                 setShowPopup(false);
                 setInputPhone("");
                 setSelectedReservation(null);
             } catch (error) {
                 console.error("예약 취소 중 오류 발생:", error);
-                alert("예약 취소 중 오류가 발생했습니다.");
+                alert(t("28"));
             }
         } else {
-            alert("입력한 전화번호가 예약 정보와 일치하지 않습니다.");
+            alert(t("29"));
         }
     };
 
@@ -146,18 +149,37 @@ const Main = () => {
     };
 
     const handleReviewWrite = (review) => {
-        console.log("후기 작성하기 버튼 클릭");
-
         setSelectedReview(review);
         setShowPasswordPopup(true); // 리뷰 팝업 열기
     }
 
     const handlePasswordSubmit = () => {
         if (inputPhone !== selectedReview.phone_number) {
-           alert("본인 인증에 실패하였습니다.")
+           alert(t("30"))
         }else{
             setShowPasswordPopup(false); // 팝업 닫기
             navigate("/reviewWrite", { state: selectedReview }); // Admin 페이지로 이동
+        }
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            handleSearch2();
+        }
+    };
+
+    const handleKeyDown2 = (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            handleConfirm();
+        }
+    };
+
+    const handleKeyDown3 = (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            handlePasswordSubmit();
         }
     };
 
@@ -165,138 +187,167 @@ const Main = () => {
     const today = new Date();
     const sevenDaysAgo = new Date(today);
     sevenDaysAgo.setDate(today.getDate() - 7);
-    const formattedToday = today.toISOString().split('T')[0].replace(/-/g, '');
-    const formattedSevenDaysAgo = sevenDaysAgo.toISOString().split('T')[0].replace(/-/g, '');
-    const formattedDate = `${formattedSevenDaysAgo}~${formattedToday}`;
 
     return (
         <>
-            <h3>숙박 예약(최소 숙박 3일)</h3>
-            <div style={{overflowY: "scroll", height: "45vh"}}>
-                <div className="row align-items-center">
-                    <div className="col-md-6 mb-2">
-                        <label htmlFor="startDate">예약일</label>
-                        <input type="text" className="form-control" id="startDate" name="startDate" value={checkDate}
-                               onClick={handleCalendar} readOnly/>
+            <br/>
+            <h3 style={{marginBottom:"10px"}}><b>{t("1")}</b></h3>
+            <p style={{color: "#5A5A5A",marginBottom:"30px"}}>{t("2")}</p>
+            <div style={{overflowY: "scroll"}}>
+                <div className="d-flex gap-2" style={{marginBottom:"50px"}}>
+                    {/* 날짜 선택 */}
+                    <div className="position-relative">
+                        <input type="text" id="startDate" name="startDate" value={checkDate} onClick={handleCalendar}
+                               className="form-control ps-5" style={{width: "340px"}} readOnly/>
+                        <FaCalendarAlt className="position-absolute top-50 start-0 translate-middle-y ms-3" size={16}
+                                       color="#555"/>
                     </div>
-                    <div className="col-md-2 mb-2">
-                        <label htmlFor="adults">성인</label>
-                        <input type="number" className="form-control" id="adults" name="adults" min="1"
-                               value={filters.adults} onChange={handleChange}/>
+
+                    {/* 인원 선택 */}
+                    <div className="position-relative">
+                        <input type="number" id="adults" name="adults" min="1" value={filters.adults}
+                               className="form-control ps-5" onChange={handleChange} style={{width: "100px"}}/>
+                        <FaUser className="position-absolute top-50 start-0 translate-middle-y ms-3" size={16}
+                                color="#555"/>
                     </div>
-                    <div className="col-md-2 mb-2">
-                        <button className="btn btn-primary mt-3" onClick={handleSearch}>검색</button>
+
+                    {/* 검색 버튼 */}
+                    <button className="reverseBtn" onClick={handleSearch}>{t("3")}</button>
+                </div>
+                {showContainer && (
+                    <div className="container" style={{height: "45vh", overflow: "auto"}}>
+                        <ul className="list-group">
+                            {rooms.map((room) => (
+                                <li key={room.seq} className="list-group-item d-flex align-items-center">
+                                    <img
+                                        src={`${url}/${room.room_number}/${room.images[0]}`}
+                                        alt={`Hotel ${room.room_number}`}
+                                        className="img-thumbnail me-3"
+                                        style={{width: "180px", height: "120px", objectFit: "cover"}}
+                                        onClick={() => handleNavigate(room)}
+                                    />
+                                    <div className="container-main">
+                                        <h5 className="mb-1">{room.room_number}</h5>
+                                        <p className="mb-1"></p>
+                                        <p className="mb-1" style={{color: "#5A5A5A"}}>
+                                            ★ {room.rating}
+                                            <span style={{cursor: "pointer"}}
+                                                  onClick={() => handleReview(room)}>({room.reviewNum})
+                                        </span>
+                                        </p>
+                                        <p className="mb-0">
+                                            <span>{t("4")}</span><br/>
+                                            <b>{room.price}{t("5")}~</b>
+                                        </p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+
+            <hr className="footer-divider"/>
+            <br/>
+            <h3 style={{marginBottom:"10px"}}><b>{t("6")}</b></h3>
+            <p style={{color: "#5A5A5A", marginBottom:"30px"}}>{t("7")}</p>
+            <div className="reservationCheck" style={{marginBottom:"50px"}}>
+                <div className="col-md-10">
+                    <input type="text" className="form-control" id="name" name="name" placeholder={t("8")}
+                           onKeyDown={handleKeyDown}
+                           value={names.name} onChange={handleChange}/>
+                </div>
+                <div className="col-md-2">
+                    <button className="reverseBtn" onClick={handleSearch2}>{t("3")}</button>
+                </div>
+            </div>
+            {showContainer2 && (
+                <div style={{overflowY: "scroll", height: "15vh"}}>
+                    <div className="container" style={{height: "100%", overflow: "auto"}}>
+                        <ul className="list-group">
+                            {checkRooms.map((checkRoom) => (
+                                <li key={checkRoom.customer_id} className="list-group-item d-flex align-items-center"
+                                    style={{height: "100px"}}>
+                                    <div className="reservation">
+                                        <h5 className="horse">{checkRoom.reserved_room_number}{t("9")}</h5>
+                                        <p>
+                                            <span>{t("10")} : </span>
+                                            <span>{formatDate(checkRoom.check_in)}</span> ~ <span>{formatDate(checkRoom.check_out)}</span>
+                                        </p>
+                                    </div>
+                                    <br/>
+                                    <div className="reservation2">
+                                        <input type={"button"} value={t("11")}
+                                               onClick={() => handleCancelClick(checkRoom)}/>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
 
-                <div className="container" style={{height: "100%", overflow: "auto"}}>
-                    <ul className="list-group">
-                        {rooms.map((room) => (
-                            <li key={room.seq} className="list-group-item d-flex align-items-center">
-                                <img
-                                    src={`${url}/${room.room_number}/${room.images[0]}`}
-                                    alt={`Hotel ${room.room_number}`}
-                                    className="img-thumbnail me-3"
-                                    style={{width: "150px", height: "100px", objectFit: "cover"}}
-                                    onClick={() => handleNavigate(room)}
-                                />
-                                <div>
-                                    <h5 className="mb-1">{room.room_number}</h5>
-                                    <p className="mb-1"></p>
-                                    <p className="mb-1">
-                                        ★ {room.rating} <button style={{cursor: "pointer"}}
-                                                              onClick={() => handleReview(room)}>({room.reviewNum} 리뷰)</button>
-                                    </p>
-                                    <p className="mb-0"><strong>1박 기준: {room.price} ~</strong></p>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-            <h3>예약확인</h3>
-            <div className="row align-items-center">
-                <div className="col-md-10 mb-10">
-                    <label htmlFor="name">이름</label>
-                    <input type="text" className="form-control" id="name" name="name"
-                           value={names.name} onChange={handleChange}/>
-                </div>
-                <div className="col-md-2 mb-2">
-                    <button className="btn btn-primary mt-3" onClick={handleSearch2}>검색</button>
-                </div>
-            </div>
-            <div style={{overflowY: "scroll", height: "15vh"}}>
-                <div className="container" style={{height: "100%", overflow: "auto"}}>
-                    <ul className="list-group">
-                        {checkRooms.map((checkRoom) => (
-                            <li key={checkRoom.customer_id} className="list-group-item d-flex align-items-center">
-                                <div>
-                                    <h5 className="mb-1">{checkRoom.reserved_room_number}호</h5><span>{checkRoom.name}</span>
-                                    <p>
-                                        <span>예약일 : </span>
-                                        <span>{formatDate(checkRoom.check_in)}</span> ~ <span>{formatDate(checkRoom.check_out)}</span>
-                                    </p>
-                                </div>
-                                <br/>
-                                <div>
-                                    <input type={"button"} value={"예약취소"} onClick={() => handleCancelClick(checkRoom)}/>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
+            )}
             {showPopup && (
                 <div className="password-popup">
                     <div className="popup-content">
-                        <h4>전화번호 확인</h4>
+                        <h4>{t("12")}</h4>
                         <input
                             type="text"
-                            placeholder="전화번호 입력('-'뺴고 입력해주세요.)"
+                            placeholder={t("13")}
                             value={inputPhone}
+                            onKeyDown={handleKeyDown2}
                             onChange={(e) => setInputPhone(e.target.value)}
                         />
-                        <button className="btn btn-danger" onClick={handleConfirm}>확인</button>
-                        <button className="btn btn-secondary" onClick={handleClosePopup}>취소</button>
+                        <div className="checkBtn">
+                            <button className="btn btn-danger" onClick={handleConfirm}>{t("14")}</button>
+                            <button className="btn btn-secondary" onClick={handleClosePopup}>{t("15")}</button>
+                        </div>
                     </div>
                 </div>
             )}
+            <hr className="footer-divider"/>
+            <br/>
+            <h3 style={{marginBottom:"10px"}}><b>{t("16")}</b></h3>
+            <p style={{color: "#5A5A5A",marginBottom:"30px"}}>{t("17")}</p>
 
-            <h3>리뷰 작성({formattedDate})</h3>
-            <div style={{overflowY: "scroll", height: "35vh"}}>
-                <div className="container" style={{height: "100%", overflow: "auto"}}>
+            <div style={{overflowY: "scroll",marginBottom:"50px"}}>
+                {showContainer3 && (
+                <div className="container" style={{height: "35vh", overflow: "auto"}}>
                     <ul className="list-group">
                         {reviews.map((review) => (
-                            <li key={review.customer_id} className="list-group-item d-flex align-items-center">
-                                <div>
-                                    <h4>{review.name}</h4>
-                                    <h5 className="mb-1">{review.reserved_room_number}호</h5>
+                            <li key={review.customer_id} className="list-group-item d-flex align-items-center"
+                                style={{height: "100px"}}>
+                                <div className="reservation3">
+                                    <h5 className="horse">{review.reserved_room_number}{t("9")}</h5>
                                     <p>
                                         <span>{formatDate(review.check_in)}</span> ~ <span>{formatDate(review.check_out)}</span>
                                     </p>
                                 </div>
                                 <br/>
-                                <div>
-                                    <input type={"button"} value={"후기 작성하기"} onClick={() => handleReviewWrite(review)}/>
+                                <div className="reservation2">
+                                    <input type={"button"} value={t("18")} onClick={() => handleReviewWrite(review)}/>
                                 </div>
                             </li>
                         ))}
                     </ul>
                 </div>
+                )}
                 {showPasswordPopup && (
                     <div className="password-popup">
                         <div className="popup-content">
-                            <h3>본인 전화번호 입력</h3>
-                            <p>본인 확인을 위해 전화번호 입력은 필수 입니다.</p>
+                            <h3>{t("19")}</h3>
+                            <p>{t("20")}</p>
                             <input
                                 type="text"
                                 value={inputPhone}
+                                onKeyDown={handleKeyDown3}
                                 onChange={(e) => setInputPhone(e.target.value)}
-                                placeholder="전화번호 입력('-'뺴고 입력해주세요.)"
+                                placeholder={t("13")}
                             />
-                            <button onClick={handlePasswordSubmit}>확인</button>
-                            <button onClick={() => setShowPasswordPopup(false)}>취소</button>
-
+                            <div className="checkBtn">
+                                <button onClick={handlePasswordSubmit}>{t("14")}</button>
+                                <button onClick={() => setShowPasswordPopup(false)}>{t("15")}</button>
+                            </div>
                         </div>
                     </div>
                 )}

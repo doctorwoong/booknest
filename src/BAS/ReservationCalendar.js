@@ -3,7 +3,8 @@ import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css'; // 기본 스타일
 import '../CSS/style/CalendarStyles.css'; // 커스텀 스타일
 import { useNavigate } from "react-router-dom";
-import { formatDateToYYYYMMDD , formatDate } from "../Util/utils"; // 유틸리티 함수 가져오기
+import { formatDateToYYYYMMDD , formatDate } from "../Util/utils";
+import {useTranslation} from "react-i18next"; // 유틸리티 함수 가져오기
 
 function ReservationCalendar() {
     const [dates, setDates] = useState([]); // 기존 예약된 날짜 배열
@@ -11,6 +12,7 @@ function ReservationCalendar() {
     const [checkOutDate, setCheckOutDate] = useState(null); // 체크아웃 날짜
     const [isFormVisible, setFormVisible] = useState(false); // 예약 폼 표시 여부
     const [isValidStay, setIsValidStay] = useState(true); // 최소 3박 유효성 체크
+    const { t, i18n } = useTranslation();
 
     const navigate = useNavigate();
 
@@ -19,7 +21,7 @@ function ReservationCalendar() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         if (date < today) {
-            alert("과거 날짜는 선택할 수 없습니다.");
+            alert(t("147"));
             return;
         }
 
@@ -30,7 +32,7 @@ function ReservationCalendar() {
             setIsValidStay(true);
         } else {
             if (date < checkInDate) {
-                alert("체크아웃 날짜는 체크인 날짜 이후여야 합니다.");
+                alert(t("52"));
                 return;
             }
             setCheckOutDate(date);
@@ -38,7 +40,7 @@ function ReservationCalendar() {
             // 최소 3박 유효성 검사
             const nights = Math.ceil((date - checkInDate) / (1000 * 60 * 60 * 24));
             if (nights < 3) {
-                alert("최소 3박 이상 예약 가능합니다.");
+                alert(t("53"));
                 setIsValidStay(false);
             } else {
                 setIsValidStay(true);
@@ -49,12 +51,12 @@ function ReservationCalendar() {
     // 예약 확인 핸들러
     const handleConfirm = () => {
         if (!checkInDate || !checkOutDate) {
-            alert("체크인 및 체크아웃 날짜를 모두 선택해주세요.");
+            alert(t("54"));
             return;
         }
 
         if (!isValidStay) {
-            alert("최소 3박 이상 예약 가능합니다.");
+            alert(t("55"));
             return;
         }
 
@@ -88,7 +90,7 @@ function ReservationCalendar() {
         }
 
         // 선택된 날짜 범위
-        if (checkInDate && checkOutDate && date >= checkInDate && date <= checkOutDate) {
+        if (checkInDate && checkOutDate && date > checkInDate && date < checkOutDate) {
             return "selected-range";
         }
 
@@ -107,26 +109,40 @@ function ReservationCalendar() {
 
     return (
         <div style={{ width: "100%", margin: "auto", backgroundColor: "#fff", padding: "20px", borderRadius: "10px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" }}>
-            <h2>예약 캘린더</h2>
-            <Calendar tileClassName={tileClassName} onClickDay={onDateClick} />
+            <br/>
+            <h2><b>{t("56")}</b></h2>
+            <p style={{color:"#5A5A5A"}}>{t("57")}</p>
+            <Calendar locale={i18n.language === "ko" ? "ko-KR" : "en-US"} tileClassName={tileClassName} onClickDay={onDateClick} />
             {isFormVisible && (
                 <div>
-                    <h3>예약 정보</h3>
-                    {checkInDate && <p>체크인 날짜: {formatDate(formatDateToYYYYMMDD(checkInDate))}</p>}
-                    {checkOutDate && <p>체크아웃 날짜: {formatDate(formatDateToYYYYMMDD(checkOutDate))}</p>}
-                    {checkInDate && checkOutDate && (
-                        <p>
-                            총 {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24))}박 {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1}일
+                    <br/><br/>
+                    <h3>{t("58")}</h3>
+                    <p style={{color: "#5A5A5A"}}>{t("59")}</p>
+                    <br/>
+                    <div className="checkDate">
+                        <b style={{marginRight: "15%"}}>{t("60")}</b>
+                        <b>{checkInDate && <b>{formatDate(formatDateToYYYYMMDD(checkInDate))}</b>}</b>
+                        <br/>
+                        <b style={{marginRight: "12%"}}>{t("61")}</b>
+                        <b>{checkOutDate && <b>{formatDate(formatDateToYYYYMMDD(checkOutDate))}</b>}</b>
+                        <p style={{textAlign:"right"}}>
+                            {checkInDate && checkOutDate && (
+                                <b>np
+                                    {t("62")} {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24))}{t("42")} {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1}{t("63")}
+                                </b>
+                            )}
                         </p>
-                    )}
-                    <button
-                        className="btn btn-primary"
-                        onClick={handleConfirm}
-                        disabled={!isValidStay} // 최소 3박이 안 되면 비활성화
-                    >
-                        확인
-                    </button>
-                    <button className="btn btn-secondary" onClick={handleReset} style={{ marginLeft: '10px' }}>초기화</button>
+                    </div>
+
+                    <div style={{display: 'flex', justifyContent: 'space-between', gap: '1%', width: '100%', height: '50px'}}>
+                        <button onClick={handleConfirm} disabled={!isValidStay} style={{width: '48%', fontSize: '20px',backgroundColor:'#F54D6E',color:"white"}}>
+                            {t("64")}
+                        </button>
+                        <button onClick={handleReset} style={{width: '48%', fontSize: '20px',backgroundColor:'#F5F5F5',color:"black"}}>
+                            {t("65")}
+                        </button>
+                    </div>
+                    <br/><br/>
                 </div>
             )}
             <style>{`
@@ -138,18 +154,6 @@ function ReservationCalendar() {
                 .past-date {
                     background-color: #f0f0f0;
                     color: #555;
-                }
-                .selected-range {
-                    background-color: rgba(135, 206, 250, 0.3); 
-                    color: black;
-                }
-                .selected-checkin {
-                    background-color: #00aaff;
-                    color: white;
-                }
-                .selected-checkout {
-                    background-color: #ffaa00;
-                    color: white;
                 }
                 .saturday {
                     color: blue;

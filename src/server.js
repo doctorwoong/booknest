@@ -1,30 +1,86 @@
 const express = require('express');
 const cors = require('cors');
+const ical = require("node-ical");
 const axios = require('axios');
-const { generateContract, sendEmails } = require("./mail"); // mail.js 호출
+const { generateContract, sendEmails , sendCheckInEmail} = require("./mail"); // mail.js 호출
 const app = express();
-const { getMainRoom , insertReservation , getCheckInCustomers , getCheckOutCustomers
-        , getCheckCustomers , getReviews ,deleteReservation,getReviewCustomer , getCustmerReview ,updateReview , writeReview ,deleteReview} = require('./controller/controller');
+const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
+    getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
+    deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
+    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus } = require('./controller/controller');
 
-// express.json() 또는 body-parser 미들웨어가 누락되었을 수 있음. 서버에서 요청 본문을 파싱하음록 설정
+// express.json() 또는 body-parser 미들웨어 추가
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+const accessKey = "ncp_iam_BPAMKR1QoJPe4uNkpFuh";
+const secretKey = "ncp_iam_BPKMKRIZfBstDm6BrAze6KwUhnBA1mwhae";
+const serviceId = "ncp:sms:kr:347789811324:airbnb";
+const sender = process.env.NCLOUD_SENDER;
+
+async function sendMessage(to, message, type, imageUrl = "") {
+    const timestamp = Date.now().toString();
+    const url = `/sms/v2/services/${serviceId}/messages`;
+    const fullUrl = `https://sens.apigw.ntruss.com${url}`;
+    const method = "POST";
+    const space = " ";
+    const newLine = "\n";
+    const hmac = crypto.createHmac("sha256", secretKey);
+    hmac.update(method + space + url + newLine + timestamp + newLine + accessKey);
+    const signature = hmac.digest("base64");
+
+    // ✅ SMS (체크아웃) / MMS (체크인) 타입 구분
+    const payload = {
+        type, // "SMS" 또는 "MMS"
+        contentType: "COMM",
+        countryCode: "82",
+        from: sender,
+        content: message,
+        messages: [{ to }],
+    };
+
+    if (type === "MMS" && imageUrl) {
+        payload.messages[0].image = imageUrl; // ✅ MMS일 때만 이미지 추가
+    }
+
+    try {
+        const response = await axios.post(fullUrl, payload, {
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "x-ncp-apigw-timestamp": timestamp,
+                "x-ncp-iam-access-key": accessKey,
+                "x-ncp-apigw-signature-v2": signature,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("메시지 전송 오류:", error.response?.data || error.message);
+        return null;
+    }
+}
+
+// 📌 프록시 요청 (React에서 API 호출 시 필요)
 app.get('/proxy', async (req, res) => {
     const { url } = req.query; // 요청된 URL
     try {
         const response = await axios.get(url);
         res.send(response.data); // 데이터를 React 앱으로 전달
     } catch (error) {
+        console.error("🔴 Proxy Error:", error.message);
         res.status(500).send('Error fetching data');
     }
 });
 
-// /send-reservation 라우트
+// 📌 예약 메일 전송
 app.post("/send-reservation", async (req, res) => {
-    console.log("받은 데이터 :", JSON.stringify(req.body, null, 2));
-    const { name, phone, email,passport, checkInDate, checkOutDate, title, price } = req.body;
+    console.log("📩 받은 데이터 :", JSON.stringify(req.body, null, 2));
+
+    const { name, phone, email, passport, checkInDate, checkOutDate, title, price } = req.body;
+
+    if (!name || !phone || !email || !passport || !checkInDate || !checkOutDate || !title || !price) {
+        return res.status(400).json({ error: "🚨 필수 데이터가 누락되었습니다." });
+    }
 
     const contractData = {
         name,
@@ -37,31 +93,61 @@ app.post("/send-reservation", async (req, res) => {
         price
     };
 
-    console.log("메일에 쏘는 데이터 :", JSON.stringify(contractData, null, 2));
+    console.log("📨 메일에 전송할 데이터 :", JSON.stringify(contractData, null, 2));
 
     try {
-        const contractPath = await generateContract(contractData);
+        const contractPath = await generateContract(contractData); // PDF 계약서 생성
+        console.log("📄 계약서 생성 완료:", contractPath);
+
         await sendEmails("admin@teamtoys.com", email, contractPath, contractData);
-        res.status(200).send("이메일 전송 성공");
+        console.log("✅ 이메일 전송 성공");
+
+        res.status(200).json({ message: "이메일 전송 성공" });
     } catch (error) {
-        console.error(error);
-        res.status(500).send("이메일 전송 실패");
+        console.error("🚨 이메일 전송 실패:", error.message);
+        res.status(500).json({ error: "이메일 전송 실패" });
     }
 });
 
-// MainRoom 라우트
-app.post('/MainSearch', getMainRoom); //메인 리스트 조회
-app.post('/insert-reservation', insertReservation); //예약 완료시 고객테이블 예약자 추가
-app.post('/check-in', getCheckInCustomers); // 예약완료 고객 조회 (체크인)
-app.post('/check-out', getCheckOutCustomers); // 예약완료 고객 조회 (체크아웃)
-app.post('/check', getCheckCustomers); // 예약완료 고객 조회 (체크아웃)
-app.post('/delete-reservation', deleteReservation); // 예약 취소
-app.post('/review', getReviewCustomer); //리뷰고객조회
-app.post('/updateReview', updateReview); //리뷰 수정
-app.post('/writeReview', writeReview); //리뷰 작성
-app.post('/deleteReview', deleteReview); //리뷰 삭제
-app.get('/api/reviews/:roomNumber', getReviews); // 객실 리뷰데이터 조회
-app.get('/review/:customer_id', getCustmerReview); // 고객 리뷰 디테일 조회
+// ✅ 체크인 이메일 (이미지 포함)
+app.post("/send-check-in-email", async (req, res) => {
+    console.log("📩 받은 데이터 (체크인) :", JSON.stringify(req.body, null, 2));
 
-const PORT = 30021;
-app.listen(PORT, () => console.log(`Proxy server running on port ${PORT}`));
+    const { email, room} = req.body;
+
+    try {
+        await sendCheckInEmail(email, room);
+        console.log("✅ 이메일 전송 성공");
+
+        res.status(200).json({ message: "이메일 전송 성공" });
+    } catch (error) {
+        console.error("🚨 이메일 전송 실패:", error.message);
+        res.status(500).json({ error: "이메일 전송 실패" });
+    }
+});
+
+// 📌 기타 API 라우트 설정
+app.post('/MainSearch', getMainRoom);
+app.post('/insertReservation', insertReservation);
+app.post('/check-in', getCheckInCustomers);
+app.post('/check-out', getCheckOutCustomers);
+app.post('/check', getCheckCustomers);
+app.post('/delete-reservation', deleteReservation);
+app.post('/review', getReviewCustomer);
+app.post('/updateReview', updateReview);
+app.post('/writeReview', writeReview);
+app.post('/deleteReview', deleteReview);
+app.post('/getReservation', getReservationCustomers);
+app.get('/api/reviews/:roomNumber', getReviews);
+app.get('/review/:customer_id', getCustmerReview);
+app.post('/updateCheckInMailStatus', updateCheckInMailStatus);
+app.post('/updateCheckOutMailStatus', updateCheckOutMailStatus);
+app.post('/updateReservationMailStatus', updateReservationMailStatus);
+
+app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
+app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
+
+
+
+const PORT = 30022;
+app.listen(PORT, () => console.log(`🚀 Proxy server running on port ${PORT}`));

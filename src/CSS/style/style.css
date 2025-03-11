@@ -1,4 +1,5 @@
-.container {padding: 0 0; border: 1px solid black}
+/* 메인 */
+.container {padding: 0 0;}
 .carousel .carousel-inner .carousel-item .d-block {width: 100%;height: auto;aspect-ratio: 16 / 9;object-fit: cover;}
 .container-reservation {display: flex;justify-content: center;align-items: center;height: 30vh;}
 .container-reservation button {background-color: #ff4b4b;color: #ffffff;border: none;border-radius: 5px;padding: 15px 30px;font-size: 18px;font-weight: bold;cursor: pointer;box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);transition: all 0.3s ease;}
@@ -6,3 +7,44 @@
 .map {display: flex;justify-content: center;align-items: center;height: 100vh;background-color: #f5f5f5;}
 .rating-stars span:hover {cursor: pointer;}
 .container-room {height: 300px}
+.search-form {display: flex;align-items: center;gap: 10px;margin-bottom: 20px}
+.search-form #startDate {width: 350px;}
+.search-form #adults {width: 100px;}
+.search-form input {height: 40px;padding: 8px;border: 1px solid #ddd;border-radius: 5px;text-align: center;}
+.search-form .search-main button {height: 38px;width: 100%;background-color: #F54D6E;color: white;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;}
+.search-form .search-main button:hover {background-color: #e43c5c;}
+.img-thumbnail{ padding: 0; border: none;border-radius:0;}
+.list-group-item {height: 150px;}
+.list-group-item2 {height: 120px;}
+.container-main {margin-left: 20px;}
+.mb-0 {margin-left: 230px;}
+.mb-0 b {font-size: 20px;}
+.mb-0 span {font-size: 12px;}
+.reverseBtn {background-color: #F54D6E;color: white;height:38px;width: 78px}
+.reservationCheck {display: flex;align-items: center;}
+.reservationCheck .col-md-2{margin-left: 10px; }
+.horse {margin: 10px 0; font-size: 25px}
+.reservation {margin-right: 190px}
+.reservation2 input{background-color: white;width: 100px;height: 40px;border: 1px solid #bbb}
+.reservation3 {margin-right: 245px}
+
+
+/* 예약 확인 폼*/
+.text-muted {margin-bottom: 30px}
+.checkDate2 {display: flex;align-items: center;gap: 30vh;margin-bottom: 20px}
+.checkCost {display: flex;align-items: center;gap: 56vh;margin: 20px 0;}
+.checkCost b{font-size: 25px;}
+.discription {background-color: #ddd;padding: 25px;border-radius: 8px;margin-bottom: 50px}
+.reverseBtn2 {width: 100%;background-color: #F54D6E;color: white;margin-bottom: 80px}
+
+/* 예약 디테일 */
+.revers {width: 100%;background-color: #F54D6E;color: white;}
+.reserCost {display: flex;align-items: center;gap: 50px;margin: 0 0;}
+.reserCost-container {border-right: 1px solid #222; margin: 10px 0; padding: 0 30px;}
+.reserCost h4{margin-right: 12vh}
+.reserCost span{font-size: 16px}
+.reserCost #costCheck{font-size: 20px;font-weight: bold}
+.reserCost #costCheck2{font-size: 24px;font-weight: bold}
+.reserCost2 {margin: 30px 0;}
+.reserCost3 {display: flex;align-items: center;gap: 500px;margin: 30px 0;}
+#stars {color: #F54D6E;}

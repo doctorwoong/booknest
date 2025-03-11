@@ -3,11 +3,13 @@ import { useLocation } from "react-router-dom";
 import '../CSS/style/style.css';
 import {apiRequest} from "../Util/api";
 import pro from '../../src/resource/profil.jpeg';
+import {useTranslation} from "react-i18next";
 
 const Review = () => {
     const location = useLocation();
     const { state } = location || {};
     const { room_number } = state || {}; // 전달된 데이터
+    const { t } = useTranslation();
 
     const [reviews, setReviews] = useState([]); // 리뷰 데이터 상태 관리
 
@@ -31,20 +33,25 @@ const Review = () => {
 
     return (
         <>
-            <h3>{room_number}호 리뷰</h3>
-            <div style={{ overflowY: "scroll", height: "65vh" }}>
-                <div className="container" style={{ height: "100%", overflow: "auto" }}>
+            <br/><br/>
+            <h3>{room_number}{t("89")}</h3>
+            <p style={{color: "#5A5A5A"}}>{t("90")}</p>
+            <div style={{overflowY: "scroll", height: "65vh"}}>
+                <div className="container-review" style={{height: "100%", overflow: "auto"}}>
                     <ul className="list-group">
                         {reviews.map((review) => (
-                            <li key={review.review_id} className="list-group-item d-flex align-items-center">
-                                <div style={{paddingRight:"10px"}}>
-                                    <img src={pro} alt="Teamtoys Logo" style={{width: "100px", height: "100px"}}/>
+                            <li key={review.review_id}
+                                style={{height: "auto", borderBottom: "1px solid #222", padding: "0 1px"}}>
+                                <div style={{display: "flex", marginTop: "3vh", marginBottom: "1vh"}}>
+                                    <img src={pro} alt="Teamtoys Logo" style={{width: "50px", height: "50px"}}/>
+                                    <div style={{marginLeft: "1vh"}}>
+                                        <b className="mb-1"
+                                           style={{fontSize: "20px"}}>{review.customer_name || t("91")}</b>
+                                        <p className="mb-1"><span id="stars">★</span> {review.rating}</p>
+                                    </div>
+                                    <br/>
                                 </div>
-                                <div>
-                                    <p className="mb-1">작성자: {review.customer_name || "익명"}</p>
-                                    <p className="mb-1">★ {review.rating}</p>
-                                    <p className="mb-1">내용: {review.review_text}</p>
-                                </div>
+                                <p>{review.review_text}</p>
                             </li>
                         ))}
                     </ul>

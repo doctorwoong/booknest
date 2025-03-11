@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import {useNavigate, useLocation} from "react-router-dom";
 import { apiRequest } from "../Util/api"; // API 요청 함수
 import "../CSS/style/ReviewDetail.css"
+import {useTranslation} from "react-i18next";
 
 function ReviewDetail() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const location = useLocation();
     const { state } = location || {};
@@ -60,18 +62,18 @@ function ReviewDetail() {
         console.log("review_id : " + id);
         console.log("customer_id : " + customer_id);
         // eslint-disable-next-line no-restricted-globals
-        const check = confirm('저장하시겠습니까?');
+        const check = confirm(t("92"));
         if (!check) return;
 
 
         setIsLoading(true); // 로딩 시작
         try {
             await apiRequest(endpoint, "POST", payload);
-            alert(id !== 0 ? "리뷰가 수정되었습니다!" : "리뷰가 작성되었습니다!");
+            alert(id !== 0 ? t("93") : t("94"));
             navigate(-1); // 이전 페이지로 이동
         } catch (error) {
             console.error("Error saving review:", error);
-            alert("리뷰 저장에 실패했습니다.");
+            alert(t("95"));
         }finally {
             setIsLoading(false); // 로딩 종료
         }
@@ -80,73 +82,74 @@ function ReviewDetail() {
     // 삭제 버튼 클릭 핸들러
     const handleDelete = async () => {
         // eslint-disable-next-line no-restricted-globals
-        const check = confirm('리뷰를 삭제하시겠습니까?');
+        const check = confirm(t("96"));
         if (!check) return;
 
         setIsLoading(true); // 로딩 시작
         try {
             await apiRequest("/deleteReview", "POST", { id });
-            alert("리뷰가 삭제되었습니다.");
+            alert(t("97"));
             navigate(-1);
         } catch (error) {
             console.error("Error deleting review:", error);
-            alert("리뷰 삭제에 실패했습니다.");
+            alert(t("98"));
         } finally {
             setIsLoading(false); // 로딩 종료
         }
     };
 
     return (
-        <div className="review-write" style={{overflowY: "scroll", height: "60vh"}}>
-            <h2>리뷰 작성</h2>
+        <div className="review-write" style={{overflowY: "scroll", height: "70vh"}}>
+            <h2><b>{t("99")}</b></h2>
+            <p style={{color: "#5A5A5A"}}>{t("100")}</p>
             <div className="review-section">
                 {/* 묵었던 호수 */}
-                <div className="room-info">
-                    <label>묵었던 호수:</label><span>{reserved_room_number}</span><br/>
-                    <label>작성일 : </label><span>{reviewData[0]?.REG_DTM}</span><br/>
-                    <label>수정일 : </label><span>{reviewData[0]?.MDFY_DTM}</span>
-                </div>
-
-                {/* 별점 */}
-                <div className="rating-section">
-                    <label>별점:</label>
-                    <div className="rating-stars">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <span
-                                key={star}
-                                className={`star ${rating >= star ? "selected" : ""}`}
-                                onClick={() => handleRatingClick(star)}
-                            >
+                <div className="info">
+                    <div>
+                        <label>{t("101")}</label><br/>
+                        <b>{reserved_room_number}</b>
+                    </div>
+                    <div>
+                        <label>{t("102")}:</label>
+                        <div className="rating-stars">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <span key={star} className={`star ${rating >= star ? "selected" : ""}`}
+                                      onClick={() => handleRatingClick(star)}>
                                 ★
                             </span>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 {/* 리뷰 텍스트 */}
                 <div className="review-text">
-                    <label>리뷰:</label>
+                    <label>{t("103")}</label>
                     <textarea
-                        rows="5"
+                        rows="9"
                         value={reviewText}
                         onChange={(e) => setReviewText(e.target.value)}
-                        placeholder="여기에 리뷰를 작성해주세요."
+                        placeholder={t("104")}
                     ></textarea>
                 </div>
 
                 {/* 버튼 섹션 */}
                 <div className="button-section">
                     <button className="btn-save" onClick={handleSave}>
-                        {id !== 0 ? "수정" : "저장"}
+                        {id !== 0 ? t("105") : t("106")}
                     </button>
                     {id !== 0 && (
                         <button className="btn-delete" onClick={handleDelete}>
-                            삭제
+                            {t("107")}
                         </button>
                     )}
                     <button className="btn-cancel" onClick={() => navigate(-1)}>
-                        취소
+                        {t("108")}
                     </button>
+                </div>
+                <hr/>
+                <div style={{textAlign:"right"}}>
+                    <label>{t("109")} : </label><span>{reviewData[0]?.REG_DTM}</span>
                 </div>
             </div>
         </div>

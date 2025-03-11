@@ -48,6 +48,7 @@ const getMainRoom = async (req, res) => {
                             STR_TO_DATE(check_out, '%Y%m%d') < STR_TO_DATE(?, '%Y%m%d')
                             )
                 )
+            and reservation_status = 'available'
         `;
 
         // 쿼리와 파라미터를 로그로 출력
@@ -74,6 +75,7 @@ const insertReservation = async (req, res) => {
             checkInDate,
             checkOutDate,
             title,
+            price
         } = req.body; // 클라이언트에서 전달된 데이터
 
         const query = `
@@ -86,12 +88,13 @@ const insertReservation = async (req, res) => {
               check_out, 
               check_in_message_status, 
               check_out_message_status, 
-              reserved_room_number, 
+              reserved_room_number,
+              totalprice,
               MDFY_DTM,
               MDFY_ID,
               REG_DTM,
               REG_ID
-            ) VALUES (?, ?, ?, ?, ?, ?,'N','N', ?, NOW(),'admin',NOW(),'admin')
+            ) VALUES (?, ?, ?, ?, ?, ?,'N','N', ?, ?, NOW(),'admin',NOW(),'admin')
         `;
 
         const [result] = await pool.query(query, [
@@ -102,6 +105,7 @@ const insertReservation = async (req, res) => {
             checkInDate,
             checkOutDate,
             title,
+            price
         ]);
 
         console.log('Reservation inserted:', result);
@@ -118,12 +122,17 @@ const getCheckInCustomers = async (req, res) => {
             SELECT
                 customer_id AS id,
                 name,
+                email,
+                phone_number as phone,
                 reserved_room_number AS room,
                 check_in AS checkIn,
                 check_in_message_status,
+                check_in_mail_status,
                 STR_TO_DATE(check_in, '%Y%m%d') AS checkInDate
             FROM
                 CustomerInfo
+            where 1=1
+              AND REG_ID != 'batch'
             ORDER BY
                 CASE
                     WHEN STR_TO_DATE(check_in, '%Y%m%d') BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) THEN 1
@@ -147,12 +156,17 @@ const getCheckOutCustomers = async (req, res) => {
             SELECT
                 customer_id AS id,
                 name,
+                email,
+                phone_number as phone,
                 reserved_room_number AS room,
                 check_out AS checkOut,
                 check_out_message_status,
+                check_out_mail_status,
                 STR_TO_DATE(check_out, '%Y%m%d') AS checkOutDate
             FROM
                 CustomerInfo
+            where 1=1
+              AND REG_ID != 'batch'
             ORDER BY
                 CASE
                     WHEN STR_TO_DATE(check_out, '%Y%m%d') >= CURDATE() THEN 1
@@ -261,7 +275,8 @@ const getReviewCustomer = async (req, res) => {
                 CustomerInfo A
             WHERE
                 STR_TO_DATE(A.check_out, '%Y%m%d') BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-              AND CURDATE();
+              AND CURDATE()
+            AND REG_ID != 'batch';
         `;
         const [rows] = await pool.query(query);
         res.json(rows);
@@ -370,7 +385,123 @@ const deleteReview = async (req, res) => {
     }
 };
 
+const getReservationCustomers = async (req, res) => {
+    try {
+        const query = `
+            select
+                customer_id,
+                name as name,
+                phone_number as phone,
+                email as email,
+                passport_number as passport,
+                check_in as checkInDate,
+                check_out as checkOutDate,
+                reserved_room_number as title,
+                totalprice as price,
+                reservation_mail_status
+            from CustomerInfo
+            where 1=1
+                AND REG_ID != 'batch'
+            order by customer_id desc
+        `;
+        const [rows] = await pool.query(query);
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error('Error getReservationCustomers data:', err);
+
+        // 에러 발생 시 500 상태와 에러 메시지 반환
+        res.status(500).send('Error getReservationCustomers data');
+    }
+};
+
+const updateCheckInMailStatus = async (req, res) => {
+    try {
+        const { id } = req.body;
+        if (!id) {return res.status(400).send("customer_id parameter is required");}
+
+        const query = `update CustomerInfo set check_in_mail_status = 'Y' where customer_id = ?`;
+        const [rows] = await pool.query(query, [id]); // id 파라미터로 전달
+
+        console.log("SQL Query: ", query);
+        console.log("SQL Parameters: ", [id]);
+        res.json(rows);
+    } catch (err) {
+        console.error("Error fetching check data:", err);
+        res.status(500).send("Error fetching check data");
+    }
+};
+
+const updateCheckOutMailStatus = async (req, res) => {
+    try {
+        const { id } = req.body;
+        if (!id) {return res.status(400).send("customer_id parameter is required");}
+
+        const query = `update CustomerInfo set check_out_mail_status = 'Y' where customer_id = ?`;
+        const [rows] = await pool.query(query, [id]); // id 파라미터로 전달
+
+        console.log("SQL Query: ", query);
+        console.log("SQL Parameters: ", [id]);
+        res.json(rows);
+    } catch (err) {
+        console.error("Error fetching check data:", err);
+        res.status(500).send("Error fetching check data");
+    }
+};
+
+const updateReservationMailStatus = async (req, res) => {
+    try {
+        const { customer_id } = req.body;
+        if (!customer_id) {return res.status(400).send("customer_id parameter is required");}
+
+        const query = `update CustomerInfo set reservation_mail_status = 'Y' where customer_id = ?`;
+        const [rows] = await pool.query(query, [customer_id]); // id 파라미터로 전달
+
+        console.log("SQL Query: ", query);
+        console.log("SQL Parameters: ", [customer_id]);
+        res.json(rows);
+    } catch (err) {
+        console.error("Error fetching check data:", err);
+        res.status(500).send("Error fetching check data");
+    }
+};
+
+const updateCheckInSmsStatus = async (req, res) => {
+    try {
+        const { id } = req.body;
+        if (!id) {return res.status(400).send("customer_id parameter is required");}
+
+        const query = `update CustomerInfo set check_in_message_status = 'Y' where customer_id = ?`;
+        const [rows] = await pool.query(query, [id]); // id 파라미터로 전달
+
+        console.log("SQL Query: ", query);
+        console.log("SQL Parameters: ", [id]);
+        res.json(rows);
+    } catch (err) {
+        console.error("Error fetching check data:", err);
+        res.status(500).send("Error fetching check data");
+    }
+};
+
+const updateCheckOutSmsStatus = async (req, res) => {
+    try {
+        const { id } = req.body;
+        if (!id) {return res.status(400).send("customer_id parameter is required");}
+
+        const query = `update CustomerInfo set check_out_message_status = 'Y' where customer_id = ?`;
+        const [rows] = await pool.query(query, [id]); // id 파라미터로 전달
+
+        console.log("SQL Query: ", query);
+        console.log("SQL Parameters: ", [id]);
+        res.json(rows);
+    } catch (err) {
+        console.error("Error fetching check data:", err);
+        res.status(500).send("Error fetching check data");
+    }
+};
+
+
 
 
 module.exports = {getMainRoom, insertReservation, getCheckInCustomers,getCheckOutCustomers,getCheckCustomers,
-    getReviews ,deleteReservation ,getReviewCustomer, getCustmerReview,updateReview,writeReview ,deleteReview};
+    getReviews ,deleteReservation ,getReviewCustomer, getCustmerReview,updateReview,writeReview ,deleteReview
+    ,getReservationCustomers ,updateCheckInMailStatus ,updateCheckOutMailStatus ,updateReservationMailStatus, updateCheckInSmsStatus,updateCheckOutSmsStatus };
