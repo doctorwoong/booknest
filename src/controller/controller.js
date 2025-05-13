@@ -43,10 +43,8 @@ const getMainRoom = async (req, res) => {
                     FROM
                         CustomerInfo
                     WHERE
-                        NOT (
-                            STR_TO_DATE(check_in, '%Y%m%d') > STR_TO_DATE(?, '%Y%m%d') OR
-                            STR_TO_DATE(check_out, '%Y%m%d') < STR_TO_DATE(?, '%Y%m%d')
-                            )
+                        STR_TO_DATE(check_in, '%Y%m%d') < STR_TO_DATE(?, '%Y%m%d') AND
+                        STR_TO_DATE(check_out, '%Y%m%d') > STR_TO_DATE(?, '%Y%m%d')
                 )
             and reservation_status = 'available'
         `;
@@ -201,10 +199,10 @@ const getCheckCustomers = async (req, res) => {
                    A.reserved_room_number,
                    (SELECT B.images FROM RoomInfo B WHERE A.reserved_room_number = B.room_number LIMIT 1) AS img
             FROM CustomerInfo A
-            WHERE A.name = ?;
+            WHERE A.name like ?
         `;
 
-        const [rows] = await pool.query(query, [name]); // name을 파라미터로 전달
+        const [rows] = await pool.query(query, [`%${name}%`]);
         res.json(rows);
     } catch (err) {
         console.error("Error fetching check data:", err);
@@ -499,9 +497,50 @@ const updateCheckOutSmsStatus = async (req, res) => {
     }
 };
 
+const getCalendarAdmin = async (req, res) => {
+    try {
+        const query = `
+            SELECT
+                reserved_room_number AS room,
+                DATE_FORMAT(DATE_SUB(STR_TO_DATE(check_in, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out
+            FROM CustomerInfo
+            WHERE MDFY_ID != 'batch'
+        `;
+        const [rows] = await pool.query(query);
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error('Error fetching check-in data:', err);
+
+        // 에러 발생 시 500 상태와 에러 메시지 반환
+        res.status(500).send('Error fetching check-in data');
+    }
+};
+const getCalendarAirbnb = async (req, res) => {
+    try {
+        const query = `
+            SELECT
+                reserved_room_number AS room,
+                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out,
+                DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i') AS REG_DTM
+            FROM CustomerInfo
+            WHERE MDFY_ID = 'batch'
+            order by customer_id desc
+        `;
+        const [rows] = await pool.query(query);
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error('Error fetching check-in data:', err);
+
+        // 에러 발생 시 500 상태와 에러 메시지 반환
+        res.status(500).send('Error fetching check-in data');
+    }
+};
 
 
 
 module.exports = {getMainRoom, insertReservation, getCheckInCustomers,getCheckOutCustomers,getCheckCustomers,
     getReviews ,deleteReservation ,getReviewCustomer, getCustmerReview,updateReview,writeReview ,deleteReview
-    ,getReservationCustomers ,updateCheckInMailStatus ,updateCheckOutMailStatus ,updateReservationMailStatus, updateCheckInSmsStatus,updateCheckOutSmsStatus };
+    ,getReservationCustomers ,updateCheckInMailStatus ,updateCheckOutMailStatus ,updateReservationMailStatus, updateCheckInSmsStatus,updateCheckOutSmsStatus
+    ,getCalendarAdmin,getCalendarAirbnb };

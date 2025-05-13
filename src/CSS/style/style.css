@@ -1,10 +1,11 @@
 /* 메인 */
 .container {padding: 0 0;}
 .carousel .carousel-inner .carousel-item .d-block {width: 100%;height: auto;aspect-ratio: 16 / 9;object-fit: cover;}
+.carousel-item img {height: 500px}
 .container-reservation {display: flex;justify-content: center;align-items: center;height: 30vh;}
 .container-reservation button {background-color: #ff4b4b;color: #ffffff;border: none;border-radius: 5px;padding: 15px 30px;font-size: 18px;font-weight: bold;cursor: pointer;box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);transition: all 0.3s ease;}
 .container-reservation button:hover {background-color: #e03a3a}
-.map {display: flex;justify-content: center;align-items: center;height: 100vh;background-color: #f5f5f5;}
+.map {display: flex;justify-content: center;align-items: center;height: 500px;background-color: #f5f5f5;}
 .rating-stars span:hover {cursor: pointer;}
 .container-room {height: 300px}
 .search-form {display: flex;align-items: center;gap: 10px;margin-bottom: 20px}
@@ -14,37 +15,79 @@
 .search-form .search-main button {height: 38px;width: 100%;background-color: #F54D6E;color: white;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;}
 .search-form .search-main button:hover {background-color: #e43c5c;}
 .img-thumbnail{ padding: 0; border: none;border-radius:0;}
-.list-group-item {height: 150px;}
 .list-group-item2 {height: 120px;}
-.container-main {margin-left: 20px;}
-.mb-0 {margin-left: 230px;}
+.container-main {margin-left: 20px;width: 65%;padding-right: 10px}
+.container::-webkit-scrollbar {display: none;}
+.mb-0 {text-align: right;}
 .mb-0 b {font-size: 20px;}
 .mb-0 span {font-size: 12px;}
-.reverseBtn {background-color: #F54D6E;color: white;height:38px;width: 78px}
-.reservationCheck {display: flex;align-items: center;}
+.reverseBtn {width: 100px !important;height: 38px;display: block;text-align: center;justify-content: center;align-items: center;background-color: #F54D6E;color: white;border-radius: 5px;border: none}
+.container li {height: 150px}
+
+.container {height: 100%;overflow: auto;}
+.list-group-item {display: flex;align-items: center;flex-wrap: wrap;min-height: 100px;padding: 10px;}
+
+.reservation {flex-grow: 1;min-width: 150px;white-space: normal;word-break: break-word;}
+.reservation2 {flex-shrink: 0;}
+.reservation2 input {padding: 10px 15px;white-space: nowrap;background-color: #F54D6E;border-radius: 5px;border:none;color:#fff}
+
+.reservationCheck {display: flex;align-items: center;border: none;color:#fff}
 .reservationCheck .col-md-2{margin-left: 10px; }
 .horse {margin: 10px 0; font-size: 25px}
-.reservation {margin-right: 190px}
-.reservation2 input{background-color: white;width: 100px;height: 40px;border: 1px solid #bbb}
 .reservation3 {margin-right: 245px}
+
+.position-relative #startDate {width: 444px;}
+.position-relative #adults{width: 100px;}
 
 
 /* 예약 확인 폼*/
 .text-muted {margin-bottom: 30px}
 .checkDate2 {display: flex;align-items: center;gap: 30vh;margin-bottom: 20px}
-.checkCost {display: flex;align-items: center;gap: 56vh;margin: 20px 0;}
+.checkCost {display: flex;align-items: center;margin: 20px 0;justify-content: space-between;}
 .checkCost b{font-size: 25px;}
 .discription {background-color: #ddd;padding: 25px;border-radius: 8px;margin-bottom: 50px}
-.reverseBtn2 {width: 100%;background-color: #F54D6E;color: white;margin-bottom: 80px}
+.reverseBtn2 {width: 100%;background-color: #F54D6E;color: white;margin-bottom: 30px;border: none;padding: 10px;border-radius: 8px}
 
 /* 예약 디테일 */
 .revers {width: 100%;background-color: #F54D6E;color: white;}
-.reserCost {display: flex;align-items: center;gap: 50px;margin: 0 0;}
-.reserCost-container {border-right: 1px solid #222; margin: 10px 0; padding: 0 30px;}
+.reserCost {display: flex;align-items: center;margin: 0 0;justify-content: space-between}
+.reserCost-container {border-right: 1px solid #222; margin: 10px 0; padding: 0 15px;}
+.reserCost-container2 {margin-left: 20px}
 .reserCost h4{margin-right: 12vh}
 .reserCost span{font-size: 16px}
+.reserCost-inner {display: flex;align-items: center;justify-content: space-between;}
 .reserCost #costCheck{font-size: 20px;font-weight: bold}
 .reserCost #costCheck2{font-size: 24px;font-weight: bold}
-.reserCost2 {margin: 30px 0;}
-.reserCost3 {display: flex;align-items: center;gap: 500px;margin: 30px 0;}
+.reserCost2 {margin: 30px 0;font-size: 13px}
+.reserCost3 {display: flex;align-items: center;justify-content: space-between;margin: 20px 0;}
+
+.channelTalk {text-align: center}
+.channelTalk span {font-weight: bold}
+.channelTalk img {width: 50px;height: 50px}
+
 #stars {color: #F54D6E;}
+
+/* 📱 모바일 반응형 */
+@media (max-width: 768px) {
+    .position-relative #startDate {width: 170px;}
+    .position-relative #adults{width: 70px;}
+    .container li {height: auto}
+    .list-group-item {flex-direction: column !important;align-items: flex-start !important;padding: 15px;}
+    .list-group-item img {width: 100% !important;height: 200px !important;margin-bottom: 12px;}
+    .container-main {width: 90% !important;padding: 0 !important;}
+    .container-main h5 {font-size: 18px;margin-bottom: 5px;}
+    .container-main p {font-size: 14px;margin-bottom: 6px;}
+    .container-main b {font-size: 16px;}
+    .carousel-item img {height: 300px}
+    .map {display: flex;justify-content: center;align-items: center;height: 300px;background-color: #f5f5f5;}
+    .reserCost {flex-direction: column;align-items: flex-start;gap: 10px;}
+    .reserCost h4 {font-size: 18px;margin-right: 0;}
+    .reserCost-inner {display: flex;align-items: flex-start;width: 100%;gap: 10px;}
+    .reserCost-container, .reserCost-container2 {width: 100%;padding: 8px 0;border-right: none;margin: 0}
+    .reserCost span#costCheck {font-size: 14px;}
+    .reserCost span#costCheck2 {font-size: 16px;font-weight: bold;}
+    .reviewContainer img {width: 100% !important;height: 100px !important;}
+
+
+}
+

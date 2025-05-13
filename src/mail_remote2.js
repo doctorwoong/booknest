@@ -57,18 +57,6 @@ const sendEmails = async (adminEmail, customerEmail, contractPath, data) => {
 
     console.log("메일받은 데이터 :", JSON.stringify(data, null, 2));
     console.log("메일받은 데이터2 :", data);
-    const adminMailOptions = {
-        from: "teamtoys717@gmail.com",
-        to: adminEmail,
-        subject: `새로운 예약 요청: ${data.name}`,
-        cc: ["bakho2@naver.com", "kangmd78@nate.com"],
-        html: `
-            <h2>새로운 예약 요청이 도착했습니다.</h2>
-            <p><b>이름:</b> ${data.name}</p>
-            <p><b>전화번호:</b> ${data.phone}</p>
-            <p><b>숙소:</b> ${data.title}</p>
-        `,
-    };
 
     const customerMailOptions = {
         from: "teamtoys717@gmail.com",
@@ -90,7 +78,6 @@ const sendEmails = async (adminEmail, customerEmail, contractPath, data) => {
         ],
     };
 
-    await transporter.sendMail(adminMailOptions);
     await transporter.sendMail(customerMailOptions);
 };
 
@@ -432,6 +419,7 @@ const sendCheckInEmail = async (customerEmail, title) => {
         from: "teamtoys717@gmail.com",
         to: customerEmail,
         subject: "체크인 1주일 전 안내",
+        cc: ["bakho2@naver.com", "kangmd78@nate.com"],
         html: `<p>${contents}</p>`,
         attachments: [...imageAttachments],
     };

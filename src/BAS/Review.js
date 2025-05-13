@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import '../CSS/style/style.css';
 import {apiRequest} from "../Util/api";
-import pro from '../../src/resource/profil.jpeg';
 import {useTranslation} from "react-i18next";
 
 const Review = () => {
@@ -36,14 +35,14 @@ const Review = () => {
             <br/><br/>
             <h3>{room_number}{t("89")}</h3>
             <p style={{color: "#5A5A5A"}}>{t("90")}</p>
-            <div style={{overflowY: "scroll", height: "65vh"}}>
+            <div style={{overflowY: "hidden", height: "65vh"}}>
                 <div className="container-review" style={{height: "100%", overflow: "auto"}}>
                     <ul className="list-group">
                         {reviews.map((review) => (
                             <li key={review.review_id}
                                 style={{height: "auto", borderBottom: "1px solid #222", padding: "0 1px"}}>
                                 <div style={{display: "flex", marginTop: "3vh", marginBottom: "1vh"}}>
-                                    <img src={pro} alt="Teamtoys Logo" style={{width: "50px", height: "50px"}}/>
+                                    <img alt="Teamtoys Logo" style={{width: "50px", height: "50px"}}/>
                                     <div style={{marginLeft: "1vh"}}>
                                         <b className="mb-1"
                                            style={{fontSize: "20px"}}>{review.customer_name || t("91")}</b>

@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import '../../CSS/layout/Header.css';
-import logo from '../../resource/Noryangjin_logo.png';
-import logo2 from '../../resource/earthht.png';
 import i18n from "../../i18n";
 import {useTranslation} from "react-i18next";
 
@@ -17,7 +15,7 @@ const Header = () => {
     };
 
     const handlePasswordSubmit = () => {
-        if (password === "1234") {
+        if (password === "7888") {
             setShowPasswordPopup(false); // 팝업 닫기
             navigate("/admin"); // Admin 페이지로 이동
         } else {
@@ -37,7 +35,6 @@ const Header = () => {
             <header className="header">
                 <Link to={`/`}>
                     <div className="logo">
-                        <img src={logo} alt="Teamtoys Logo" style={{ width: "200px", height: "200px" }} />
                     </div>
                 </Link>
                 <div>
@@ -46,7 +43,6 @@ const Header = () => {
                 <div className="admin">
                     <div className="dropdown">
                         <button className="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src={logo2} alt="Language Selector"/>
                         </button>
                         <ul className="dropdown-menu">
                             <li><span className="dropdown-item" onClick={() => i18n.changeLanguage("ko")}>🇰🇷 한국어</span></li>

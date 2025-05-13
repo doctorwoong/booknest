@@ -108,37 +108,50 @@ function ReservationCalendar() {
     };
 
     return (
-        <div style={{ width: "100%", margin: "auto", backgroundColor: "#fff", padding: "20px", borderRadius: "10px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" }}>
+        <div style={{ width: "100%", margin: "auto", backgroundColor: "#fff", padding: "20px", borderRadius: "10px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",marginTop:"50px"}}>
             <br/>
             <h2><b>{t("56")}</b></h2>
-            <p style={{color:"#5A5A5A"}}>{t("57")}</p>
+            <p style={{color:"#5A5A5A",marginBottom:"30px"}}>{t("57")}</p>
             <Calendar locale={i18n.language === "ko" ? "ko-KR" : "en-US"} tileClassName={tileClassName} onClickDay={onDateClick} />
             {isFormVisible && (
-                <div>
+                <div className="calendarForm">
                     <br/><br/>
                     <h3>{t("58")}</h3>
-                    <p style={{color: "#5A5A5A"}}>{t("59")}</p>
+                    <p style={{color: "#5A5A5A"}} className="calendarFormP">{t("59")}</p>
                     <br/>
                     <div className="checkDate">
-                        <b style={{marginRight: "15%"}}>{t("60")}</b>
-                        <b>{checkInDate && <b>{formatDate(formatDateToYYYYMMDD(checkInDate))}</b>}</b>
-                        <br/>
-                        <b style={{marginRight: "12%"}}>{t("61")}</b>
-                        <b>{checkOutDate && <b>{formatDate(formatDateToYYYYMMDD(checkOutDate))}</b>}</b>
-                        <p style={{textAlign:"right"}}>
+                        <div className="date-row">
+                            <b>{t("60")}</b>
+                            <b>{checkInDate && formatDate(formatDateToYYYYMMDD(checkInDate))}</b>
+                        </div>
+                        <div className="date-row">
+                            <b>{t("61")}</b>
+                            <b>{checkOutDate && formatDate(formatDateToYYYYMMDD(checkOutDate))}</b>
+                        </div>
+                        <p style={{textAlign: "right", marginTop: "20px"}}>
                             {checkInDate && checkOutDate && (
-                                <b>np
-                                    {t("62")} {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24))}{t("42")} {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1}{t("63")}
+                                <b>
+                                    {t("62")} {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24))}{t("42")}{" "}
+                                    {Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1}{t("63")}
                                 </b>
                             )}
                         </p>
                     </div>
 
-                    <div style={{display: 'flex', justifyContent: 'space-between', gap: '1%', width: '100%', height: '50px'}}>
-                        <button onClick={handleConfirm} disabled={!isValidStay} style={{width: '48%', fontSize: '20px',backgroundColor:'#F54D6E',color:"white"}}>
+
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        gap: '1%',
+                        width: '100%',
+                        height: '50px'
+                    }}>
+                        <button onClick={handleConfirm} disabled={!isValidStay}
+                                style={{width: '49%', fontSize: '20px', backgroundColor: '#F54D6E', color: "white",borderRadius:"8px",border:"none"}}>
                             {t("64")}
                         </button>
-                        <button onClick={handleReset} style={{width: '48%', fontSize: '20px',backgroundColor:'#F5F5F5',color:"black"}}>
+                        <button onClick={handleReset}
+                                style={{width: '49%', fontSize: '20px', backgroundColor: '#F5F5F5', color: "black",borderRadius:"8px",border:"none"}}>
                             {t("65")}
                         </button>
                     </div>
@@ -146,22 +159,26 @@ function ReservationCalendar() {
                 </div>
             )}
             <style>{`
-                .reserved {
-                    background-color: lightblue;
-                    border: 1px solid blue;
-                    color: black;
+                .reserved {background-color: lightblue;border: 1px solid blue;color: black;}
+                .past-date {background-color: #f0f0f0;color: #555;}
+                .saturday {color: blue;}
+                .btn:disabled {background-color: grey;cursor: not-allowed;}
+                .checkDate .date-row {display: flex;justify-content: space-between;margin-bottom: 8px;}
+                @media (max-width: 768px) {
+                  .react-calendar {width: 100% !important;font-size: 11px !important;border-radius: 10px;}
+                  .react-calendar__tile {padding: 0.75em 0 !important;}
+                  .react-calendar__navigation {flex-wrap: wrap;gap: 4px;justify-content: center;color: black !important;}
+                  .react-calendar__month-view__weekdays {font-size: 13px !important;color: black !important;}
+                  .react-calendar__tile abbr {font-size: 14px;}
+                  .react-calendar__tile--now {background: #f5f5f5 !important;border-radius: 50%;}
+                  .react-calendar__tile--active {background: #F54D6E !important;color: white;border-radius: 50%;}
+                  .react-calendar__tile:disabled {background: #eee;color: #ccc;}
+                  .checkDate b {font-size:17px}
+                  .calendarForm h3 {font-size:21px}
+                  .calendarForm .calendarFormP {font-size:14px}
                 }
-                .past-date {
-                    background-color: #f0f0f0;
-                    color: #555;
-                }
-                .saturday {
-                    color: blue;
-                }
-                .btn:disabled {
-                    background-color: grey;
-                    cursor: not-allowed;
-                }
+
+                
             `}</style>
         </div>
     );

@@ -99,7 +99,7 @@ function ReviewDetail() {
     };
 
     return (
-        <div className="review-write" style={{overflowY: "scroll", height: "70vh"}}>
+        <div className="review-write" style={{overflowY: "hidden"}}>
             <h2><b>{t("99")}</b></h2>
             <p style={{color: "#5A5A5A"}}>{t("100")}</p>
             <div className="review-section">
@@ -147,8 +147,7 @@ function ReviewDetail() {
                         {t("108")}
                     </button>
                 </div>
-                <hr/>
-                <div style={{textAlign:"right"}}>
+                <div style={{textAlign:"right",marginBottom:"30px"}}>
                     <label>{t("109")} : </label><span>{reviewData[0]?.REG_DTM}</span>
                 </div>
             </div>

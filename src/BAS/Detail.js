@@ -1,47 +1,37 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import '../CSS/style/style.css'
-import React, {useEffect, useState} from "react";
+import '../CSS/style/style.css';
 import { formatDate } from "../Util/utils";
-import {apiRequest} from "../Util/api";
-import pro from "../resource/profil.jpeg";
-import {useTranslation} from "react-i18next";
+import { apiRequest } from "../Util/api";
+import { useTranslation } from "react-i18next";
 
 const Detail = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { state } = location || {};
     const { t } = useTranslation();
-
-    console.log(state);
-    const { room_number, images ,adults, price ,checkInDate, checkOutDate} = state || {}; // 전달된 데이터
+    const { room_number, images, price, checkInDate, checkOutDate } = state || {};
     const nightlyRate = price;
     const [totalPrice, setTotalPrice] = useState(0);
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [reviews, setReviews] = useState([]); // 리뷰 데이터 상태 관리
+    const [reviews, setReviews] = useState([]);
 
-    const openModal = (index) => {
-        setSelectedImage(url + images[index]);
-        setCurrentIndex(index);
-    };
+    let url = `/resource/img/${room_number}/`;
+    const [isLoading, setIsLoading] = useState(false); 
 
-    const closeModal = () => {
-        setSelectedImage(null);
-    };
-
-    const nextImage = () => {
-        const newIndex = (currentIndex + 1) % images.length;
-        setSelectedImage(url + images[newIndex]);
-        setCurrentIndex(newIndex);
-    };
-
-    const prevImage = () => {
-        const newIndex = (currentIndex - 1 + images.length) % images.length;
-        setSelectedImage(url + images[newIndex]);
-        setCurrentIndex(newIndex);
-    };
+    const [formData, setFormData] = useState({
+        name: "",
+        phone: "",
+        email: "",
+        passport: "",
+        checkInDate: "",
+        checkOutDate: "",
+        adults: 2,
+        children: 0,
+        infants: 0,
+        pets: 0,
+    });
 
     useEffect(() => {
         // Kakao 지도 API 스크립트 로드
@@ -106,51 +96,84 @@ const Detail = () => {
                 checkOutDate.substring(4, 6) - 1,
                 checkOutDate.substring(6, 8)
             );
-
             const diffTime = Math.abs(endDate - startDate);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
             let discount = 0;
-            if (diffDays >= 30) {
-                discount = 0.3; // 30% 할인
-            } else if (diffDays >= 8) {
-                discount = 0.15; // 15% 할인
-            }
+            if (diffDays >= 30) discount = 0.3;
+            else if (diffDays >= 8) discount = 0.15;
 
             const calculatedPrice = diffDays * nightlyRate * (1 - discount);
             setTotalPrice(calculatedPrice);
-        } else {
-            setTotalPrice(0);
         }
     }, [checkInDate, checkOutDate]);
 
-    const fetchReviews = async (roomNumber) => {
-        try {
-            const response = await apiRequest(`/api/reviews/${roomNumber}`, "GET");
-            setReviews(response);
-
-        } catch (err) {
-            console.error("Failed to fetch reviews:", err);
-        }
-    };
-
-    // 컴포넌트가 로드될 때 방 번호로 리뷰 데이터 가져오기
     useEffect(() => {
-        if (room_number) {
-            fetchReviews(room_number);
-        }
+        const fetchReviews = async (roomNumber) => {
+            try {
+                const response = await apiRequest(`/api/reviews/${roomNumber}`, "GET");
+                setReviews(response);
+            } catch (err) {
+                console.error("Failed to fetch reviews:", err);
+            }
+        };
+
+        if (room_number) fetchReviews(room_number);
     }, [room_number]);
 
-    const handleReservation = () => {
-        const hotelData = { room_number, images ,checkInDate ,checkOutDate ,adults, price };
-        const confirmReservation = window.confirm(t("33"));
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-        if (confirmReservation) {
-            navigate("/reservation-form", { state: hotelData });
+        const reservationData = {
+            name: formData.name,
+            phone: formData.phone,
+            email: formData.email,
+            passport: formData.passport,
+            checkInDate: checkInDate,
+            checkOutDate: checkOutDate,
+            title: room_number,
+            price: totalPrice,
+        };
+
+        setIsLoading(true); // 로딩 시작
+        try {
+            const insertResponse = await apiRequest("/insertReservation", "POST", reservationData);
+
+            if (insertResponse) {
+                // ✅ 여기 추가
+                const message = `[노량진 스튜디오] ${formData.name}님이 예약하셨습니다.\n체크인: ${formatDate(checkInDate)}, 체크아웃: ${formatDate(checkOutDate)} 입니다.`;
+
+                const recipients = ["01082227855", "01062776765"];
+
+                // 번호 배열을 돌면서 문자 보내기
+                for (const phone of recipients) {
+                    await apiRequest("/send-check-in-sms", "POST", {
+                        phone: phone,
+                        message: message,
+                    });
+                }
+
+                alert(t("66"));
+                navigate("/");
+            } else {
+                alert(t("67"));
+                navigate("/");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            navigate("/");
+        } finally {
+            setIsLoading(false); // 로딩 종료
         }
     };
 
-    let url = `/resource/img/${room_number}/`
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
 
     return (
         <div className="container">
@@ -159,130 +182,132 @@ const Detail = () => {
                     <br/><br/>
                     <h2><b>{room_number}호</b></h2>
                     <p style={{color: "#5A5A5A"}}>{t("34")}</p>
-                    <div className="container mt-4">
-                        <div className="row g-2">
-                            <div className="col-md-8">
-                                <img
-                                    src={url + images[0]}
-                                    className="img-fluid rounded shadow"
-                                    alt="Main Image"
-                                    style={{cursor: "pointer", objectFit: "cover", width: "100%", height: "400px"}}
-                                    onClick={() => openModal(0)}
-                                />
-                            </div>
-                            <div className="col-md-4 d-flex flex-column gap-2">
-                                {images.slice(1, 3).map((image, index) => (
+
+                    <div id="carouselImages" className="carousel slide mt-4" data-bs-ride="carousel">
+                        <div className="carousel-inner">
+                            {images.map((image, index) => (
+                                <div
+                                    className={`carousel-item ${index === 0 ? "active" : ""}`} key={index}>
                                     <img
-                                        key={index}
                                         src={url + image}
-                                        className="img-fluid rounded shadow"
-                                        alt={`Small Image ${index + 1}`}
-                                        style={{cursor: "pointer", objectFit: "cover", height: "195px"}}
-                                        onClick={() => openModal(index + 1)}
+                                        className="d-block w-100 rounded shadow"
+                                        alt={`Slide ${index}`}
+                                        style={{objectFit: "cover"}}
                                     />
-                                ))}
-                            </div>
-                        </div>
-                        <br/>
-                        {/* 모달 (팝업) */}
-                        {selectedImage && (
-                            <div className="modal show d-block" style={{background: "rgba(0, 0, 0, 0.8)"}}>
-                                <div className="modal-dialog modal-dialog-centered">
-                                    <div className="modal-content bg-transparent border-0">
-                                        <div className="modal-body text-center position-relative" style={{padding:"0"}}>
-                                            {/* 닫기 버튼 */}
-                                            <button className="btn-close position-absolute top-0 end-0 m-2"
-                                                    onClick={closeModal}></button>
-
-                                            {/* 팝업 이미지 */}
-                                            <img src={selectedImage} className="img-fluid rounded shadow-lg"
-                                                 alt="Selected"/>
-
-                                            {/* 이전 / 다음 버튼 */}
-                                            <button
-                                                className="btn btn-dark position-absolute start-0 top-50 translate-middle-y"
-                                                onClick={prevImage}>
-                                                ◀
-                                            </button>
-                                            <button
-                                                className="btn btn-dark position-absolute end-0 top-50 translate-middle-y"
-                                                onClick={nextImage}>
-                                                ▶
-                                            </button>
-
-                                            {/* 썸네일 리스트 */}
-                                            <div className="d-flex justify-content-center mt-3">
-                                                {images.map((image, index) => (
-                                                    <img
-                                                        key={index}
-                                                        src={url + image}
-                                                        className={`img-thumbnail mx-1 ${index === currentIndex ? "border border-warning" : ""}`}
-                                                        alt={`Thumbnail ${index + 1}`}
-                                                        style={{width: "50px", cursor: "pointer"}}
-                                                        onClick={() => openModal(index)}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            ))}
+                        </div>
+                        <button className="carousel-control-prev" type="button" data-bs-target="#carouselImages"
+                                data-bs-slide="prev">
+                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span className="visually-hidden">Previous</span>
+                        </button>
+                        <button className="carousel-control-next" type="button" data-bs-target="#carouselImages"
+                                data-bs-slide="next">
+                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span className="visually-hidden">Next</span>
+                        </button>
                     </div>
-                    {/* Hotel Info */}
-                    <hr/><br/>
-                    <div>
-                        <h4><b>{t("35")}</b></h4>
-                        <span>{t("36")}</span><br/><br/><br/>
 
-                        <h4><b>{t("37")}</b></h4>
-                        <span>{t("38")}</span><br/><br/><br/>
+                    {/* 예약 및 상세 정보 */}
+                    <hr/>
+                    <br/>
+                    <h4><b>{t("35")}</b></h4>
+                    <span>{t("36")}</span><br/><br/><br/>
 
-                        <h4><b>{t("39")}</b></h4>
-                        <span>{t("40")}</span><br/><br/><br/>
+                    <h4><b>{t("37")}</b></h4>
+                    <span>{t("38")}</span><br/><br/><br/>
 
-                        <h4><b>{t("41")}</b></h4>
-                        <div id="map" className="map" style={{width: "100%", height: "500px"}}></div><br/>
+                    <h4><b>{t("39")}</b></h4>
+                    <span>{t("40")}</span><br/><br/><br/>
 
-                        {/* 가격 및 예약 버튼 */}
-                        <div className="border p-3 mt-3">
-                            <div className="reserCost">
-                                <h4><b>₩{price.toLocaleString()}</b><span>/ {t("42")}</span></h4>
+                    <h4><b>{t("41")}</b></h4>
+                    <div id="map" className="map" style={{width: "100%"}}></div>
+                    <br/>
+
+                    <div className="border p-3 mt-3">
+                        <div className="reserCost">
+                            <h4><b>₩{price.toLocaleString()}</b><span>/ {t("42")}</span></h4>
+                            <div className="reserCost-inner">
                                 <div className="reserCost-container">
-                                    <span id="costCheck">{t("43")}</span><br/><span
-                                    id="costCheck2">{formatDate(checkInDate)}</span>
+                                    <span id="costCheck">{t("43")}</span><br/>
+                                    <span id="costCheck2">{formatDate(checkInDate)}</span>
                                 </div>
-                                <div>
-                                    <span id="costCheck">{t("44")}</span><br/><span
-                                    id="costCheck2">{formatDate(checkOutDate)}</span>
+                                <div className="reserCost-container2">
+                                    <span id="costCheck">{t("44")}</span><br/>
+                                    <span id="costCheck2">{formatDate(checkOutDate)}</span>
                                 </div>
                             </div>
-                            <hr className="footer-divider"/>
-                            <div className="reserCost2">
-                                <span>{t("45")}</span><br/>
-                                <span>{t("46")}</span>
-                            </div>
-                            <hr className="footer-divider"/>
-                            <div className="reserCost3">
-                                <span>{t("47")}</span>
-                                <h2>₩{totalPrice.toLocaleString()}</h2>
-                            </div>
-
-                            <button className="revers" onClick={handleReservation}>{t("48")}</button>
                         </div>
+                        <hr className="footer-divider"/>
+                        <div className="reserCost2">
+                            <span>• {t("45")}</span><br/>
+                            <span>• {t("46")}</span><br/>
+                            <span>• {t("74")}</span><br/>
+                            <span>• {t("151")}</span>
+                        </div>
+                        <hr className="footer-divider"/>
+                        <div className="reserCost3">
+                            <span>{t("47")}</span>
+                            <h2>₩{totalPrice.toLocaleString()}</h2>
+                        </div>
+                        {/*<button className="revers" onClick={handleReservation}>{t("48")}</button>*/}
                     </div>
                     <br/>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <h3><b>{t("78")}</b></h3>
+                            <form onSubmit={handleSubmit}>
+                                <div className="row">
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">{t("79")}</label>
+                                        <input type="text" className="form-control" name="name" value={formData.name}
+                                               onChange={handleChange} placeholder={t("80")} required/>
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">{t("81")}</label>
+                                        <input type="tel" className="form-control" name="phone" value={formData.phone}
+                                               onChange={handleChange} placeholder={t("82")} required/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">{t("83")}</label>
+                                        <input type="email" className="form-control" name="email" value={formData.email}
+                                               onChange={handleChange} placeholder={t("84")} required/>
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <label className="form-label">{t("85")}</label>
+                                        <input type="text" className="form-control" name="passport"
+                                               value={formData.passport}
+                                               onChange={handleChange} placeholder={t("86")}/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <button type="submit" className="reverseBtn2" disabled={isLoading}>
+                                    {isLoading ? t("87") + "..." : t("88")}
+                                </button>
+                                {isLoading && (
+                                    <div className="text-center mt-3">
+                                        <div className="spinner-border text-primary" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </form>
+                        </div>
+                    </div>
 
                     <div>
                         <h4><b>{t("49")}</b></h4>
-                        <div style={{overflowY: "scroll", height: "30vh"}}>
+                        <div style={{overflowY: "hidden", height: "30vh"}}>
                             <div className="container" style={{height: "100%", overflow: "auto"}}>
                                 <ul className="list-group">
                                     {reviews.map((review) => (
-                                        <li key={review.review_id}
-                                            className="list-group-item d-flex align-items-center" style={{height:"auto"}}>
-                                            <div style={{paddingRight: "30px"}}>
-                                                <img src={pro} alt="Teamtoys Logo"
+                                        <li key={review.review_id} className="list-group-item d-flex align-items-center"
+                                            style={{height: "auto"}}>
+                                            <div style={{paddingRight: "30px"}} className="reviewContainer">
+                                                <img alt="Teamtoys Logo"
                                                      style={{width: "100px", height: "100px"}}/>
                                             </div>
                                             <div>

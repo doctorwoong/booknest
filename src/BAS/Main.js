@@ -116,7 +116,7 @@ const Main = () => {
         if (inputPhone === selectedReservation.phone_number) {
             try {
                 await apiRequest("/delete-reservation", "POST", { id: selectedReservation.customer_id });
-                alert("${selectedReservation.reserved_room_number}"+t("27"));
+                alert(`${selectedReservation.reserved_room_number}`+t("27"));
                 setCheckRooms((prev) => prev.filter((item) => item.customer_id !== selectedReservation.customer_id));
                 setShowPopup(false);
                 setInputPhone("");
@@ -190,15 +190,18 @@ const Main = () => {
 
     return (
         <>
+            <br/><br/>
+            <div className="channelTalk">
+            </div>
             <br/>
-            <h3 style={{marginBottom:"10px"}}><b>{t("1")}</b></h3>
-            <p style={{color: "#5A5A5A",marginBottom:"30px"}}>{t("2")}</p>
-            <div style={{overflowY: "scroll"}}>
-                <div className="d-flex gap-2" style={{marginBottom:"50px"}}>
+            <h3 style={{marginBottom: "10px"}}><b>{t("1")}</b></h3>
+            <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("2")}</p>
+            <div style={{overflowY: "hidden"}}>
+                <div className="d-flex gap-2" style={{marginBottom: "50px"}}>
                     {/* 날짜 선택 */}
                     <div className="position-relative">
                         <input type="text" id="startDate" name="startDate" value={checkDate} onClick={handleCalendar}
-                               className="form-control ps-5" style={{width: "340px"}} readOnly/>
+                               className="form-control ps-5" readOnly/>
                         <FaCalendarAlt className="position-absolute top-50 start-0 translate-middle-y ms-3" size={16}
                                        color="#555"/>
                     </div>
@@ -206,7 +209,7 @@ const Main = () => {
                     {/* 인원 선택 */}
                     <div className="position-relative">
                         <input type="number" id="adults" name="adults" min="1" value={filters.adults}
-                               className="form-control ps-5" onChange={handleChange} style={{width: "100px"}}/>
+                               className="form-control ps-5" onChange={handleChange} readOnly/>
                         <FaUser className="position-absolute top-50 start-0 translate-middle-y ms-3" size={16}
                                 color="#555"/>
                     </div>
@@ -218,7 +221,7 @@ const Main = () => {
                     <div className="container" style={{height: "45vh", overflow: "auto"}}>
                         <ul className="list-group">
                             {rooms.map((room) => (
-                                <li key={room.seq} className="list-group-item d-flex align-items-center">
+                                <li key={room.seq} className="list-group-item d-flex align-items-center2">
                                     <img
                                         src={`${url}/${room.room_number}/${room.images[0]}`}
                                         alt={`Hotel ${room.room_number}`}
@@ -248,10 +251,9 @@ const Main = () => {
             </div>
 
             <hr className="footer-divider"/>
-            <br/>
-            <h3 style={{marginBottom:"10px"}}><b>{t("6")}</b></h3>
-            <p style={{color: "#5A5A5A", marginBottom:"30px"}}>{t("7")}</p>
-            <div className="reservationCheck" style={{marginBottom:"50px"}}>
+            <h3 style={{marginBottom: "10px", marginTop: "50px"}}><b>{t("6")}</b></h3>
+            <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("7")}</p>
+            <div className="reservationCheck" style={{marginBottom: "50px"}}>
                 <div className="col-md-10">
                     <input type="text" className="form-control" id="name" name="name" placeholder={t("8")}
                            onKeyDown={handleKeyDown}
@@ -262,12 +264,11 @@ const Main = () => {
                 </div>
             </div>
             {showContainer2 && (
-                <div style={{overflowY: "scroll", height: "15vh"}}>
+                <div style={{overflowY: "hidden", height: "22vh"}}>
                     <div className="container" style={{height: "100%", overflow: "auto"}}>
                         <ul className="list-group">
                             {checkRooms.map((checkRoom) => (
-                                <li key={checkRoom.customer_id} className="list-group-item d-flex align-items-center"
-                                    style={{height: "100px"}}>
+                                <li key={checkRoom.customer_id} className="list-group-item d-flex align-items-center">
                                     <div className="reservation">
                                         <h5 className="horse">{checkRoom.reserved_room_number}{t("9")}</h5>
                                         <p>
@@ -275,7 +276,6 @@ const Main = () => {
                                             <span>{formatDate(checkRoom.check_in)}</span> ~ <span>{formatDate(checkRoom.check_out)}</span>
                                         </p>
                                     </div>
-                                    <br/>
                                     <div className="reservation2">
                                         <input type={"button"} value={t("11")}
                                                onClick={() => handleCancelClick(checkRoom)}/>
@@ -306,31 +306,29 @@ const Main = () => {
                 </div>
             )}
             <hr className="footer-divider"/>
-            <br/>
-            <h3 style={{marginBottom:"10px"}}><b>{t("16")}</b></h3>
-            <p style={{color: "#5A5A5A",marginBottom:"30px"}}>{t("17")}</p>
+            <h3 style={{marginBottom: "10px", marginTop: "50px"}}><b>{t("16")}</b></h3>
+            <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("17")}</p>
 
-            <div style={{overflowY: "scroll",marginBottom:"50px"}}>
+            <div style={{overflowY: "hidden", marginBottom: "50px"}}>
                 {showContainer3 && (
-                <div className="container" style={{height: "35vh", overflow: "auto"}}>
-                    <ul className="list-group">
-                        {reviews.map((review) => (
-                            <li key={review.customer_id} className="list-group-item d-flex align-items-center"
-                                style={{height: "100px"}}>
-                                <div className="reservation3">
-                                    <h5 className="horse">{review.reserved_room_number}{t("9")}</h5>
-                                    <p>
-                                        <span>{formatDate(review.check_in)}</span> ~ <span>{formatDate(review.check_out)}</span>
-                                    </p>
-                                </div>
-                                <br/>
-                                <div className="reservation2">
-                                    <input type={"button"} value={t("18")} onClick={() => handleReviewWrite(review)}/>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                    <div className="container" style={{height: "35vh", overflow: "auto"}}>
+                        <ul className="list-group">
+                            {reviews.map((review) => (
+                                <li key={review.customer_id} className="list-group-item d-flex align-items-center">
+                                    <div className="reservation">
+                                        <h5 className="horse">{review.reserved_room_number}{t("9")}</h5>
+                                        <p>
+                                            <span>{formatDate(review.check_in)}</span> ~ <span>{formatDate(review.check_out)}</span>
+                                        </p>
+                                    </div>
+                                    <div className="reservation2">
+                                        <input type={"button"} value={t("18")}
+                                               onClick={() => handleReviewWrite(review)}/>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 )}
                 {showPasswordPopup && (
                     <div className="password-popup">

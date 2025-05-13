@@ -1,0 +1,10 @@
+.date-cell {min-width: 80px;padding: 5px;border-bottom: 1px solid #ccc;text-align: center;font-size: 12px;white-space: nowrap;}
+.cell {position: relative;width: 80px;height: 40px;border: 1px solid #eee;}
+.booking-bar {position: absolute;top: 0;bottom: 0;background-color: #F54D6E;color: white;padding-left: 4px;font-size: 13px;line-height: 40px;white-space: nowrap;}
+.tab-search {display: flex;align-items: center;margin: 20px 0;justify-content: space-between;border-bottom: 1px solid #ddd}
+.tab-search-area {display: flex ;gap: 10px;position: sticky;top: 0;background: white;padding: 10px 0;z-index: 10;}
+
+@media (max-width: 768px) {
+    .tab-search {display: block;}
+    .room-list {width: 70px}
+}

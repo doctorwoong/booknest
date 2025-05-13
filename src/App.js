@@ -18,7 +18,7 @@ function App() {
     const { t } = useTranslation();
 
     const authenticateAdmin = (password) => {
-        if (password === "1234") {
+        if (password === "7888") {
             setIsAdminAuthenticated(true);
             return true;
         }
@@ -64,6 +64,10 @@ const PasswordPopup = ({onAuthenticate}) => {
         }
     };
 
+    const handleSubmit2 = () => {
+        return <Navigate to="/" />;
+    };
+
     const handleKeyDown = (event) => {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -85,7 +89,7 @@ const PasswordPopup = ({onAuthenticate}) => {
                 />
                 <div className="checkBtn">
                     <button onClick={handleSubmit}>{t("14")}</button>
-                    <button>{t("15")}</button>
+                    <button onClick={handleSubmit2}>{t("15")}</button>
                 </div>
             </div>
         </div>

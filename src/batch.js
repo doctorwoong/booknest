@@ -78,10 +78,10 @@ const fetchAndStoreAirbnbBookings = async () => {
     }
 };
 
-// ⏰ 매일 새벽 1시 실행 (UTC 기준: 16:00 -> 한국 시간 01:00)
-// cron.schedule("0 16 * * *", () => {
-//     console.log("⏰ Airbnb 캘린더 동기화 배치 실행 중...");
+//2시간 마다 실행
+cron.schedule("0 */2 * * *", () => {
+    console.log("Airbnb 캘린더 동기화 배치 실행 중...");
+    fetchAndStoreAirbnbBookings();
+});
 //fetchAndStoreAirbnbBookings();
-// });
-fetchAndStoreAirbnbBookings();
 console.log("🚀 Airbnb 캘린더 동기화 배치 작업이 설정되었습니다.");

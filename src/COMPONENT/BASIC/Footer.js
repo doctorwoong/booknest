@@ -13,12 +13,12 @@ const Footer = () => {
                     <p>{t("113")}: bakho2@naver.com | {t("114")}: 010-8222-7855</p>
                 </div>
                 <div className="footer-right">
-                    <a href="/terms-of-service">{t("115")}</a> | <a href="/privacy-policy">{t("116")}</a>
+                    <a href="/terms-of-service">{t("115")}</a>  <a href="/privacy-policy">{t("116")}</a>
                 </div>
             </div>
             <hr className="footer-divider"/>
             <div className="footer-bottom">
-                <p>&copy; 2024 Abcd, pcw.</p>
+                <p>&copy; 2024 Abcd, Inc</p>
             </div>
         </footer>
     );
