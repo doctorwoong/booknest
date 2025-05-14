@@ -23,6 +23,7 @@ function Admin() {
     const [bookings ,setBookings] = useState([]);
     const [airbookings ,setAirbookings] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [manualPhone, setManualPhone] = useState("");
 
     const rooms = [
         {id : 1, name: 'C106'},
@@ -165,356 +166,11 @@ function Admin() {
 
         // 간단하게 예시:
         if (type === "checkOut2") {
-            message = `Good morning.
-            \nI hope you have stayed without any inconvenience. I would like you to post a review about your studio in the website(https://airbnbnoryangjin.co.kr/) if it is not bothering you.
-            \nHave a wonderful day.
-            \nCleaning your room will be started 11am. Please check out at 11am or a little earlier.`;
-
+            message = t("checkout_msg");
+        } else if (type === "newMsg") {
+            message = "";
         } else {
-            switch (customer.room) {
-                case "R102":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 102 and the door lock password is 12388*. 
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime102 and the password is '12318102'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "N103":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 103 and the door lock password is 11038*. 
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime103 and the password is '11038103h'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "K105":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 105 and the door lock password is 12358*. 
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime7855-5G or iptime7855, and the password is 'korea7855'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "C106":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 106 and the door lock password is 10618*. 
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime106, and the password is '10618106h'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "C107":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 107 and the door lock password is 12378*.
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime107, and the password is 107iptime.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "C201":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 201 and the door lock password is *20128* or *12388*.
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is TP Link F20E pch, and the password is 'qkrckdgus1!'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "N202":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 202 and the door lock password is 13388*. 1234*
-                        \nTouch the door lock with your hand, and you'll see the numbers and press the password.
-                        \nWifi is iptime202, and the password is '13328202h'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "N207":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 207 and the door lock password is 12378*. 
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime207, and the password is '20712345'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "C302":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 302 and the door lock password is 12388*. 
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime302, and the password is '2580302h'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "N303":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 303 and the door lock password is 30388*.
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime303 and the password is '13038303h'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "C305":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 305 and the door lock password is 12388*.
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime305, and the password is 12388305.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "N306":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 306 and the door lock password is 30618*.
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime306, and the password is 3061234h.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "N307":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 307 and the door lock password is 3695*.
-                        \nTouch the door lock with your hand, and you'll see the numbers and press the password.
-                        \nWifi is iptime306, and the password is 3695307h.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                case "C402":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 402 and the first door lock password is 12388* and 2nd door lock password is 14028*.
-                        \nYour room is on the fourth floor. If you go straight inside from the third floor, you will find the stairs leading to the fourth floor.
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime402, and the password is 'iptime14028'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-
-                case "N203":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 203 and the door lock password is 12038*
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime203, and the password is 20312388.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-
-                case "N207":
-                    message =
-                        `Hello. 
-                        \nI am the host who runs the accommodation you booked.
-                        \nThe address of the studio is '25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea'.
-                        \nZip code is 06914.
-                        \nPlease find exit no. 3 at Noryangjin subway station in line 9. 
-                        \nYou can find the studio in a map application with the address.
-                        \nFor your reference, the address in Korean is '서울시 동작구 만양로14마길 25' 
-                        \nI inform you of the information about the room in advance.
-                        \nYour room number is 207 and the door lock password is 12378*.
-                        \nLift up the doorlock cover and press the password and press down the cover.
-                        \nWifi is iptime207, and the password is '20712345'.
-                        \nFor your reference, I explain how to find the studio.
-                        \nPlease find exit no. 3 at Norangjin subway station in line 9. Turn to the right. 
-                        \nThe direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, 
-                        \nturn to the right and go straight about 100m. When you see 'Coffee namu(커피나무)' coffee shop, turn to the left, 
-                        \nand go up 150m. When you see 'Hyerimjae' building, turn to the right. You can find the studio on the right. 
-                        \nPlease find attached picture for your reference.
-                        \nHave a good day.`
-                    break;
-                default:
-                    message = "안녕하세요, 체크인 안내드립니다.";
-                    break;
-            }
+            message = t(`send_${customer.room}`);
         }
 
         setSelectedCustomer(customer);
@@ -525,10 +181,21 @@ function Admin() {
 
     const handleSendSMSConfirm = async () => {
         if (!window.confirm("문자를 보내시겠습니까?")) return;
+
+        const targetPhone = selectedCustomer?.phone || manualPhone;
+        if (!targetPhone) {
+            alert("전화번호를 입력해주세요.");
+            return;
+        }
+
         try {
             setLoading(true);
             await handleSendSMS(
-                { ...selectedCustomer, message: smsContent },
+                {
+                    ...(selectedCustomer || {}),
+                    phone: targetPhone,
+                    message: smsContent,
+                },
                 smsType
             );
             setShowModal(false);
@@ -550,13 +217,15 @@ function Admin() {
             endpoint = "/send-check-in-sms";
             smspoint = "/updateCheckInSmsStatus";
             statusKey = "check_in_message_status";
-
             imgUrl = 'Y';
 
         } else if(type === "checkOut2"){
             endpoint = "/send-check-in-sms";
             smspoint = "/updateCheckOutSmsStatus";
             statusKey = "check_out_message_status";
+            imgUrl = 'N';
+        } else if(type === "newMsg"){
+            endpoint = "/send-check-in-sms";
             imgUrl = 'N';
         }
 
@@ -582,7 +251,7 @@ function Admin() {
             }
 
         } catch (error) {
-            alert(t("120")+`: ${customer.name}`);
+            alert(t("120"));
         }
     };
 
@@ -624,6 +293,11 @@ function Admin() {
                             role="tab"
                         >
                             달력
+                        </button>
+                        <button
+                            className={`nav-link ${activeTab === "message" ? "active" : ""}`}
+                            onClick={() => handleOpenSMSModal("", "newMsg")}>
+                            메세지
                         </button>
                     </div>
                 </div>
@@ -734,11 +408,7 @@ function Admin() {
                                 {checkOutCustomers.map((customer) => (
                                     <tr key={customer.id}>
                                         <td>{customer.id}</td>
-                                        <td
-                                            style={{
-                                                color: isWithinAWeek2(customer.checkOut) ? "red" : "black",
-                                            }}
-                                        >
+                                        <td style={{color: isWithinAWeek2(customer.checkOut) ? "red" : "black",}}>
                                             {customer.name}
                                         </td>
                                         <td>{customer.room}</td>
@@ -770,12 +440,32 @@ function Admin() {
                                             <h5 className="modal-title">메세지 전송 확인</h5>
                                         </div>
                                         <div className="modal-body">
+                                            <div className="mb-3">
+                                                <label>수신자 전화번호</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={selectedCustomer?.phone || manualPhone}
+                                                    onChange={(e) => {
+                                                        if (selectedCustomer) {
+                                                            setSelectedCustomer({
+                                                                ...selectedCustomer,
+                                                                phone: e.target.value,
+                                                            });
+                                                        } else {
+                                                            setManualPhone(e.target.value);
+                                                        }
+                                                    }}
+                                                    placeholder="01012345678"
+                                                />
+                                            </div>
+                                            <label>문자 내용</label>
                                             <textarea
                                                 className="form-control"
-                                                rows="20"
+                                                rows="15"
                                                 value={smsContent}
                                                 onChange={(e) => setSmsContent(e.target.value)}
-                                            ></textarea>
+                                            />
                                         </div>
                                         <div className="modal-footer">
                                             <button className="btn btn-secondary" onClick={() => setShowModal(false)}>

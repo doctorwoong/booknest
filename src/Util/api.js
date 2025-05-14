@@ -1,5 +1,5 @@
-//const BASE_URL = "http://localhost:30022";
-const BASE_URL = "https://airbnbnoryangjin.co.kr/api"; // ✅ Nginx에서 프록시 적용됨
+const BASE_URL = "http://localhost:30022";
+//const BASE_URL = "https://airbnbnoryangjin.co.kr/api"; // ✅ Nginx에서 프록시 적용됨
 
 
 /**

@@ -84,7 +84,7 @@ const sendEmails = async (adminEmail, customerEmail, contractPath, data) => {
         `,
         attachments: [
             {
-                filename: "계약서.pdf",
+                filename: "rental_agreement.pdf",
                 path: contractPath,
             },
         ],

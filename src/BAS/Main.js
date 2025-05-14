@@ -5,6 +5,7 @@ import { apiRequest } from "../Util/api";
 import { formatDate } from "../Util/utils";
 import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import channeltalk from '../resource/channeltalk.gif'
 
 let url = "/resource/img/";
 
@@ -192,6 +193,7 @@ const Main = () => {
         <>
             <br/><br/>
             <div className="channelTalk">
+                <b>{t("152")}<img src={channeltalk}/></b>
             </div>
             <br/>
             <h3 style={{marginBottom: "10px"}}><b>{t("1")}</b></h3>
