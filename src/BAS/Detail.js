@@ -1,24 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import '../CSS/style/style.css';
-import { formatDate } from "../Util/utils";
-import { apiRequest } from "../Util/api";
-import { useTranslation } from "react-i18next";
+import {formatDate} from "../Util/utils";
+import {apiRequest} from "../Util/api";
+import {useTranslation} from "react-i18next";
+import PayPalCheckout from '../COMPONENT/PayPalCheckout';
 
 const Detail = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { state } = location || {};
-    const { t } = useTranslation();
-    const { room_number, images, price, checkInDate, checkOutDate } = state || {};
+    const {state} = location || {};
+    const {t} = useTranslation();
+    const {room_number, images, price, checkInDate, checkOutDate} = state || {};
     const nightlyRate = price;
     const [totalPrice, setTotalPrice] = useState(0);
     const [reviews, setReviews] = useState([]);
+    const [showPayPal, setShowPayPal] = useState(false);
+
 
     let url = `/resource/img/${room_number}/`;
-    const [isLoading, setIsLoading] = useState(false); 
+    const [isLoading, setIsLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -168,7 +171,7 @@ const Detail = () => {
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
@@ -284,9 +287,21 @@ const Detail = () => {
                                     </div>
                                 </div>
                                 <br/>
-                                <button type="submit" className="reverseBtn2" disabled={isLoading}>
+                                <button
+                                    type="button"
+                                    className="reverseBtn2"
+                                    onClick={() => {
+                                        if (!formData.name || !formData.phone || !formData.email) {
+                                            alert("예약자 정보를 모두 입력해주세요.");
+                                            return;
+                                        }
+                                        setShowPayPal(true);
+                                    }}
+                                    disabled={isLoading}
+                                >
                                     {isLoading ? t("87") + "..." : t("88")}
                                 </button>
+
                                 {isLoading && (
                                     <div className="text-center mt-3">
                                         <div className="spinner-border text-primary" role="status">
@@ -327,6 +342,53 @@ const Detail = () => {
                 <p>{t("51")}</p>
             )}
             <br/><br/>
+            {/* PayPal 버튼 클릭 후 모달 열기 */}
+            {showPayPal && (
+                <div className="modal show d-block" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">PayPal 결제</h5>
+                                <button type="button" className="btn-close"
+                                        onClick={() => setShowPayPal(false)}></button>
+                            </div>
+                            <div className="modal-body">
+                                <PayPalCheckout
+                                    amount={totalPrice}
+                                    onApprove={async (details) => {
+                                        const reservationData = {
+                                            name: formData.name,
+                                            phone: formData.phone,
+                                            email: formData.email,
+                                            passport: formData.passport,
+                                            checkInDate: checkInDate,
+                                            checkOutDate: checkOutDate,
+                                            title: room_number,
+                                            price: totalPrice,
+                                        };
+
+                                        try {
+                                            setIsLoading(true);
+                                            const insertResponse = await apiRequest("/insertReservation", "POST", reservationData);
+
+                                            if (insertResponse) {
+                                                alert(t("66"));
+                                                navigate("/");
+                                            } else {
+                                                alert(t("67"));
+                                            }
+                                        } catch (e) {
+                                            console.error("예약 실패:", e);
+                                            alert("예약 중 문제가 발생했습니다.");
+                                        } finally {
+                                            setIsLoading(false);
+                                        }
+                                    }}
+                                /></div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
