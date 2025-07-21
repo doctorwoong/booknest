@@ -25,6 +25,11 @@ function Admin() {
     const [loading, setLoading] = useState(false);
     const [manualPhone, setManualPhone] = useState("");
 
+    const paymentTypeMap = {
+        card: '카드결제',
+        cash: '현장결제',
+    };
+
     const rooms = [
         {id : 1, name: 'C106'},
         {id : 2, name: 'C107'},
@@ -315,6 +320,7 @@ function Admin() {
                                     <th>{t("127")}</th>
                                     <th>{t("128")}</th>
                                     <th>{t("129")}</th>
+                                    <th>결제타입</th>
                                     <th>{t("131")}</th>
                                 </tr>
                                 </thead>
@@ -327,8 +333,9 @@ function Admin() {
                                         <td>{customer.title}</td>
                                         <td>{customer.checkIn}</td>
                                         <td>{customer.checkOut}</td>
+                                        <td>{paymentTypeMap[customer.type] || ''}</td>
                                         <td>
-                                            {customer.reservation_mail_status === "N" ? (
+                                        {customer.reservation_mail_status === "N" ? (
                                                 <button onClick={() => handleSendEmail(customer, "reservation")}>
                                                     {t("131")}
                                                 </button>

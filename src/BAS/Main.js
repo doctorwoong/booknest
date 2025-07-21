@@ -47,7 +47,6 @@ const Main = () => {
         try {
             const fetchData = async () => {
                 const data = await apiRequest("/review", "POST");
-                console.log("리뷰 : " ,data);
                 if(data.length > 0){
                     setShowContainer3(true);
                 }
@@ -68,6 +67,7 @@ const Main = () => {
                 const data = await apiRequest("/MainSearch", "POST", filters);
                 setRooms(data);
                 if(data.length > 0) {setShowContainer(true);}
+                else alert(t("154"));
             } catch (error) {
                 console.error("검색 중 오류 발생:", error);
             }

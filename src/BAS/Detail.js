@@ -18,6 +18,7 @@ const Detail = () => {
     const [totalPrice, setTotalPrice] = useState(0);
     const [reviews, setReviews] = useState([]);
     const [showPayPal, setShowPayPal] = useState(false);
+    const [paymentType, setPaymentType] = useState("");
 
 
     let url = `/resource/img/${room_number}/`;
@@ -34,6 +35,7 @@ const Detail = () => {
         children: 0,
         infants: 0,
         pets: 0,
+        countryCode: "+82",
     });
 
     useEffect(() => {
@@ -129,13 +131,14 @@ const Detail = () => {
 
         const reservationData = {
             name: formData.name,
-            phone: formData.phone,
+            phone: `${formData.countryCode}${formData.phone}`,
             email: formData.email,
             passport: formData.passport,
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
             title: room_number,
             price: totalPrice,
+            type: paymentType,
         };
 
         setIsLoading(true); // 로딩 시작
@@ -247,7 +250,10 @@ const Detail = () => {
                             <span>• {t("45")}</span><br/>
                             <span>• {t("46")}</span><br/>
                             <span>• {t("74")}</span><br/>
-                            <span>• {t("151")}</span>
+                            <span>• {t("151")}</span><br/>
+                            <span>• {t("153")}</span><br/>
+                            <span>• {t("155")}</span><br/>
+                            <span>• {t("156")}</span><br/>
                         </div>
                         <hr className="footer-divider"/>
                         <div className="reserCost3">
@@ -269,9 +275,42 @@ const Detail = () => {
                                     </div>
                                     <div className="col-md-6 mb-3">
                                         <label className="form-label">{t("81")}</label>
-                                        <input type="tel" className="form-control" name="phone" value={formData.phone}
-                                               onChange={handleChange} placeholder={t("82")} required/>
+                                        <div className="phone-input-group">
+                                            <select
+                                                className="form-select country-code"
+                                                value={formData.countryCode}
+                                                onChange={(e) => setFormData({
+                                                    ...formData,
+                                                    countryCode: e.target.value
+                                                })}
+                                            >
+                                                <option value="+82">+82</option>
+                                                <option value="+34">+34</option>
+                                                <option value="+86">+86</option>
+                                                <option value="+81">+81</option>
+                                                <option value="+33">+33</option>
+                                                <option value="+49">+49</option>
+                                                <option value="+63">+63</option>
+                                                <option value="+60">+60</option>
+                                                <option value="+1">+1</option>
+                                                <option value="+84">+84</option>
+                                                <option value="+66">+66</option>
+                                                <option value="+46">+46</option>
+                                                <option value="+39">+39</option>
+                                                <option value="+61">+61</option>
+                                            </select>
+                                            <input
+                                                type="tel"
+                                                className="form-control phone-number"
+                                                name="phone"
+                                                value={formData.phone}
+                                                onChange={handleChange}
+                                                placeholder={t("82")}
+                                                required
+                                            />
+                                        </div>
                                     </div>
+
                                 </div>
                                 <div className="row">
                                     <div className="col-md-6 mb-3">
@@ -287,20 +326,65 @@ const Detail = () => {
                                     </div>
                                 </div>
                                 <br/>
-                                <button
-                                    type="button"
-                                    className="reverseBtn2"
-                                    onClick={() => {
-                                        if (!formData.name || !formData.phone || !formData.email) {
-                                            alert("예약자 정보를 모두 입력해주세요.");
-                                            return;
-                                        }
-                                        setShowPayPal(true);
-                                    }}
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? t("87") + "..." : t("88")}
-                                </button>
+                                {/*<button*/}
+                                {/*    type="button"*/}
+                                {/*    className="reverseBtn2"*/}
+                                {/*    onClick={() => {*/}
+                                {/*        if (!formData.name || !formData.phone || !formData.email) {*/}
+                                {/*            alert("예약자 정보를 모두 입력해주세요.");*/}
+                                {/*            return;*/}
+                                {/*        }*/}
+
+                                {/*        if (formData.countryCode === "+82") {*/}
+                                {/*            if(window.confirm('해당 숙소로 예약하시겠습니까?')) {*/}
+                                {/*                handleSubmit(new Event("submit"));*/}
+                                {/*            }*/}
+                                {/*        } else {*/}
+                                {/*            setShowPayPal(true);*/}
+                                {/*        }*/}
+                                {/*    }}*/}
+                                {/*    disabled={isLoading}*/}
+                                {/*>*/}
+                                {/*    {isLoading ? t("87") + "..." : t("88")}*/}
+                                {/*</button>*/}
+                                <div className="d-flex gap-2">
+                                    <button
+                                        type="button"
+                                        className="reverseBtn2"
+                                        onClick={() => {
+                                            if (!formData.name || !formData.phone || !formData.email) {
+                                                alert("예약자 정보를 모두 입력해주세요.");
+                                                return;
+                                            }
+                                            setPaymentType("cash");
+                                            handleSubmit(new Event("submit"));
+                                        }}
+                                        disabled={isLoading}
+                                    >
+                                        💵 {t("157")}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="reverseBtn2"
+                                        onClick={() => {
+                                            if (!formData.name || !formData.phone || !formData.email) {
+                                                alert("예약자 정보를 모두 입력해주세요.");
+                                                return;
+                                            }
+                                            setPaymentType("card");
+                                            if (formData.countryCode === "+82") {
+                                                handleSubmit(new Event("submit"));
+                                            } else {
+                                                setShowPayPal(true);
+                                            }
+                                        }}
+                                        disabled={isLoading}
+                                    >
+                                        💳 {t("158")}
+                                    </button>
+                                </div>
+
 
                                 {isLoading && (
                                     <div className="text-center mt-3">
@@ -358,13 +442,14 @@ const Detail = () => {
                                     onApprove={async (details) => {
                                         const reservationData = {
                                             name: formData.name,
-                                            phone: formData.phone,
+                                            phone: `${formData.countryCode}${formData.phone}`,
                                             email: formData.email,
                                             passport: formData.passport,
                                             checkInDate: checkInDate,
                                             checkOutDate: checkOutDate,
                                             title: room_number,
                                             price: totalPrice,
+                                            type: "card",
                                         };
 
                                         try {

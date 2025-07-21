@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const ical = require("node-ical");
 const mysql = require("mysql2/promise");
 
-// MySQL 데이터베이스 연결 설정
+// ✅ MySQL 연결 설정
 const db = mysql.createPool({
     host: '211.254.214.79',
     user: 'aiabnb',
@@ -11,7 +11,7 @@ const db = mysql.createPool({
     timezone: '+09:00'
 });
 
-// 숙소별 iCal URL 목록
+// ✅ 숙소 리스트
 const airbnbListings = [
     { id: 1, name: "N303", airbnbIcalUrl: "https://www.airbnb.co.kr/calendar/ical/990315601098043406.ics?s=567502002ef1cc2d2222d474fedbff5d" },
     { id: 2, name: "N306", airbnbIcalUrl: "https://www.airbnb.co.kr/calendar/ical/1122138059511745129.ics?s=70894734612ce6821bc7e1621af0b920" },
@@ -29,59 +29,60 @@ const airbnbListings = [
     { id: 14, name: "R102", airbnbIcalUrl: "https://www.airbnb.co.kr/calendar/ical/1049749739738131515.ics?s=c6dbccd6c556f618ed1c453fb4bb1c78" },
 ];
 
-// 📌 예약 데이터 테이블
+// ✅ Airbnb 예약 동기화 함수
 const fetchAndStoreAirbnbBookings = async () => {
     try {
         console.log("🔄 Airbnb 캘린더 동기화 시작...");
 
         for (const listing of airbnbListings) {
-            console.log(`📡 ${listing.name} (ID: ${listing.id}) 캘린더 가져오는 중...`);
+            console.log(`📡 ${listing.name} 캘린더 가져오는 중...`);
+
             const events = await ical.async.fromURL(listing.airbnbIcalUrl);
+
+            // 💥 기존 예약 삭제
+            await db.query(
+                "DELETE FROM CustomerInfo WHERE reserved_room_number = ? AND name = 'batch'",
+                [listing.name]
+            );
+            console.log(`🗑️ 기존 예약 삭제됨: ${listing.name}`);
 
             for (const event of Object.values(events)) {
                 if (!event.start || !event.end) continue;
 
-                const correctedCheckIn = new Date(event.start);
-                correctedCheckIn.setDate(correctedCheckIn.getDate() + 1);
-                const checkIn = correctedCheckIn.toISOString().split("T")[0].replace(/-/g, '');
+                const checkIn = new Date(event.start).toISOString().split("T")[0].replace(/-/g, '');
+                const checkOut = new Date(event.end).toISOString().split("T")[0].replace(/-/g, '');
 
-                const correctedCheckOut = new Date(event.end);
-                correctedCheckOut.setDate(correctedCheckOut.getDate());
-                const checkOut = correctedCheckOut.toISOString().split("T")[0].replace(/-/g, '');
-
-
-                // ✅ 예약이 DB에 있는지 확인 (중복 방지)
-                const [existing] = await db.query(
-                    "SELECT customer_id FROM CustomerInfo WHERE reserved_room_number = ? AND check_in = ? AND check_out = ?",
-                    [listing.name, checkIn, checkOut]
+                await db.query(
+                    `INSERT INTO CustomerInfo (
+            name, email, phone_number, passport_number,
+            check_in, check_out,
+            check_in_message_status, check_out_message_status,
+            check_in_mail_status, check_out_mail_status, reservation_mail_status,
+            reserved_room_number, review_id, totalprice,
+            MDFY_DTM, MDFY_ID, REG_DTM, REG_ID
+          ) VALUES (
+            'batch', '', '', '', ?, ?,
+            'N', 'N', 'N', 'N', 'N',
+            ?, 0, 0, NOW(), 'batch', NOW(), 'batch'
+          )`,
+                    [checkIn, checkOut, listing.name]
                 );
 
-                if (existing.length === 0) {
-                    // 🆕 새 예약 추가
-                    await db.query(
-                        `INSERT INTO CustomerInfo (
-                            name,email,phone_number,passport_number,check_in,check_out,check_in_message_status,check_out_message_status,check_in_mail_status,check_out_mail_status,reservation_mail_status,reserved_room_number,review_id,totalprice,MDFY_DTM,MDFY_ID,REG_DTM,REG_ID
-                        ) VALUES (
-                          'batch','','','',?,?,'N','N','N','N','N',?,0,0,NOW(),'batch',NOW(),'batch')`,
-                        [checkIn, checkOut,listing.name]
-                    );
-                    console.log(`✅ 새 예약 추가됨: ${listing.name} | ${checkIn} ~ ${checkOut}`);
-                } else {
-                    console.log(`🔄 기존 예약 있음: ${listing.name} | ${checkIn} ~ ${checkOut}`);
-                }
+                console.log(`✅ 예약 삽입됨: ${listing.name} | ${checkIn} ~ ${checkOut}`);
             }
         }
 
         console.log("🎉 Airbnb 캘린더 동기화 완료!");
     } catch (error) {
-        console.error("❌ Airbnb 캘린더 동기화 중 오류 발생:", error);
+        console.error("❌ 오류 발생:", error);
     }
 };
 
-// ⏰ 매일 새벽 1시 실행 (UTC 기준: 16:00 -> 한국 시간 01:00)
+// 🕐 매일 새벽 1시에 자동 실행 설정 (UTC 기준 16:00)
 // cron.schedule("0 16 * * *", () => {
-//     console.log("⏰ Airbnb 캘린더 동기화 배치 실행 중...");
-//fetchAndStoreAirbnbBookings();
+//     console.log("⏰ Airbnb 캘린더 배치 실행 중...");
+//     fetchAndStoreAirbnbBookings();
 // });
+
+// 🔃 개발 시 수동 실행도 가능
 fetchAndStoreAirbnbBookings();
-console.log("🚀 Airbnb 캘린더 동기화 배치 작업이 설정되었습니다.");

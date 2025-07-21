@@ -34,7 +34,7 @@ const PayPalCheckout = ({ amount, onApprove }) => {
     if (!usdAmount) return <div>❌ Failed to calculate exchange rate.</div>;
 
     return (
-        <PayPalScriptProvider options={{ "client-id": "AQi_AJnk65vTtX_SStVX-HDGMx8AN5JzYlvBpY0oQL4rk5Zj7JfHMhIUscA7DeNZhJMrP4D-W0z2Il2a", currency: "USD" }}>
+        <PayPalScriptProvider options={{ "client-id": "AaVfxIHKal2Y0szcuD8olAvBt7ak7cz-e66YgWqunWc7ZaD3e88G1hJjDkZOcdkEswFy6ORQhB4IpGe7", currency: "USD" }}>
             <PayPalButtons
                 style={{ layout: "vertical" }}
                 createOrder={(data, actions) => {

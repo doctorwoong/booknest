@@ -73,7 +73,8 @@ const insertReservation = async (req, res) => {
             checkInDate,
             checkOutDate,
             title,
-            price
+            price,
+            type
         } = req.body; // 클라이언트에서 전달된 데이터
 
         const query = `
@@ -91,8 +92,9 @@ const insertReservation = async (req, res) => {
               MDFY_DTM,
               MDFY_ID,
               REG_DTM,
-              REG_ID
-            ) VALUES (?, ?, ?, ?, ?, ?,'N','N', ?, ?, NOW(),'admin',NOW(),'admin')
+              REG_ID,
+              TYPE
+            ) VALUES (?, ?, ?, ?, ?, ?,'N','N', ?, ?, NOW(),'admin',NOW(),'admin',?)
         `;
 
         const [result] = await pool.query(query, [
@@ -103,7 +105,7 @@ const insertReservation = async (req, res) => {
             checkInDate,
             checkOutDate,
             title,
-            price
+            price,type
         ]);
 
         console.log('Reservation inserted:', result);
@@ -396,7 +398,8 @@ const getReservationCustomers = async (req, res) => {
                 check_out as checkOutDate,
                 reserved_room_number as title,
                 totalprice as price,
-                reservation_mail_status
+                reservation_mail_status,
+                TYPE as type
             from CustomerInfo
             where 1=1
                 AND REG_ID != 'batch'

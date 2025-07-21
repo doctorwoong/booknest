@@ -86,13 +86,12 @@ app.post("/send-check-in-email", async (req, res) => {
 });
 
 app.post("/send-check-in-sms", async (req, res) => {
-    const { phone, message,imgUrl } = req.body;
+    const { phone, message } = req.body;
 
     try {
         const result = await sendSMS({
             to: phone,
-            content: message, // 줄바꿈 HTML → 문자용
-            imgUrl : imgUrl
+            content: message,
         });
 
         res.json({ success: true, result });

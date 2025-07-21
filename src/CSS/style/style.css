@@ -65,6 +65,11 @@
 .channelTalk span {font-weight: bold}
 .channelTalk img {width: 50px;height: 50px}
 
+.phone-input-group {display: flex;gap: 10px;}
+.phone-input-group .country-code {flex: 0 0 100px;max-width: 100px;}
+.phone-input-group .phone-number {flex: 1;}
+
+
 #stars {color: #F54D6E;}
 
 /* 📱 모바일 반응형 */
