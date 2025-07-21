@@ -7,6 +7,7 @@ import {formatDate} from "../Util/utils";
 import {apiRequest} from "../Util/api";
 import {useTranslation} from "react-i18next";
 import PayPalCheckout from '../COMPONENT/PayPalCheckout';
+import reviewlogo from '../resource/Teamtoys.png';
 
 const Detail = () => {
     const location = useLocation();
@@ -126,7 +127,7 @@ const Detail = () => {
         if (room_number) fetchReviews(room_number);
     }, [room_number]);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e ,type) => {
         e.preventDefault();
 
         const reservationData = {
@@ -138,7 +139,7 @@ const Detail = () => {
             checkOutDate: checkOutDate,
             title: room_number,
             price: totalPrice,
-            type: paymentType,
+            type: type,
         };
 
         setIsLoading(true); // 로딩 시작
@@ -266,7 +267,7 @@ const Detail = () => {
                     <div className="row">
                         <div className="col-md-12">
                             <h3><b>{t("78")}</b></h3>
-                            <form onSubmit={handleSubmit}>
+                            <form>
                                 <div className="row">
                                     <div className="col-md-6 mb-3">
                                         <label className="form-label">{t("79")}</label>
@@ -351,13 +352,15 @@ const Detail = () => {
                                     <button
                                         type="button"
                                         className="reverseBtn2"
-                                        onClick={() => {
+                                        onClick={(e) => {
                                             if (!formData.name || !formData.phone || !formData.email) {
-                                                alert("예약자 정보를 모두 입력해주세요.");
+                                                alert(t("59"));
                                                 return;
                                             }
-                                            setPaymentType("cash");
-                                            handleSubmit(new Event("submit"));
+
+                                            if (window.confirm(t("33"))) {
+                                                handleSubmit(e, "cash");  // 직접 전달
+                                            }
                                         }}
                                         disabled={isLoading}
                                     >
@@ -369,15 +372,12 @@ const Detail = () => {
                                         className="reverseBtn2"
                                         onClick={() => {
                                             if (!formData.name || !formData.phone || !formData.email) {
-                                                alert("예약자 정보를 모두 입력해주세요.");
+                                                alert(t("59"));
                                                 return;
                                             }
                                             setPaymentType("card");
-                                            if (formData.countryCode === "+82") {
-                                                handleSubmit(new Event("submit"));
-                                            } else {
-                                                setShowPayPal(true);
-                                            }
+                                            setShowPayPal(true);
+
                                         }}
                                         disabled={isLoading}
                                     >
@@ -403,23 +403,35 @@ const Detail = () => {
                             <div className="container" style={{height: "100%", overflow: "auto"}}>
                                 <ul className="list-group">
                                     {reviews.map((review) => (
-                                        <li key={review.review_id} className="list-group-item d-flex align-items-center"
-                                            style={{height: "auto"}}>
-                                            <div style={{paddingRight: "30px"}} className="reviewContainer">
-                                                <img alt="Teamtoys Logo"
-                                                     style={{width: "100px", height: "100px"}}/>
+                                        <li key={review.review_id} className="list-group-item2" style={{height: "auto"}}>
+
+                                            <div className="d-flex align-items-center mb-2">
+                                                <div style={{paddingRight: "20px"}}>
+                                                    <img
+                                                        alt="Teamtoys Logo"
+                                                        src={reviewlogo}
+                                                        style={{width: "50px", height: "50px", borderRadius: "50%"}}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <b style={{fontSize: "18px"}}>{review.customer_name || t("50")}</b>
+                                                    <div style={{fontSize: "16px"}}>
+                                                        <span id="stars">★</span> {review.rating}
+                                                    </div>
+                                                </div>
                                             </div>
+
                                             <div>
-                                                <b className="mb-1"
-                                                   style={{fontSize: "20px"}}>{review.customer_name || t("50")}</b>
-                                                <p className="mb-1"><span id="stars">★</span> {review.rating}</p>
-                                                <p className="mb-1">{review.review_text}</p>
+                                                <p className="mb-1" style={{whiteSpace: "pre-line"}}>
+                                                    {review.review_text}
+                                                </p>
                                             </div>
                                         </li>
                                     ))}
                                 </ul>
                             </div>
                         </div>
+
                     </div>
                 </div>
             ) : (

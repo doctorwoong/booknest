@@ -311,7 +311,7 @@ function Admin() {
                     <div className="tab-content">
                         {/* 고객관리 탭 */}
                         <div className={`tab-pane fade ${activeTab === "customer" ? "show active" : ""}`} id="customer" role="tabpanel">
-                            <table >
+                            <table>
                                 <thead>
                                 <tr>
                                     <th>{t("124")}</th>
@@ -333,9 +333,15 @@ function Admin() {
                                         <td>{customer.title}</td>
                                         <td>{customer.checkIn}</td>
                                         <td>{customer.checkOut}</td>
-                                        <td>{paymentTypeMap[customer.type] || ''}</td>
+                                        <td style={customer.type === 'cash' ? {
+                                            backgroundColor: '#e0f3ff',
+                                            fontWeight: 'bold',
+                                            color: '#007bff'
+                                        } : {}}>
+                                            {paymentTypeMap[customer.type] || ''}
+                                        </td>
                                         <td>
-                                        {customer.reservation_mail_status === "N" ? (
+                                            {customer.reservation_mail_status === "N" ? (
                                                 <button onClick={() => handleSendEmail(customer, "reservation")}>
                                                     {t("131")}
                                                 </button>

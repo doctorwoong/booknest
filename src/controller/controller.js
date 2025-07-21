@@ -75,8 +75,8 @@ const insertReservation = async (req, res) => {
             title,
             price,
             type
-        } = req.body; // 클라이언트에서 전달된 데이터
-
+        } = req.body;
+        console.log("insertReservation body : ",req.body)
         const query = `
             INSERT INTO CustomerInfo (
               name, 
