@@ -17,6 +17,7 @@ const Detail = () => {
     const {room_number, images, price, checkInDate, checkOutDate} = state || {};
     const nightlyRate = price;
     const [totalPrice, setTotalPrice] = useState(0);
+    const [totalPrice2, setTotalPrice2] = useState(0);
     const [reviews, setReviews] = useState([]);
     const [showPayPal, setShowPayPal] = useState(false);
     const [paymentType, setPaymentType] = useState("");
@@ -110,7 +111,9 @@ const Detail = () => {
             else if (diffDays >= 8) discount = 0.15;
 
             const calculatedPrice = diffDays * nightlyRate * (1 - discount);
+            const calculatedPrice2 = diffDays * 30000 * (1 - discount);
             setTotalPrice(calculatedPrice);
+            setTotalPrice2(calculatedPrice2);
         }
     }, [checkInDate, checkOutDate]);
 
@@ -259,7 +262,10 @@ const Detail = () => {
                         <hr className="footer-divider"/>
                         <div className="reserCost3">
                             <span>{t("47")}</span>
-                            <h2>₩{totalPrice.toLocaleString()}</h2>
+                            <div>
+                                <h3>{t("157")} : ₩{totalPrice2.toLocaleString()}</h3>
+                                <h3>{t("158")} : ₩{totalPrice.toLocaleString()}</h3>
+                            </div>
                         </div>
                         {/*<button className="revers" onClick={handleReservation}>{t("48")}</button>*/}
                     </div>
@@ -367,12 +373,17 @@ const Detail = () => {
                                         💵 {t("157")}
                                     </button>
 
+
                                     <button
                                         type="button"
                                         className="reverseBtn2"
                                         onClick={() => {
                                             if (!formData.name || !formData.phone || !formData.email) {
                                                 alert(t("59"));
+                                                return;
+                                            }
+                                            if(formData.countryCode === "+82") {
+                                                alert(t("한국 발행카드는 카드결재가 불가하니 체크인시 현금 결재 바랍니다."));
                                                 return;
                                             }
                                             setPaymentType("card");

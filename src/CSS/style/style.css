@@ -25,6 +25,7 @@
 
 .container {overflow: auto;padding: 0 0;}
 .list-group-item {display: flex;align-items: center;flex-wrap: wrap;min-height: 100px;padding: 10px;}
+.list-group-item:hover {cursor: pointer;}
 .list-group-item2 {min-height: 100px;padding: 10px;}
 
 .reservation {flex-grow: 1;min-width: 150px;white-space: normal;word-break: break-word;}
