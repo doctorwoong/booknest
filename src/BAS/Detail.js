@@ -40,6 +40,15 @@ const Detail = () => {
         countryCode: "+82",
     });
 
+    // 국가번호 +82 일때, 0 제거하여 +8210XXXX 형태로 변경
+    function normalizePhone(countryCode, phone) {
+        const onlyDigits = phone.replace(/[^0-9]/g, "");
+        if (countryCode === "+82" && onlyDigits.startsWith("0")) {
+            return "+82" + onlyDigits.slice(1);
+        }
+        return countryCode + onlyDigits;
+    }
+
     useEffect(() => {
         // Kakao 지도 API 스크립트 로드
         const script = document.createElement("script");
@@ -133,15 +142,18 @@ const Detail = () => {
     const handleSubmit = async (e ,type) => {
         e.preventDefault();
 
+        const selectedPrice = type === "cash" ? totalPrice2 : totalPrice;
+        const normalizedPhone = normalizePhone(formData.countryCode, formData.phone);
+
         const reservationData = {
             name: formData.name,
-            phone: `${formData.countryCode}${formData.phone}`,
+            phone: normalizedPhone,
             email: formData.email,
             passport: formData.passport,
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
             title: room_number,
-            price: totalPrice,
+            price: selectedPrice,
             type: type,
         };
 
@@ -153,7 +165,7 @@ const Detail = () => {
                 // ✅ 여기 추가
                 const message = `[노량진 스튜디오] ${formData.name}님이 예약하셨습니다.\n체크인: ${formatDate(checkInDate)}, 체크아웃: ${formatDate(checkOutDate)} 입니다.`;
 
-                const recipients = ["01082227855", "01062776765"];
+                const recipients = ["+821092341232"];
 
                 // 번호 배열을 돌면서 문자 보내기
                 for (const phone of recipients) {
@@ -465,7 +477,7 @@ const Detail = () => {
                                     onApprove={async (details) => {
                                         const reservationData = {
                                             name: formData.name,
-                                            phone: `${formData.countryCode}${formData.phone}`,
+                                            phone: normalizePhone(formData.countryCode, formData.phone),
                                             email: formData.email,
                                             passport: formData.passport,
                                             checkInDate: checkInDate,

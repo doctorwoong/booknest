@@ -29,6 +29,9 @@ const Main = () => {
     const [showContainer3, setShowContainer3] = useState(false);
     const { t } = useTranslation();
 
+    const [countryCode, setCountryCode] = useState("+82");
+    const [phoneNumber, setPhoneNumber] = useState("");
+
     const [filters, setFilters] = useState({
         startDate: checkInDate || null,
         endDate: checkOutDate || null,
@@ -114,11 +117,33 @@ const Main = () => {
     };
 
     const handleConfirm = async () => {
-        if (inputPhone === selectedReservation.phone_number) {
+        let fullPhone = inputPhone;
+
+        // 한국 국가번호일 경우 0 제거
+        if (countryCode === "+82" && inputPhone.startsWith("0")) {
+            fullPhone = inputPhone.substring(1);
+        }
+
+        const fullPhoneNumber = countryCode + fullPhone;
+
+        if (fullPhoneNumber === selectedReservation.phone_number) {
             try {
+                // ✅ 1. 고객에게 예약 취소 메일 전송
+                await apiRequest("/send-cancel-email", "POST", selectedReservation);
+
+                // ✅ 2. 관리자에게 예약 취소 문자 전송
+                await apiRequest("/send-cancel-sms", "POST", selectedReservation);
+
+                // ✅ 3. 예약 정보 삭제
                 await apiRequest("/delete-reservation", "POST", { id: selectedReservation.customer_id });
-                alert(`${selectedReservation.reserved_room_number}`+t("27"));
-                setCheckRooms((prev) => prev.filter((item) => item.customer_id !== selectedReservation.customer_id));
+
+                // ✅ 4. UI 정리
+                alert(`${selectedReservation.reserved_room_number}` + t("27"));
+
+                setCheckRooms((prev) =>
+                    prev.filter((item) => item.customer_id !== selectedReservation.customer_id)
+                );
+
                 setShowPopup(false);
                 setInputPhone("");
                 setSelectedReservation(null);
@@ -127,7 +152,7 @@ const Main = () => {
                 alert(t("28"));
             }
         } else {
-            alert(t("29"));
+            alert(t("29")); // 전화번호 불일치 안내
         }
     };
 
@@ -155,11 +180,19 @@ const Main = () => {
     }
 
     const handlePasswordSubmit = () => {
-        if (inputPhone !== selectedReview.phone_number) {
-           alert(t("30"))
-        }else{
-            setShowPasswordPopup(false); // 팝업 닫기
-            navigate("/reviewWrite", { state: selectedReview }); // Admin 페이지로 이동
+        let phone = inputPhone;
+
+        if (countryCode === '+82' && phone.startsWith('0')) {
+            phone = phone.substring(1); // 앞의 0 제거
+        }
+
+        const fullPhone = countryCode + phone;
+
+        if (fullPhone !== selectedReview.phone_number) {
+            alert(t("30")); // "연락처가 일치하지 않습니다"
+        } else {
+            setShowPasswordPopup(false);
+            navigate("/reviewWrite", { state: selectedReview });
         }
     };
 
@@ -293,13 +326,39 @@ const Main = () => {
                 <div className="password-popup">
                     <div className="popup-content">
                         <h4>{t("12")}</h4>
-                        <input
-                            type="text"
-                            placeholder={t("13")}
-                            value={inputPhone}
-                            onKeyDown={handleKeyDown2}
-                            onChange={(e) => setInputPhone(e.target.value)}
-                        />
+
+                        <div className="phone-input-group">
+                            <select
+                                className="form-select country-code"
+                                value={countryCode}
+                                onChange={(e) => setCountryCode(e.target.value)}
+                            >
+                                <option value="+82">+82</option>
+                                <option value="+34">+34</option>
+                                <option value="+86">+86</option>
+                                <option value="+81">+81</option>
+                                <option value="+33">+33</option>
+                                <option value="+49">+49</option>
+                                <option value="+63">+63</option>
+                                <option value="+60">+60</option>
+                                <option value="+1">+1</option>
+                                <option value="+84">+84</option>
+                                <option value="+66">+66</option>
+                                <option value="+46">+46</option>
+                                <option value="+39">+39</option>
+                                <option value="+61">+61</option>
+                            </select>
+
+                            <input
+                                type="tel"
+                                className="form-control phone-number"
+                                placeholder={t("13")}
+                                value={inputPhone}
+                                onKeyDown={handleKeyDown2}
+                                onChange={(e) => setInputPhone(e.target.value)}
+                            />
+                        </div>
+
                         <div className="checkBtn">
                             <button className="btn btn-danger" onClick={handleConfirm}>{t("14")}</button>
                             <button className="btn btn-secondary" onClick={handleClosePopup}>{t("15")}</button>
@@ -337,13 +396,36 @@ const Main = () => {
                         <div className="popup-content">
                             <h3>{t("19")}</h3>
                             <p>{t("20")}</p>
-                            <input
-                                type="text"
-                                value={inputPhone}
-                                onKeyDown={handleKeyDown3}
-                                onChange={(e) => setInputPhone(e.target.value)}
-                                placeholder={t("13")}
-                            />
+                            <div className="phone-input-group">
+                                <select
+                                    className="form-select country-code"
+                                    value={countryCode}
+                                    onChange={(e) => setCountryCode(e.target.value)}
+                                >
+                                    <option value="+82">+82</option>
+                                    <option value="+34">+34</option>
+                                    <option value="+86">+86</option>
+                                    <option value="+81">+81</option>
+                                    <option value="+33">+33</option>
+                                    <option value="+49">+49</option>
+                                    <option value="+63">+63</option>
+                                    <option value="+60">+60</option>
+                                    <option value="+1">+1</option>
+                                    <option value="+84">+84</option>
+                                    <option value="+66">+66</option>
+                                    <option value="+46">+46</option>
+                                    <option value="+39">+39</option>
+                                    <option value="+61">+61</option>
+                                </select>
+                                <input
+                                    type="tel"
+                                    className="form-control phone-number"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    onKeyDown={handleKeyDown3}
+                                    placeholder={t("13")}
+                                />
+                            </div>
                             <div className="checkBtn">
                                 <button onClick={handlePasswordSubmit}>{t("14")}</button>
                                 <button onClick={() => setShowPasswordPopup(false)}>{t("15")}</button>

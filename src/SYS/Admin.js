@@ -320,6 +320,7 @@ function Admin() {
                                     <th>{t("127")}</th>
                                     <th>{t("128")}</th>
                                     <th>{t("129")}</th>
+                                    <th>{t("159")}</th>
                                     <th>결제타입</th>
                                     <th>{t("131")}</th>
                                 </tr>
@@ -333,6 +334,7 @@ function Admin() {
                                         <td>{customer.title}</td>
                                         <td>{customer.checkIn}</td>
                                         <td>{customer.checkOut}</td>
+                                        <td>{customer.price?.toLocaleString()}</td>
                                         <td style={customer.type === 'cash' ? {
                                             backgroundColor: '#e0f3ff',
                                             fontWeight: 'bold',

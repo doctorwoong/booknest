@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
-const { exec } = require("child_process");
+const {exec} = require("child_process");
 
 // Nodemailer transporter 설정
 const transporter = nodemailer.createTransport({
@@ -21,21 +21,21 @@ const generateContract = async (data) => {
     const todayDate = new Date().toISOString().split("T")[0];
     const wordFileName = `${randomString}_${todayDate}.docx`;
     const pdfFileName = `${randomString}_${todayDate}.pdf`;
-    const templatePath = path.join(__dirname, "template/Lease-Agreement-404-rev1.docx");
+    const templatePath = path.join(__dirname, "../../template/Lease-Agreement-402-rev1.docx");
     const outputPdfDir = path.join(__dirname, "outputPdf/");
 
     try {
         const template = fs.readFileSync(templatePath, "binary");
         const zip = new PizZip(template);
-        const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+        const doc = new Docxtemplater(zip, {paragraphLoop: true, linebreaks: true});
 
         doc.render(data);
 
         const outputDir = path.join(__dirname, "outputDocx/");
-        if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+        if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, {recursive: true});
 
         const wordFilePath = path.join(outputDir, wordFileName);
-        const buffer = doc.getZip().generate({ type: "nodebuffer" });
+        const buffer = doc.getZip().generate({type: "nodebuffer"});
         fs.writeFileSync(wordFilePath, buffer);
 
         const libreofficePath = "/opt/homebrew/bin/soffice";
@@ -439,4 +439,4 @@ const sendCheckInEmail = async (customerEmail, title) => {
     await transporter.sendMail(customerMailOptions);
 };
 
-module.exports = { generateContract, sendEmails,sendCheckInEmail };
+module.exports = {generateContract, sendEmails, sendCheckInEmail};
