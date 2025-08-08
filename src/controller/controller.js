@@ -195,6 +195,7 @@ const getCheckCustomers = async (req, res) => {
         const query = `
             SELECT A.customer_id,
                    A.name,
+                   A.email,
                    A.phone_number,
                    A.check_in,
                    A.check_out,
@@ -266,6 +267,7 @@ const getReviewCustomer = async (req, res) => {
             SELECT
                 A.customer_id,
                 A.name,
+                A.email,
                 A.check_in,
                 A.check_out,
                 A.reserved_room_number,

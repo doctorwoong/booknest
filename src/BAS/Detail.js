@@ -162,16 +162,17 @@ const Detail = () => {
             const insertResponse = await apiRequest("/insertReservation", "POST", reservationData);
 
             if (insertResponse) {
-                // ✅ 여기 추가
-                const message = `[노량진 스튜디오] ${formData.name}님이 예약하셨습니다.\n체크인: ${formatDate(checkInDate)}, 체크아웃: ${formatDate(checkOutDate)} 입니다.`;
 
-                const recipients = ["+821092341232"];
+                const message = `[노량진 스튜디오] ${formData.name}님이 예약하셨습니다.\n 체크인: ${formatDate(checkInDate)},\n 체크아웃: ${formatDate(checkOutDate)}`;
+
+                const recipients = ["01082227855", "01062776765"];
 
                 // 번호 배열을 돌면서 문자 보내기
                 for (const phone of recipients) {
                     await apiRequest("/send-check-in-sms", "POST", {
                         phone: phone,
                         message: message,
+                        isInternational: false
                     });
                 }
 
@@ -395,7 +396,7 @@ const Detail = () => {
                                                 return;
                                             }
                                             if(formData.countryCode === "+82") {
-                                                alert(t("한국 발행카드는 카드결재가 불가하니 체크인시 현금 결재 바랍니다."));
+                                                alert(t("한국 발행카드는 카드결제가 불가하니 체크인시 현금 결제 바랍니다."));
                                                 return;
                                             }
                                             setPaymentType("card");
@@ -407,7 +408,6 @@ const Detail = () => {
                                         💳 {t("158")}
                                     </button>
                                 </div>
-
 
                                 {isLoading && (
                                     <div className="text-center mt-3">
@@ -492,6 +492,19 @@ const Detail = () => {
                                             const insertResponse = await apiRequest("/insertReservation", "POST", reservationData);
 
                                             if (insertResponse) {
+
+                                                const message = `[노량진 스튜디오] ${formData.name}님이 예약하셨습니다.\n 체크인: ${formatDate(checkInDate)},\n 체크아웃: ${formatDate(checkOutDate)}`;
+
+                                                const recipients = ["01082227855", "01062776765"];
+
+                                                // 번호 배열을 돌면서 문자 보내기
+                                                for (const phone of recipients) {
+                                                    await apiRequest("/send-check-in-sms", "POST", {
+                                                        phone: phone,
+                                                        message: message,
+                                                        isInternational: false
+                                                    });
+                                                }
                                                 alert(t("66"));
                                                 navigate("/");
                                             } else {
@@ -504,7 +517,8 @@ const Detail = () => {
                                             setIsLoading(false);
                                         }
                                     }}
-                                /></div>
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

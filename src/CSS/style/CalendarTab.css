@@ -4,6 +4,29 @@
 .tab-search {display: flex;align-items: center;margin: 20px 0;justify-content: space-between;border-bottom: 1px solid #ddd}
 .tab-search-area {display: flex ;gap: 10px;position: sticky;top: 0;background: white;padding: 10px 0;z-index: 10;}
 
+/* 수평 스크롤 컨테이너 */
+.calendar-scroll {
+    overflow-x: auto;      /* ← 가로 스크롤 ON */
+    overflow-y: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch; /* 모바일 부드럽게 */
+}
+
+/* 헤더/바디 행을 가로로 */
+.calendar-header,
+.calendar-body .calendar-row {
+    display: flex;
+}
+
+/* JS의 80px과 동일하게 고정폭 */
+.calendar-header .date-cell { flex: 0 0 80px; }
+.calendar-body .cell { flex: 0 0 80px; }
+
+/* (선택) 좌측 룸 리스트 폭 고정 */
+.room-list { flex: 0 0 140px; }
+
+
+
 @media (max-width: 768px) {
     .tab-search {display: block;}
     .room-list {width: 70px}

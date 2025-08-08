@@ -31,6 +31,7 @@ const Main = () => {
 
     const [countryCode, setCountryCode] = useState("+82");
     const [phoneNumber, setPhoneNumber] = useState("");
+    const [isCancelling, setIsCancelling] = useState(false);
 
     const [filters, setFilters] = useState({
         startDate: checkInDate || null,
@@ -116,43 +117,59 @@ const Main = () => {
         setShowPopup(true);
     };
 
-    const handleConfirm = async () => {
-        let fullPhone = inputPhone;
+    const toE164 = (countryCode, localNumber) => {
+        if (!countryCode || !localNumber) return null;
+        let n = String(localNumber).trim().replace(/[^\d]/g, ''); // 숫자만
 
-        // 한국 국가번호일 경우 0 제거
-        if (countryCode === "+82" && inputPhone.startsWith("0")) {
-            fullPhone = inputPhone.substring(1);
+        // 한국만 trunk '0' 제거 (010 -> 10...)
+        if (countryCode === '+82' && n.startsWith('0')) {
+            n = n.slice(1);
+        }
+        return countryCode + n; // 예: +82 + 1012345678 -> +821012345678
+    };
+
+    const handleConfirm = async () => {
+        if (isCancelling) return;
+
+        const fullPhoneNumber = toE164(countryCode, inputPhone); // 입력값을 E.164로
+        const savedPhone = (selectedReservation?.phone_number || '').trim(); // DB(+8210...) 값
+
+        if (!fullPhoneNumber) {
+            alert("전화번호를 확인해주세요.");
+            return;
         }
 
-        const fullPhoneNumber = countryCode + fullPhone;
+        if (fullPhoneNumber !== savedPhone) {
+            alert(t("29")); // 전화번호 불일치
+            return;
+        }
 
-        if (fullPhoneNumber === selectedReservation.phone_number) {
-            try {
-                // ✅ 1. 고객에게 예약 취소 메일 전송
-                await apiRequest("/send-cancel-email", "POST", selectedReservation);
+        try {
+            setIsCancelling(true);
 
-                // ✅ 2. 관리자에게 예약 취소 문자 전송
-                await apiRequest("/send-cancel-sms", "POST", selectedReservation);
+            // 1) 고객에게 취소 메일
+            const mailOk = await apiRequest("/send-cancel-email", "POST", selectedReservation);
+            if (!mailOk) throw new Error("cancel email failed");
 
-                // ✅ 3. 예약 정보 삭제
-                await apiRequest("/delete-reservation", "POST", { id: selectedReservation.customer_id });
+            // 2) 관리자에게 취소 문자
+            const smsOk = await apiRequest("/send-cancel-sms", "POST", selectedReservation);
+            if (!smsOk) throw new Error("cancel sms failed");
 
-                // ✅ 4. UI 정리
-                alert(`${selectedReservation.reserved_room_number}` + t("27"));
+            // 3) 예약 삭제
+            const delOk = await apiRequest("/delete-reservation", "POST", { id: selectedReservation.customer_id });
+            if (!delOk) throw new Error("delete reservation failed");
 
-                setCheckRooms((prev) =>
-                    prev.filter((item) => item.customer_id !== selectedReservation.customer_id)
-                );
-
-                setShowPopup(false);
-                setInputPhone("");
-                setSelectedReservation(null);
-            } catch (error) {
-                console.error("예약 취소 중 오류 발생:", error);
-                alert(t("28"));
-            }
-        } else {
-            alert(t("29")); // 전화번호 불일치 안내
+            // 4) UI 반영
+            alert(`${selectedReservation.reserved_room_number}${t("27")}`);
+            setCheckRooms(prev => prev.filter(it => it.customer_id !== selectedReservation.customer_id));
+            setShowPopup(false);
+            setInputPhone("");
+            setSelectedReservation(null);
+        } catch (e) {
+            console.error("예약 취소 중 오류:", e);
+            alert(t("28"));
+        } finally {
+            setIsCancelling(false);
         }
     };
 

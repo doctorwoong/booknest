@@ -123,15 +123,16 @@ function Admin() {
 
     const handleSendEmail = async (customer, type) => {
         if (!window.confirm("메일을 보내시겠습니까?")) return;
+
         let endpoint = "";
         let mailpoint = "";
         let statusKey = "";
 
-        if(type === "checkIn"){
+        if (type === "checkIn") {
             endpoint = "/send-check-in-email";
             mailpoint = "/updateCheckInMailStatus";
             statusKey = "check_in_mail_status";
-        }else if(type === "reservation"){
+        } else if (type === "reservation") {
             endpoint = "/send-reservation";
             mailpoint = "/updateReservationMailStatus";
             statusKey = "reservation_mail_status";
@@ -139,29 +140,33 @@ function Admin() {
 
         try {
             setLoading(true);
-            const [sendResponse, updateResponse] = await Promise.all([
-                apiRequest(endpoint, "POST", customer),
-                apiRequest(mailpoint, "POST", customer)
-            ]);
 
-            if (sendResponse && updateResponse) {
-                // ✅ 상태값 변경하여 UI 업데이트
-                if (type === "checkIn") {
-                    setCheckInCustomers(prev =>
-                        prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
-                    );
-                } else if (type === "reservation") {
-                    setreservationCustomers(prev =>
-                        prev.map(c => c.customer_id === customer.customer_id ? { ...c, [statusKey]: "Y" } : c)
-                    );
-                }
+            // 1) 메일 먼저 보냄 (실패하면 여기서 throw)
+            const sendResponse = await apiRequest(endpoint, "POST", customer);
+            if (!sendResponse) throw new Error("메일 전송 실패");
+
+            // 2) 성공했을 때만 상태 업데이트 호출
+            const updatePayload =
+                type === "checkIn"
+                    ? { id: customer.id } // 서버가 기대하는 키 확인
+                    : { customer_id: customer.customer_id };
+
+            const updateResponse = await apiRequest(mailpoint, "POST", updatePayload);
+            if (!updateResponse) throw new Error("상태 업데이트 실패");
+
+            // 3) UI 반영
+            if (type === "checkIn") {
+                setCheckInCustomers(prev =>
+                    prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
+                );
             } else {
-                alert(t("117"));
+                setreservationCustomers(prev =>
+                    prev.map(c => c.customer_id === customer.customer_id ? { ...c, [statusKey]: "Y" } : c)
+                );
             }
-
         } catch (error) {
-            alert(t("118")+`: ${customer.name}`);
-        }finally {
+            alert(t("118") + `: ${customer.name}`);
+        } finally {
             setLoading(false);
         }
     };
@@ -246,7 +251,7 @@ function Admin() {
                     setCheckInCustomers(prev =>
                         prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
                     );
-                } else if (type === "checkOut") {
+                } else if (type === "checkOut2") {
                     setCheckOutCustomers(prev =>
                         prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
                     );
@@ -329,7 +334,7 @@ function Admin() {
                                 {reservationCustomers.map((customer) => (
                                     <tr key={customer.customer_id}>
                                         <td>{customer.customer_id}</td>
-                                        <td>{customer.name}</td>
+                                        <td className="customer-name">{customer.name}</td>
                                         <td>{customer.phone}</td>
                                         <td>{customer.title}</td>
                                         <td>{customer.checkIn}</td>
@@ -373,7 +378,7 @@ function Admin() {
                                 {checkInCustomers.map((customer) => (
                                     <tr key={customer.id}>
                                         <td>{customer.id}</td>
-                                        <td
+                                        <td className="customer-name"
                                             style={{
                                                 color: isWithinAWeek(customer.checkIn) ? "red" : "black",
                                             }}
@@ -423,7 +428,7 @@ function Admin() {
                                 {checkOutCustomers.map((customer) => (
                                     <tr key={customer.id}>
                                         <td>{customer.id}</td>
-                                        <td style={{color: isWithinAWeek2(customer.checkOut) ? "red" : "black",}}>
+                                        <td className="customer-name" style={{color: isWithinAWeek2(customer.checkOut) ? "red" : "black",}}>
                                             {customer.name}
                                         </td>
                                         <td>{customer.room}</td>
