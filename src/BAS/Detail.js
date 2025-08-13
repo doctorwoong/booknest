@@ -71,7 +71,7 @@ const Detail = () => {
                 const geocoder = new window.kakao.maps.services.Geocoder();
 
                 // 특정 주소를 좌표로 변환
-                const address = t("31"); // 검색할 주소
+                const address = "동작구 만양로14마길 25"; // 검색할 주소
                 geocoder.addressSearch(address, (result, status) => {
                     if (status === window.kakao.maps.services.Status.OK) {
                         const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
