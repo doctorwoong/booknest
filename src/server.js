@@ -80,46 +80,26 @@ app.post("/send-check-in-email", async (req, res) => {
     }
 });
 
-app.post("/send-check-in-sms", async (req, res) => {
-    const { phone, message,imgUrl, isInternational } = req.body;
-    console.log("보낼 휴대폰번호 : ",phone);
-    console.log("보낼 메세지 내용 : ",message);
-    console.log("바디에 뭐들엇냐 : ",req.body);
-
-    try {
-        const result = await sendSMS({
-            to: phone,
-            content: message, // 줄바꿈 HTML → 문자용
-            imgUrl : imgUrl,
-            isInternational : isInternational ?? true
-        });
-
-        res.json({ success: true, result });
-    } catch (error) {
-        console.error("SMS 전송 실패:", error.response?.data || error.message);
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-app.post("/send-cancel-email", async (req, res) => {
-    try {
-        await sendCancelEmail(req.body);
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-app.post("/send-cancel-sms", async (req, res) => {
-    try {
-        await sendCancelSMS(req.body);
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
+// app.post("/send-check-in-sms", async (req, res) => {
+//     const { phone, message,imgUrl, isInternational } = req.body;
+//     console.log("보낼 휴대폰번호 : ",phone);
+//     console.log("보낼 메세지 내용 : ",message);
+//     console.log("바디에 뭐들엇냐 : ",req.body);
+//
+//     try {
+//         const result = await sendSMS({
+//             to: phone,
+//             content: message, // 줄바꿈 HTML → 문자용
+//             imgUrl : imgUrl,
+//             isInternational : isInternational ?? true
+//         });
+//
+//         res.json({ success: true, result });
+//     } catch (error) {
+//         console.error("SMS 전송 실패:", error.response?.data || error.message);
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
 
 // 📌 기타 API 라우트 설정

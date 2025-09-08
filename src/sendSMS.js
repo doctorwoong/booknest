@@ -1,20 +1,15 @@
 const axios = require("axios");
-var request = require('request');
+const request = require("request");
 
 const OMNI_API_BASE_URL = "https://omni.ibapi.kr";
-const USER_NAME = "admi_om_61697p63"; // 연동 계정 아이디
-const PASSWORD = "ZPCX6DQ6FLEVFKKQHMLU"; // 연동 계정 비밀번호
+const USER_NAME = "admi_om_61697p63";
+const PASSWORD = "ZPCX6DQ6FLEVFKKQHMLU";
 
 /**
  * 📌 Access Token 발급 함수
- * @returns {Promise<string>} access token
  */
 async function getAccessToken() {
     try {
-        console.log("🔑 AccessToken 요청 시작...");
-        console.log(`🌐 요청 URL: ${OMNI_API_BASE_URL}/v1/auth/token`);
-        console.log(`👤 계정: ${USER_NAME}`);
-
         const response = await axios.post(`${OMNI_API_BASE_URL}/v1/auth/token`, null, {
             headers: {
                 "X-IB-Client-Id": USER_NAME,
@@ -23,25 +18,12 @@ async function getAccessToken() {
                 "Content-Type": "application/json",
             },
         });
-
-        console.log("✅ AccessToken 응답:", response.data);
-
-        // 토큰 추출 방식 수정
         return response.data?.data?.token;
     } catch (error) {
-        console.error("🚨 [AccessToken] 요청 실패:");
-        if (error.response) {
-            console.error("🔻 status:", error.response.status);
-            console.error("🔻 data:", error.response.data);
-        } else if (error.request) {
-            console.error("🔻 요청은 되었으나 응답 없음:", error.request);
-        } else {
-            console.error("🔻 오류 메시지:", error.message);
-        }
+        console.error("🚨 [AccessToken] 요청 실패:", error.message);
         throw error;
     }
 }
-
 
 /**
  * 📦 문자 전송 함수 (국내/국제 지원)
@@ -51,43 +33,45 @@ async function getAccessToken() {
  * @param {string} param.content - 메시지 내용
  * @param {boolean} [param.isInternational=false] - 국제문자인지 여부
  */
-async function sendSMS({ to, from = "16661734", content }) {
+async function sendSMS({ to, from = "16661734", content, isInternational }) {
     try {
-        // 배열 - 각각 발송
-        if (Array.isArray(to)) {
-            const results = [];
-            for (const num of to) {
-                results.push(await sendSMS({ to: num, from, content }));
-            }
-            return results;
-        }
-
         const token = await getAccessToken();
-        const toStr = String(to || "");
-        const isDomestic = toStr.startsWith("+8210") || toStr.startsWith("010");
+        console.log("수신자 번호:", to);
+        console.log("국제문자 여부?:", isInternational);
 
-        const url = isDomestic
-            ? `${OMNI_API_BASE_URL}/v1/send/sms`
-            : `${OMNI_API_BASE_URL}/v1/send/international`;
+        const url = isInternational
+            ? `${OMNI_API_BASE_URL}/v1/send/international`
+            : `${OMNI_API_BASE_URL}/v1/send/sms`;
 
-        const sendTo = isDomestic ? toDomesticKRMobile(to) : to;
+        console.log("호출 endpoint:", url);
 
-        const payload = { from, text: content, to: sendTo, ref: "참조필드" };
+        const payload = {
+            from: from,
+            text: content,
+            to: to,
+            ref: "참조필드"
+        };
+
         const options = {
             method: 'POST',
             url,
             headers: {
-                Authorization: 'Bearer ' + token,
+                'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json',
                 Accept: 'application/json',
             },
             body: JSON.stringify(payload),
         };
 
-        return await new Promise((resolve, reject) => {
-            request(options, (error, response, body) => {
+        return new Promise((resolve, reject) => {
+            request(options, function (error, response, body) {
                 if (error) return reject(error);
-                try { resolve(JSON.parse(body)); } catch { resolve(body); }
+                console.log("✅ 문자 전송 응답:", body);
+                try {
+                    resolve(JSON.parse(body));
+                } catch (e) {
+                    resolve(body); // JSON 파싱 실패 시 원본문자
+                }
             });
         });
     } catch (error) {

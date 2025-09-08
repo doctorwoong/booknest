@@ -128,62 +128,62 @@ const Main = () => {
         return countryCode + n; // 예: +82 + 1012345678 -> +821012345678
     };
 
-  // 숫자만 추출
-  const digitsOnly = (v = "") => String(v).replace(/\D/g, "");
+    // 숫자만 추출
+    const digitsOnly = (v = "") => String(v).replace(/\D/g, "");
 
 // 뒤 4자리
-  const last4 = (v = "") => {
-    const d = digitsOnly(v);
-    return d.slice(-4); // 길이가 4 미만이면 그대로(비교 전에 길이 체크)
-  };
+    const last4 = (v = "") => {
+        const d = digitsOnly(v);
+        return d.slice(-4); // 길이가 4 미만이면 그대로(비교 전에 길이 체크)
+    };
 
-  const handleConfirm = async () => {
-    if (isCancelling) return;
+    const handleConfirm = async () => {
+        if (isCancelling) return;
 
-    // 입력값/DB값에서 뒤 4자리만 추출
-    const inputLast4 = last4(inputPhone); // 사용자가 입력한 전화번호(마스킹/하이픈 상관없음)
-    const savedLast4 = last4(selectedReservation?.phone_number || ""); // DB 저장값(+8210... 등 포맷 무관)
+        // 입력값/DB값에서 뒤 4자리만 추출
+        const inputLast4 = last4(inputPhone); // 사용자가 입력한 전화번호(마스킹/하이픈 상관없음)
+        const savedLast4 = last4(selectedReservation?.phone_number || ""); // DB 저장값(+8210... 등 포맷 무관)
 
-    // 4자리 미만이면 잘못된 입력
-    if (!inputLast4 || inputLast4.length < 4) {
-      alert(t?.("enter_last4") || "전화번호 뒷자리 4자리를 입력해주세요.");
-      return;
-    }
+        // 4자리 미만이면 잘못된 입력
+        if (!inputLast4 || inputLast4.length < 4) {
+            alert(t?.("enter_last4") || "전화번호 뒷자리 4자리를 입력해주세요.");
+            return;
+        }
 
-    // 불일치 시 취소 불가
-    if (inputLast4 !== savedLast4) {
-      alert(t("29")); // 기존 "전화번호 불일치" 메시지 재사용
-      return;
-    }
+        // 불일치 시 취소 불가
+        if (inputLast4 !== savedLast4) {
+            alert(t("29")); // 기존 "전화번호 불일치" 메시지 재사용
+            return;
+        }
 
-    try {
-      setIsCancelling(true);
+        try {
+            setIsCancelling(true);
 
-      // 1) 고객에게 취소 메일
-      const mailOk = await apiRequest("/send-cancel-email", "POST", selectedReservation);
-      if (!mailOk) throw new Error("cancel email failed");
+            // 1) 고객에게 취소 메일
+            const mailOk = await apiRequest("/send-cancel-email", "POST", selectedReservation);
+            if (!mailOk) throw new Error("cancel email failed");
 
-      // 2) 관리자에게 취소 문자
-      const smsOk = await apiRequest("/send-cancel-sms", "POST", selectedReservation);
-      if (!smsOk) throw new Error("cancel sms failed");
+            // 2) 관리자에게 취소 문자
+            const smsOk = await apiRequest("/send-cancel-sms", "POST", selectedReservation);
+            if (!smsOk) throw new Error("cancel sms failed");
 
-      // 3) 예약 삭제
-      const delOk = await apiRequest("/delete-reservation", "POST", { id: selectedReservation.customer_id });
-      if (!delOk) throw new Error("delete reservation failed");
+            // 3) 예약 삭제
+            const delOk = await apiRequest("/delete-reservation", "POST", { id: selectedReservation.customer_id });
+            if (!delOk) throw new Error("delete reservation failed");
 
-      // 4) UI 반영
-      alert(`${selectedReservation.reserved_room_number}${t("27")}`);
-      setCheckRooms(prev => prev.filter(it => it.customer_id !== selectedReservation.customer_id));
-      setShowPopup(false);
-      setInputPhone("");
-      setSelectedReservation(null);
-    } catch (e) {
-      console.error("예약 취소 중 오류:", e);
-      alert(t("28"));
-    } finally {
-      setIsCancelling(false);
-    }
-  };
+            // 4) UI 반영
+            alert(`${selectedReservation.reserved_room_number}${t("27")}`);
+            setCheckRooms(prev => prev.filter(it => it.customer_id !== selectedReservation.customer_id));
+            setShowPopup(false);
+            setInputPhone("");
+            setSelectedReservation(null);
+        } catch (e) {
+            console.error("예약 취소 중 오류:", e);
+            alert(t("28"));
+        } finally {
+            setIsCancelling(false);
+        }
+    };
 
     const handleClosePopup = () => {
         setShowPopup(false);

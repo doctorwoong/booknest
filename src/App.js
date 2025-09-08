@@ -1,4 +1,4 @@
-import {Navigate, Route, Routes} from 'react-router-dom';
+import {Navigate, Route, Routes, useNavigate} from 'react-router-dom';
 import './CSS/App.css';
 import Header from "./COMPONENT/BASIC/Header";
 import ReservationCalendar from "./BAS/ReservationCalendar";
@@ -12,17 +12,30 @@ import ReviewDetail from "./BAS/ReviewDetail";
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
 
+function getAdminPasswordFromEnv() {
+    const craVal = process.env.REACT_APP_ADMIN_PASSWORD;
+    return (craVal || '').trim();
+}
+
+const ADMIN_PASSWORD = getAdminPasswordFromEnv();
+
 function App() {
 
     const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
     const { t } = useTranslation();
 
     const authenticateAdmin = (password) => {
-        if (password === "7888") {
+        if (!ADMIN_PASSWORD) {
+            // 환경변수 미설정 시 안내
+            alert('관리자 비밀번호가 설정되지 않았습니다.');
+            return false;
+        }
+
+        if (password === ADMIN_PASSWORD) {
             setIsAdminAuthenticated(true);
             return true;
         }
-        alert(t("148"));
+        alert(t("148")); // 비밀번호 오류 메시지
         return false;
     };
 
@@ -38,7 +51,7 @@ function App() {
                     <Route path="/review" element={<Review/>}/>
                     <Route path="/reviewWrite" element={<ReviewDetail/>}/>
                     <Route
-                        path="/admin"
+                        path="/admin-c1w4"
                         element={
                             isAdminAuthenticated ? (
                                 <Admin/>
@@ -54,18 +67,20 @@ function App() {
     );
 }
 
-const PasswordPopup = ({onAuthenticate}) => {
+const PasswordPopup = ({ onAuthenticate }) => {
     const [password, setPassword] = useState("");
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     const handleSubmit = () => {
-        if (onAuthenticate(password)) {
-            return <Navigate to="/admin" />;
+        const ok = onAuthenticate(password);
+        if (ok) {
+            navigate('/admin-c1w4', { replace: true });
         }
     };
 
-    const handleSubmit2 = () => {
-        return <Navigate to="/" />;
+    const handleCancel = () => {
+        navigate('/', { replace: true });
     };
 
     const handleKeyDown = (event) => {
@@ -89,7 +104,7 @@ const PasswordPopup = ({onAuthenticate}) => {
                 />
                 <div className="checkBtn">
                     <button onClick={handleSubmit}>{t("14")}</button>
-                    <button onClick={handleSubmit2}>{t("15")}</button>
+                    <button onClick={handleCancel}>{t("15")}</button>
                 </div>
             </div>
         </div>
