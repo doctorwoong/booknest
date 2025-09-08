@@ -229,14 +229,11 @@ function Admin() {
             smspoint = "/updateCheckOutSmsStatus";
             statusKey = "check_out_message_status";
             imgUrl = 'N';
-        } else if(type === "newMsg"){
-            endpoint = "/send-check-in-sms";
-            imgUrl = 'N';
         }
 
         try {
             const [sendResponse2, updateResponse2] = await Promise.all([
-                apiRequest(endpoint, "POST", { ...customer, imgUrl }),
+                //apiRequest(endpoint, "POST", { ...customer, imgUrl }),
                 apiRequest(smspoint, "POST", customer)
             ]);
 
@@ -261,14 +258,14 @@ function Admin() {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-8">
             {loading && (
                 <div className="loading-overlay">
                     <Spinner animation="border" variant="primary" />
                     <p>로딩 중...</p>
                 </div>
             )}
-            <div className="row" style={{marginTop:"80px"}}>
+            <div className="row" style={{marginTop:"100px"}}>
                 <div className="col-12">
                     <div className="nav nav-tabs" role="tablist">
                         <button
@@ -299,19 +296,24 @@ function Admin() {
                         >
                             달력
                         </button>
-                        <button
-                            className={`nav-link ${activeTab === "message" ? "active" : ""}`}
-                            onClick={() => handleOpenSMSModal("", "newMsg")}>
-                            메세지
-                        </button>
                     </div>
                 </div>
 
-                <div className="col-12 mt-3" style={{overflowY: "hidden", height: "77vh"}}>
+                <div style={{overflowY: "auto", height: "77vh"}}>
                     <div className="tab-content">
                         {/* 고객관리 탭 */}
                         <div className={`tab-pane fade ${activeTab === "customer" ? "show active" : ""}`} id="customer" role="tabpanel">
                             <table>
+                                <colgroup>
+                                    <col width="10%"/>
+                                    <col width="*"/>
+                                    <col width="15%"/>
+                                    <col width="10%"/>
+                                    <col width="12%"/>
+                                    <col width="12%"/>
+                                    <col width="10%"/>
+                                    <col width="10%"/>
+                                </colgroup>
                                 <thead>
                                 <tr>
                                     <th>{t("124")}</th>
@@ -328,17 +330,20 @@ function Admin() {
                                 {reservationCustomers.map((customer) => (
                                     <tr key={customer.customer_id}>
                                         <td>{customer.customer_id}</td>
-                                        <td>{customer.name}</td>
-                                        <td>{customer.phone}</td>
+                                        <td style={{textAlign:'left'}}>{customer.name}</td>
+                                        <td style={{textAlign:'left'}}>{customer.phone}</td>
                                         <td>{customer.title}</td>
                                         <td>{customer.checkIn}</td>
                                         <td>{customer.checkOut}</td>
-                                        <td style={customer.type === 'cash' ? {
-                                            backgroundColor: '#e0f3ff',
-                                            fontWeight: 'bold',
-                                            color: '#007bff'
-                                        } : {}}>
-                                            {paymentTypeMap[customer.type] || ''}
+                                        <td>
+                                            <span style={customer.type === 'cash' ? {
+                                                backgroundColor: '#e0f3ff',
+                                                fontWeight: 'bold',
+                                                color: '#007bff',
+                                                padding : '7px'
+                                            } : {}}>
+                                                {paymentTypeMap[customer.type] || ''}
+                                            </span>
                                         </td>
                                         <td>
                                             {customer.reservation_mail_status === "N" ? (
@@ -357,6 +362,13 @@ function Admin() {
                         {/* 체크인 탭 */}
                         <div className={`tab-pane fade ${activeTab === "checkIn" ? "show active" : ""}`} id="checkIn" role="tabpanel">
                             <table>
+                                <colgroup>
+                                    <col width="10%"/>
+                                    <col width="*"/>
+                                    <col width="15%"/>
+                                    <col width="15%"/>
+                                    <col width="12%"/>
+                                </colgroup>
                                 <thead>
                                 <tr>
                                     <th>{t("133")}</th>
@@ -364,18 +376,16 @@ function Admin() {
                                     <th>{t("135")}</th>
                                     <th>{t("136")}</th>
                                     <th>{t("137")}</th>
-                                    <th>{t("138")}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {checkInCustomers.map((customer) => (
                                     <tr key={customer.id}>
                                         <td>{customer.id}</td>
-                                        <td
-                                            style={{
-                                                color: isWithinAWeek(customer.checkIn) ? "red" : "black",
-                                            }}
-                                        >
+                                        <td style={{
+                                            color: isWithinAWeek(customer.checkIn) ? "red" : "black",
+                                            textAlign: 'left'
+                                        }}>
                                             {customer.name}
                                         </td>
                                         <td>{customer.room}</td>
@@ -389,16 +399,6 @@ function Admin() {
                                                 <span>{t("132")}</span>
                                             )}
                                         </td>
-                                        <td>
-                                            {customer.check_in_message_status === "N" ? (
-                                                <button onClick={() => handleOpenSMSModal(customer, "checkIn2")}>
-                                                    {t("146")}
-                                                </button>
-
-                                                ) : (
-                                                <span>{t("140")}</span>
-                                            )}
-                                        </td>
                                     </tr>
                                 ))}
                                 </tbody>
@@ -406,93 +406,42 @@ function Admin() {
                         </div>
 
                         {/* 체크아웃 탭 */}
-                        <div className={`tab-pane fade ${activeTab === "checkOut" ? "show active" : ""}`} id="checkOut" role="tabpanel">
+                        <div className={`tab-pane fade ${activeTab === "checkOut" ? "show active" : ""}`} id="checkOut"
+                             role="tabpanel">
                             <table>
+                                <colgroup>
+                                    <col width="10%"/>
+                                    <col width="*"/>
+                                    <col width="15%"/>
+                                    <col width="15%"/>
+                                </colgroup>
                                 <thead>
                                 <tr>
                                     <th>{t("133")}</th>
                                     <th>{t("134")}</th>
                                     <th>{t("135")}</th>
                                     <th>{t("129")}</th>
-                                    <th>{t("138")}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {checkOutCustomers.map((customer) => (
                                     <tr key={customer.id}>
                                         <td>{customer.id}</td>
-                                        <td style={{color: isWithinAWeek2(customer.checkOut) ? "red" : "black",}}>
+                                        <td style={{color: isWithinAWeek2(customer.checkOut) ? "red" : "black",textAlign:'left'}}>
                                             {customer.name}
                                         </td>
                                         <td>{customer.room}</td>
                                         <td>{customer.checkOut}</td>
-                                        <td>
-                                            {customer.check_out_message_status === "N" ? (
-                                                <button onClick={() => handleOpenSMSModal(customer, "checkOut2")}>
-                                                    {t("146")}
-                                                </button>
-                                            ) : (
-                                                <span>{t("140")}</span>
-                                            )}
-                                        </td>
                                     </tr>
                                 ))}
                                 </tbody>
                             </table>
                         </div>
                         {/* 달력 탭 */}
-                        <div className={`tab-pane fade ${activeTab === "calendar" ? "show active" : ""}`} id="calendar" role="tabpanel">
-                            <CalendarTab rooms={rooms} bookings={bookings} airbookings={airbookings} />
+                        <div className={`tab-pane fade ${activeTab === "calendar" ? "show active" : ""}`} id="calendar"
+                             role="tabpanel">
+                            <CalendarTab rooms={rooms} bookings={bookings} airbookings={airbookings}/>
                         </div>
-
-                        {showModal && (
-                            <div className="modal show d-block" tabIndex="-1" role="dialog">
-                                <div className="modal-dialog modal-lg" role="document">
-                                    <div className="modal-content">
-                                        <div className="modal-header">
-                                            <h5 className="modal-title">메세지 전송 확인</h5>
-                                        </div>
-                                        <div className="modal-body">
-                                            <div className="mb-3">
-                                                <label>수신자 전화번호</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    value={selectedCustomer?.phone || manualPhone}
-                                                    onChange={(e) => {
-                                                        if (selectedCustomer) {
-                                                            setSelectedCustomer({
-                                                                ...selectedCustomer,
-                                                                phone: e.target.value,
-                                                            });
-                                                        } else {
-                                                            setManualPhone(e.target.value);
-                                                        }
-                                                    }}
-                                                    placeholder="01012345678"
-                                                />
-                                            </div>
-                                            <label>문자 내용</label>
-                                            <textarea
-                                                className="form-control"
-                                                rows="15"
-                                                value={smsContent}
-                                                onChange={(e) => setSmsContent(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                                                취소
-                                            </button>
-                                            <button className="btn btn-primary" onClick={handleSendSMSConfirm}>
-                                                전송
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
                     </div>
                 </div>
             </div>
