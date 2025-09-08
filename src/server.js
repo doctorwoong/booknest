@@ -1,13 +1,19 @@
+// ✅ 환경변수 설정 (서버 관리자 설정 없이 코드에서 직접)
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const { generateContract, sendEmails , sendCheckInEmail, sendCancelEmail} = require("./mail"); // mail.js 호출
+const { generateContract, sendEmails , sendCheckInEmail, sendCancelEmail} = require("./Mail"); // mail.js 호출
 const { sendSMS, sendCancelSMS } = require("./sendSMS");
 const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
     updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./controller/controller');
+
+    // ✅ 환경변수 설정 (서버 관리자 설정 없이 코드에서 직접)
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 // express.json() 또는 body-parser 미들웨어 추가
 app.use(express.json());
