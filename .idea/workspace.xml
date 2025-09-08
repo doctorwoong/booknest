@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="2025.08.22 예약 취소 조건 변경 (전화번호 비교 -&gt; 전화번호 뒷 4자리 비교)" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="30wM22ilkZjzUlxnAliaQAnO7Xx" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;20.19.4&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;20.19.9&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;C:/Users/user/Desktop/work/node-v20.19.4-win-x64/node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.start.executor&quot;: &quot;Run&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\user\Desktop\workspace\booknest\src\template" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.23892.409" />
+        <option value="bundled-js-predefined-d6986cc7102b-e03c56caf84a-JavaScript-IU-252.23892.409" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="" />
+      <created>1754533971868</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1754533971868</updated>
+      <workItem from="1754533988875" duration="610000" />
+      <workItem from="1754534609161" duration="246000" />
+      <workItem from="1754534904904" duration="105000" />
+      <workItem from="1754535019022" duration="201000" />
+      <workItem from="1754535237713" duration="1057000" />
+      <workItem from="1754536328332" duration="14907000" />
+      <workItem from="1754557015158" duration="3931000" />
+      <workItem from="1754613365806" duration="7249000" />
+      <workItem from="1754620758054" duration="23586000" />
+      <workItem from="1754875967880" duration="50000" />
+      <workItem from="1754876194275" duration="1270000" />
+      <workItem from="1754877853647" duration="135000" />
+      <workItem from="1754878771649" duration="2863000" />
+      <workItem from="1754891005061" duration="672000" />
+      <workItem from="1754894253429" duration="668000" />
+      <workItem from="1755061656602" duration="1415000" />
+      <workItem from="1755594330359" duration="4262000" />
+      <workItem from="1755651502345" duration="11000" />
+      <workItem from="1755657918398" duration="51000" />
+      <workItem from="1755680180504" duration="1468000" />
+      <workItem from="1755737157110" duration="1102000" />
+      <workItem from="1755844193559" duration="1223000" />
+    </task>
+    <task id="LOCAL-00001" summary="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중">
+      <option name="closed" value="true" />
+      <created>1754560995365</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1754560995365</updated>
+    </task>
+    <task id="LOCAL-00002" summary="2025.08.08 이메일 전송 문자 전송 수정 완료">
+      <option name="closed" value="true" />
+      <created>1754644396664</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1754644396664</updated>
+    </task>
+    <task id="LOCAL-00003" summary="2025.08.08 배포용 서버 파일 변경">
+      <option name="closed" value="true" />
+      <created>1754648006946</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1754648006946</updated>
+    </task>
+    <task id="LOCAL-00004" summary="2025.08.13 Detail.js 지도API 기본 위치 하드코딩">
+      <option name="closed" value="true" />
+      <created>1755062952876</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1755062952876</updated>
+    </task>
+    <task id="LOCAL-00005" summary="2025.08.19 달력 탭 세로 스크롤 구현">
+      <option name="closed" value="true" />
+      <created>1755598616759</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1755598616759</updated>
+    </task>
+    <task id="LOCAL-00006" summary="2025.08.22 예약 취소 조건 변경 (전화번호 비교 -&gt; 전화번호 뒷 4자리 비교)">
+      <option name="closed" value="true" />
+      <created>1755845419573</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1755845419573</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중" />
+    <MESSAGE value="2025.08.08 이메일 전송 문자 전송 수정 완료" />
+    <MESSAGE value="2025.08.08 배포용 서버 파일 변경" />
+    <MESSAGE value="2025.08.13 Detail.js 지도API 기본 위치 하드코딩" />
+    <MESSAGE value="2025.08.19 달력 탭 세로 스크롤 구현" />
+    <MESSAGE value="2025.08.22 예약 취소 조건 변경 (전화번호 비교 -&gt; 전화번호 뒷 4자리 비교)" />
+    <option name="LAST_COMMIT_MESSAGE" value="2025.08.22 예약 취소 조건 변경 (전화번호 비교 -&gt; 전화번호 뒷 4자리 비교)" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/SYS/Admin.js</url>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
