@@ -86,27 +86,47 @@ app.post("/send-check-in-email", async (req, res) => {
     }
 });
 
-// app.post("/send-check-in-sms", async (req, res) => {
-//     const { phone, message,imgUrl, isInternational } = req.body;
-//     console.log("보낼 휴대폰번호 : ",phone);
-//     console.log("보낼 메세지 내용 : ",message);
-//     console.log("바디에 뭐들엇냐 : ",req.body);
-//
-//     try {
-//         const result = await sendSMS({
-//             to: phone,
-//             content: message, // 줄바꿈 HTML → 문자용
-//             imgUrl : imgUrl,
-//             isInternational : isInternational ?? true
-//         });
-//
-//         res.json({ success: true, result });
-//     } catch (error) {
-//         console.error("SMS 전송 실패:", error.response?.data || error.message);
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
+app.post("/send-check-in-sms", async (req, res) => {
+    const { phone, message, imgUrl } = req.body;
+    console.log("보낼 휴대폰번호 : ",phone);
+    console.log("보낼 메세지 내용 : ",message);
+    console.log("바디에 뭐들엇냐 : ",req.body);
 
+    try {
+        const result = await sendSMS({
+            to: phone,
+            content: message, // 줄바꿈 HTML → 문자용
+            imgUrl : imgUrl
+        });
+
+        res.json({ success: true, result });
+    } catch (error) {
+        console.error("SMS 전송 실패:", error.response?.data || error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ✅ 예약 취소 이메일 전송
+app.post("/send-cancel-email", async (req, res) => {
+    try {
+        await sendCancelEmail(req.body);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ✅ 예약 취소 SMS 전송
+app.post("/send-cancel-sms", async (req, res) => {
+    try {
+        await sendCancelSMS(req.body);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
 
 // 📌 기타 API 라우트 설정
 app.post('/MainSearch', getMainRoom);
@@ -133,7 +153,31 @@ app.post('/updateReservationMailStatus', updateReservationMailStatus);
 app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
 app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
 
+// ✅ iCal 내보내기 엔드포인트
+const { generateAndSaveIcal } = require('./controller/bookingSync');
 
+app.get('/export-ical/:roomNumber?', async (req, res) => {
+    try {
+        const { roomNumber } = req.params;
+        const result = await generateAndSaveIcal(roomNumber);
+        
+        if (!result) {
+            return res.status(404).json({ error: '내보낼 예약이 없습니다.' });
+        }
+
+        // 생성된 파일을 직접 응답으로 전송
+        const fs = require('fs');
+        const fileContent = fs.readFileSync(result.filePath, 'utf8');
+        
+        res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+        res.send(fileContent);
+
+    } catch (error) {
+        console.error('iCal 내보내기 오류:', error);
+        res.status(500).json({ error: 'iCal 내보내기 실패' });
+    }
+});
 
 const PORT = 30022;
 app.listen(PORT, () => console.log(`🚀 Proxy server running on port ${PORT}`));

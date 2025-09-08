@@ -526,8 +526,8 @@ const getCalendarAdmin = async (req, res) => {
         const query = `
             SELECT
                 reserved_room_number AS room,
-                DATE_FORMAT(DATE_SUB(STR_TO_DATE(check_in, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_in,
-                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out
+                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out
             FROM CustomerInfo
             WHERE MDFY_ID != 'booking' AND MDFY_ID != 'batch'
         `;
@@ -545,8 +545,8 @@ const getCalendarAirbnb = async (req, res) => {
         const query = `
             SELECT
                 reserved_room_number AS room,
-                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
-                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out,
+                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_in, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out,
                 DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i') AS REG_DTM
             FROM CustomerInfo
             WHERE MDFY_ID = 'booking' OR MDFY_ID = 'batch'

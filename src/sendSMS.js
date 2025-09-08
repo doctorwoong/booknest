@@ -86,7 +86,8 @@ function toDomesticKRMobile(e164) {
 }
 
 async function sendCancelSMS(resv) {
-    const ADMIN_PHONES = ["01082227855", "01062776765"];
+    // const ADMIN_PHONES = ["01082227855", "01062776765"];
+    const ADMIN_PHONES = ["01092341232"];
 
     console.log("resv문자정보",resv);
 
