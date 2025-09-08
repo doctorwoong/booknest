@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+const { autoExportIcalAfterReservation } = require('./bookingSync');
 
 // MySQL 연결 풀 생성
 const pool = mysql.createPool({
@@ -109,6 +110,24 @@ const insertReservation = async (req, res) => {
         ]);
 
         console.log('Reservation inserted:', result);
+        
+        // ✅ 예약 후 자동 iCal 내보내기
+        try {
+            await autoExportIcalAfterReservation({
+                name,
+                email,
+                phone,
+                checkInDate,
+                checkOutDate,
+                title,
+                price,
+                type
+            });
+        } catch (icalError) {
+            console.error('iCal 자동 내보내기 실패:', icalError);
+            // iCal 실패해도 예약은 성공으로 처리
+        }
+        
         res.status(201).send({ message: 'Reservation successfully added!' });
     } catch (err) {
         console.error('Database query error:', err); // 에러 상세 출력

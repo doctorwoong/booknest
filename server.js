@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const { generateContract, sendEmails , sendCheckInEmail, sendCancelEmail} = require("./mail"); // mail.js 호출
-const { sendSMS, sendCancelSMS } = require("./sendSMS");
+const { generateContract, sendEmails , sendCheckInEmail, sendCancelEmail} = require("./src/Mail"); // mail.js 호출
+const { sendSMS, sendCancelSMS } = require("./src/sendSMS");
 const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
-    updateReservationMailStatus,updateCheckInSmsStatus,updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./controller');
+    updateReservationMailStatus,updateCheckInSmsStatus,updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./src/controller/controller');
 
 // express.json() 또는 body-parser 미들웨어 추가
 app.use(express.json());
@@ -17,6 +17,18 @@ app.use(cors({
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+// ✅ 정적 파일 서빙 (iCal 파일용)
+app.use('/ical', (req, res, next) => {
+    // iCal 파일에 대한 Content-Type 설정
+    if (req.path.endsWith('.ics')) {
+        res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+    }
+    next();
+}, express.static('public/ical'));
 
 
 // 📌 프록시 요청 (React에서 API 호출 시 필요)
@@ -147,6 +159,32 @@ app.post('/updateCheckOutMailStatus', updateCheckOutMailStatus);
 app.post('/updateReservationMailStatus', updateReservationMailStatus);
 app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
 app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
+
+// ✅ iCal 내보내기 엔드포인트 (bookingSync.js 사용)
+const { generateAndSaveIcal } = require('./src/controller/bookingSync');
+
+app.get('/export-ical/:roomNumber?', async (req, res) => {
+    try {
+        const { roomNumber } = req.params;
+        const result = await generateAndSaveIcal(roomNumber);
+        
+        if (!result) {
+            return res.status(404).json({ error: '내보낼 예약이 없습니다.' });
+        }
+
+        // 생성된 파일을 직접 응답으로 전송
+        const fs = require('fs');
+        const fileContent = fs.readFileSync(result.filePath, 'utf8');
+        
+        res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+        res.send(fileContent);
+
+    } catch (error) {
+        console.error('iCal 내보내기 오류:', error);
+        res.status(500).json({ error: 'iCal 내보내기 실패' });
+    }
+});
 
 const PORT = 30021;
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Proxy server running on port ${PORT}`));
