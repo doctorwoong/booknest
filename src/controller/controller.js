@@ -529,7 +529,7 @@ const getCalendarAdmin = async (req, res) => {
                 DATE_FORMAT(DATE_SUB(STR_TO_DATE(check_in, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_in,
                 DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out
             FROM CustomerInfo
-            WHERE MDFY_ID != 'batch'
+            WHERE MDFY_ID != 'booking' AND MDFY_ID != 'batch'
         `;
         const [rows] = await pool.query(query);
         res.status(200).json(rows);
@@ -549,7 +549,7 @@ const getCalendarAirbnb = async (req, res) => {
                 DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out,
                 DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i') AS REG_DTM
             FROM CustomerInfo
-            WHERE MDFY_ID = 'batch'
+            WHERE MDFY_ID = 'booking' OR MDFY_ID = 'batch'
             order by customer_id desc
         `;
         const [rows] = await pool.query(query);

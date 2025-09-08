@@ -26,7 +26,8 @@ const roomList = [
     { id: 12, name: 'N306' },
     { id: 13, name: 'N307' },
     { id: 14, name: 'N203' },
-    { id: 15, name: 'N207' }
+    { id: 15, name: 'N207' },
+    { id: 16, name: 'N301' }
 ];
 
 // ✅ Booking.com 숙소 리스트 (iCal URL만 사용)
@@ -45,7 +46,8 @@ const bookingListings = [
     { id: 12, name: 'N306', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c669d6fe-66ae-4dbd-8e8a-5238c67dcaaf" },
     { id: 13, name: 'N307', bookingIcalUrl: "https://ical.booking.com/v1/export?t=cb9785c5-513e-4588-8d9b-dc51eddca58e" },
     { id: 14, name: 'N203', bookingIcalUrl: "https://ical.booking.com/v1/export?t=d140a2b7-b3f5-4148-b2d6-09b727dc9585" },
-    { id: 15, name: 'N207', bookingIcalUrl: "https://ical.booking.com/v1/export?t=6757631a-ce0c-4458-80f8-e286ecee7ca6" }
+    { id: 15, name: 'N207', bookingIcalUrl: "https://ical.booking.com/v1/export?t=6757631a-ce0c-4458-80f8-e286ecee7ca6" },
+    { id: 16, name: 'N301', bookingIcalUrl: "https://ical.booking.com/v1/export?t=be72ae8b-c9f8-4eef-8904-e9287d99e8ca" }
     // 실제 booking.com iCal URL을 여기에 추가하세요
 ];
 
@@ -92,9 +94,16 @@ const fetchAndStoreBookingBookings = async () => {
                 let checkIn, checkOut, guestName = 'batch', guestEmail = '', guestPhone = '';
 
                 if (reservation.start && reservation.end) {
-                    // iCal 형식
-                    checkIn = new Date(reservation.start).toISOString().split("T")[0].replace(/-/g, '');
-                    checkOut = new Date(reservation.end).toISOString().split("T")[0].replace(/-/g, '');
+                    // ✅ 한국 시간대 고려한 날짜 변환
+                    const startDate = new Date(reservation.start);
+                    const endDate = new Date(reservation.end);
+                    
+                    // 한국 시간대로 변환 (UTC+9)
+                    const koreaStart = new Date(startDate.getTime() + (9 * 60 * 60 * 1000));
+                    const koreaEnd = new Date(endDate.getTime() + (9 * 60 * 60 * 1000));
+                    
+                    checkIn = koreaStart.toISOString().split("T")[0].replace(/-/g, '');
+                    checkOut = koreaEnd.toISOString().split("T")[0].replace(/-/g, '');
                 } else {
                     continue;
                 }
@@ -174,8 +183,8 @@ X-WR-TIMEZONE:Asia/Seoul
         icalContent += `BEGIN:VEVENT
 UID:${uid}
 DTSTAMP:${dtstamp}
-DTSTART;VALUE=DATE:${startDate}
-DTEND;VALUE=DATE:${endDate}
+DTSTART;TZID=Asia/Seoul:${startDate.substring(0,4)}${startDate.substring(4,6)}${startDate.substring(6,8)}T000000
+DTEND;TZID=Asia/Seoul:${endDate.substring(0,4)}${endDate.substring(4,6)}${endDate.substring(6,8)}T000000
 SUMMARY:${summary}
 DESCRIPTION:${description}
 STATUS:CONFIRMED

@@ -172,8 +172,7 @@ const Detail = () => {
                     for (const phone of recipients) {
                         await apiRequest("/send-check-in-sms", "POST", {
                             phone: phone,
-                            message: message,
-                            isInternational: false
+                            message: message
                         });
                     }
                     console.log("✅ 예약 신청 SMS 전송 완료");

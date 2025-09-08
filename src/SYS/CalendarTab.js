@@ -191,7 +191,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [] }) {
         };
     }, [rooms.length]);
 
-    /** ----- 휠 가로 전환: 세로 스크롤 가능할 땐 개입 금지 ----- */
+    /** ----- 휠 가로 전환: 개선된 휠 스크롤 ----- */
     useEffect(() => {
         const horiz = scrollRef.current;
         if (!horiz) return;
@@ -199,16 +199,32 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [] }) {
         const onWheel = (e) => {
             const wrap = wrapperRef.current;
             const canVertScroll = wrap && wrap.scrollHeight > wrap.clientHeight;
-
-            // ✅ 세로 스크롤 가능한 상황이면 건드리지 않음
-            if (canVertScroll) return;
-
-            // 일부러 가로로만 굴리려면 Shift와 함께
-            if (e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            
+            // Shift 키를 누르면 무조건 가로 스크롤
+            if (e.shiftKey) {
                 horiz.scrollLeft += e.deltaY;
                 e.preventDefault();
+                return;
             }
+            
+            // 세로 스크롤이 가능하고, 세로 스크롤이 맨 위/아래에 도달하지 않은 경우
+            if (canVertScroll) {
+                const isAtTop = wrap.scrollTop <= 0;
+                const isAtBottom = wrap.scrollTop >= wrap.scrollHeight - wrap.clientHeight;
+                
+                // 위/아래 끝에 도달했을 때만 가로 스크롤 허용
+                if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
+                    horiz.scrollLeft += e.deltaY;
+                    e.preventDefault();
+                }
+                return;
+            }
+            
+            // 세로 스크롤이 불가능한 경우 가로 스크롤
+            horiz.scrollLeft += e.deltaY;
+            e.preventDefault();
         };
+        
         horiz.addEventListener("wheel", onWheel, { passive: false });
         return () => horiz.removeEventListener("wheel", onWheel);
     }, []);

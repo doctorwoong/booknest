@@ -99,7 +99,7 @@ app.post("/send-check-in-email", async (req, res) => {
 });
 
 app.post("/send-check-in-sms", async (req, res) => {
-    const { phone, message,imgUrl, isInternational } = req.body;
+    const { phone, message, imgUrl } = req.body;
     console.log("보낼 휴대폰번호 : ",phone);
     console.log("보낼 메세지 내용 : ",message);
     console.log("바디에 뭐들엇냐 : ",req.body);
@@ -108,8 +108,7 @@ app.post("/send-check-in-sms", async (req, res) => {
         const result = await sendSMS({
             to: phone,
             content: message, // 줄바꿈 HTML → 문자용
-            imgUrl : imgUrl,
-            isInternational : isInternational ?? true
+            imgUrl : imgUrl
         });
 
         res.json({ success: true, result });

@@ -289,6 +289,25 @@ const sendCheckInEmail = async (customerEmail, title) => {
                 "Please find attached picture for your reference.<br>" +
                 "Have a good day. ";
             break;
+        case "N301":
+            contents = "Hello. <br>" +
+                "I am  the host who runs the accommodation you booked.<br>" +
+                "<br>" +
+                "The address  of the studio is \"25, Manyang-ro 14ma-gil, Dongjak-gu, Seoul, Republic of Korea\".<br>" +
+                "Zip code is 06914.<br>" +
+                "Please find exit no. 3 at Noryangjin subway station in line 9. <br>" +
+                "You can find the studio in a map application with the address.<br>" +
+                "For your reference, the address in Korean is \"서울시 동작구 만양로14마길 25\" <br>" +
+                "<br>" +
+                "I inform you of the information about the room in advance.<br>" +
+                "Your room number is 301 and the door lock password is 0525*. <br>" +
+                "Lift up the doorlock cover and press the password and press down the cover.<br>" +
+                "Wifi is iptime301, and  the password is \"iptime301st\".<br>" +
+                "For your reference, I explain how to find the studio.<br>" +
+                "Please find exit no. 3 at Norangjin subway station in line 9. Turn to the right. The direction is for Yongsan and Hanriver bringe, and go straight about 500m, and when you find Ediya coffee shop on the right, turn to the right and go straight about 100m. When you see \"Coffee namu(커피나무)\" coffee shop, turn to the left, and go up 150m. When you see \"Hyerimjae\" building, turn to the right. You can find the studio on the right. <br>" +
+                "Please find attached picture for your reference.<br>" +
+                "Have a good day.";
+            break;
         case "C302":
             contents = "Hello. <br>" +
                 "I am  the host who runs the accommodation you booked.<br>" +

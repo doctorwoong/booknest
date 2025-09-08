@@ -31,17 +31,13 @@ async function getAccessToken() {
  * @param {string} param.to - 수신자 번호
  * @param {string} [param.from="16661734"] - 발신 번호
  * @param {string} param.content - 메시지 내용
- * @param {boolean} [param.isInternational=false] - 국제문자인지 여부
  */
-async function sendSMS({ to, from = "16661734", content, isInternational }) {
+async function sendSMS({ to, from = "16661734", content }) {
     try {
         const token = await getAccessToken();
         console.log("수신자 번호:", to);
-        console.log("국제문자 여부?:", isInternational);
 
-        const url = isInternational
-            ? `${OMNI_API_BASE_URL}/v1/send/international`
-            : `${OMNI_API_BASE_URL}/v1/send/sms`;
+        const url = `${OMNI_API_BASE_URL}/v1/send/sms`;
 
         console.log("호출 endpoint:", url);
 

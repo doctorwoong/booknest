@@ -37,6 +37,7 @@ function Admin() {
         {id : 4, name: 'C302'},
         {id : 5, name: 'C305'},
         {id : 6, name: 'C402'},
+        {id : 7, name: 'N301'},
         {id : 8, name: 'N103'},
         {id : 9, name: 'N202'},
         {id : 10, name: 'R102'},
@@ -341,6 +342,7 @@ function Admin() {
                                         <td>{customer.title}</td>
                                         <td>{customer.checkIn}</td>
                                         <td>{customer.checkOut}</td>
+                                        <td>₩{customer.price?.toLocaleString() || '0'}</td>
                                         <td>
                                             <span style={customer.type === 'cash' ? {
                                                 backgroundColor: '#e0f3ff',
