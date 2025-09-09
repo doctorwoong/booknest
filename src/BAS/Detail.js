@@ -20,7 +20,7 @@ const Detail = () => {
     const [totalPrice2, setTotalPrice2] = useState(0);
     const [reviews, setReviews] = useState([]);
     const [showPayPal, setShowPayPal] = useState(false);
-    const [paymentType, setPaymentType] = useState("");
+    // const [paymentType, setPaymentType] = useState("");
 
 
     let url = `/resource/img/${room_number}/`;
@@ -80,7 +80,7 @@ const Detail = () => {
                         map.setCenter(coords);
 
                         // 마커 생성
-                        const marker = new window.kakao.maps.Marker({
+                        new window.kakao.maps.Marker({
                             position: coords,
                             map: map,
                         });
@@ -164,9 +164,73 @@ const Detail = () => {
             if (insertResponse) {
                 // ✅ 예약 신청 시 사장님께 SMS 전송
                 try {
-                    const message = `[노량진 스튜디오] ${formData.name}님이 예약하셨습니다.\n객실: ${room_number}\n체크인: ${formatDate(checkInDate)}\n체크아웃: ${formatDate(checkOutDate)}\n결제방식: ${type === 'cash' ? '현금' : '카드'}\n가격: ₩${selectedPrice.toLocaleString()}`;
+                    const getByteLength = (str) => {
+                        return str.replace(/[^\u0000-\u007F]/g, "**").length;
+                    };
                     
-                    const recipients = ["01082227855", "01062776765"];
+                        const createReservationMessage = (name, price, checkIn, checkOut, room) => {
+                            // 객실 정보 제거로 바이트 절약 (90바이트 제한 고려)
+                            const baseMessage = `[예약안내]\n고객: ${name}\n금액: ${price.toLocaleString()}원\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
+                        
+                        console.log("🔍 [예약 SMS] 입력 데이터:", { name, price, checkIn, checkOut, room });
+                        console.log("🔍 [예약 SMS] 기본 메시지:", baseMessage);
+                        console.log("🔍 [예약 SMS] 바이트 길이:", getByteLength(baseMessage));
+                        
+                        // 90바이트 이내면 그대로 반환
+                        if (getByteLength(baseMessage) <= 90) {
+                            console.log("✅ [예약 SMS] 90바이트 이내, 그대로 사용");
+                            return baseMessage;
+                        }
+                        
+                        // 90바이트 초과시 이름을 자르기
+                        console.log("⚠️ [예약 SMS] 90바이트 초과, 이름 자르기 시작");
+                        
+                        const nameTruncate = (name, maxBytes) => {
+                            let result = '';
+                            for (let i = 0; i < name.length; i++) {
+                                const test = result + name[i];
+                                if (getByteLength(test) > maxBytes) break;
+                                result = test;
+                            }
+                            return result + '...';
+                        };
+                        
+                        // 이름을 점진적으로 자르면서 90바이트 이내로 맞추기
+                        for (let nameLength = name.length; nameLength > 0; nameLength--) {
+                            const truncatedName = nameTruncate(name, nameLength);
+                            const testMessage = `[예약안내]\n고객: ${truncatedName}\n금액: ${price.toLocaleString()}원\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
+                            
+                            console.log(`🔍 [예약 SMS] 이름 길이 ${nameLength} 테스트:`, truncatedName, "바이트:", getByteLength(testMessage));
+                            
+                            if (getByteLength(testMessage) <= 90) {
+                                console.log("✅ [예약 SMS] 90바이트 이내 달성, 최종 메시지:", testMessage);
+                                return testMessage;
+                            }
+                        }
+                        
+                        // 최악의 경우 기본 메시지 반환
+                        const fallbackMessage = `[예약안내]\n고객: ...\n금액: ${price.toLocaleString()}원\n객실: ${room}\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
+                        console.log("⚠️ [예약 SMS] 최악의 경우 메시지:", fallbackMessage);
+                        return fallbackMessage;
+                    };
+                    
+                    const formatFullDate = (dateStr) => {
+                        const year = dateStr.substring(0, 4);
+                        const month = dateStr.substring(4, 6);
+                        const day = dateStr.substring(6, 8);
+                        return `${year}-${month}-${day}`;
+                    };
+                    
+                    const message = createReservationMessage(
+                        formData.name,
+                        selectedPrice,
+                        formatFullDate(checkInDate),
+                        formatFullDate(checkOutDate),
+                        room_number
+                    );
+                    
+                    //const recipients = ["01082227855", "01062776765"];
+                    const recipients = ["01092341232"];
                     
                     // 번호 배열을 돌면서 문자 보내기
                     for (const phone of recipients) {
@@ -182,14 +246,14 @@ const Detail = () => {
                 }
 
                 alert(t("66"));
-                navigate("/");
+                window.location.href = "/";
             } else {
                 alert(t("67"));
-                navigate("/");
+                window.location.href = "/";
             }
         } catch (error) {
             console.error("Error:", error);
-            navigate("/");
+            window.location.href = "/";
         } finally {
             setIsLoading(false); // 로딩 종료
         }
@@ -404,7 +468,7 @@ const Detail = () => {
                                                 alert(t("한국 발행카드는 카드결제가 불가하니 체크인시 현금 결제 바랍니다."));
                                                 return;
                                             }
-                                            setPaymentType("card");
+                                            // setPaymentType("card");
                                             setShowPayPal(true);
 
                                         }}

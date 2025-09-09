@@ -2,8 +2,8 @@ const axios = require("axios");
 const request = require("request");
 
 const OMNI_API_BASE_URL = "https://omni.ibapi.kr";
-const USER_NAME = "admi_om_61697p63";
-const PASSWORD = "ZPCX6DQ6FLEVFKKQHMLU";
+const USER_NAME = "admi_om_16517nw2";
+const PASSWORD = "P6E62SKJGF21FMUO2RDQ";
 
 /**
  * 📌 Access Token 발급 함수
@@ -89,8 +89,6 @@ async function sendCancelSMS(resv) {
     // const ADMIN_PHONES = ["01082227855", "01062776765"];
     const ADMIN_PHONES = ["01092341232"];
 
-    console.log("resv문자정보",resv);
-
     const {
         name,
         reserved_room_number: room,
@@ -98,13 +96,59 @@ async function sendCancelSMS(resv) {
         check_out,
     } = resv || {};
 
-    const text =
-        `[예약 취소]\n` +
-        `고객: ${name ?? "-"}\n` +
-        `객실: ${room ?? "-"}\n` +
-        `체크인: ${check_in ?? "-"} /\n 체크아웃: ${check_out ?? "-"}`;
+    const getByteLength = (str) => {
+        return str.replace(/[^\x00-\x7F]/g, "**").length;
+    };
+    
+    const createCancelMessage = (name, room, checkIn, checkOut) => {
+        const baseMessage = `[예약취소]\n고객: ${name}\n객실: ${room}\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
+        
+        // 90바이트 이내면 그대로 반환
+        if (getByteLength(baseMessage) <= 90) {
+            return baseMessage;
+        }
+        
+        // 90바이트 초과시 이름을 자르기
+        const nameTruncate = (name, maxBytes) => {
+            let result = '';
+            for (let i = 0; i < name.length; i++) {
+                const test = result + name[i];
+                if (getByteLength(test) > maxBytes) break;
+                result = test;
+            }
+            return result + '...';
+        };
+        
+        // 이름을 점진적으로 자르면서 90바이트 이내로 맞추기
+        for (let nameLength = name.length; nameLength > 0; nameLength--) {
+            const truncatedName = nameTruncate(name, nameLength);
+            const testMessage = `[예약취소]\n고객: ${truncatedName}\n객실: ${room}\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
+            
+            if (getByteLength(testMessage) <= 90) {
+                return testMessage;
+            }
+        }
+        
+        // 최악의 경우 기본 메시지 반환
+        return `[예약취소]\n고객: ...\n객실: ${room}\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
+    };
+    
+    const formatFullDate = (dateStr) => {
+        if (!dateStr || dateStr === "-") return "-";
+        const year = dateStr.substring(0, 4);
+        const month = dateStr.substring(4, 6);
+        const day = dateStr.substring(6, 8);
+        return `${year}-${month}-${day}`;
+    };
+    
+    const text = createCancelMessage(
+        name ?? "-",
+        room ?? "-",
+        formatFullDate(check_in),
+        formatFullDate(check_out)
+    );
 
-    return await sendSMS({ to: ADMIN_PHONES, content: text });
+    return await sendSMS({ to: ADMIN_PHONES[0], content: text });
 }
 
 module.exports = {

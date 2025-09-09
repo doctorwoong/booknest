@@ -163,7 +163,6 @@ const Main = () => {
             try {
                 const mailOk = await apiRequest("/send-cancel-email", "POST", selectedReservation);
                 if (!mailOk) throw new Error("cancel email failed");
-                console.log("✅ 취소 이메일 전송 성공");
             } catch (mailError) {
                 console.error("❌ 취소 이메일 전송 실패:", mailError);
                 // 이메일 실패해도 예약 취소는 계속 진행
@@ -173,7 +172,6 @@ const Main = () => {
             try {
                 const smsOk = await apiRequest("/send-cancel-sms", "POST", selectedReservation);
                 if (!smsOk) throw new Error("cancel sms failed");
-                console.log("✅ 취소 SMS 전송 성공");
             } catch (smsError) {
                 console.error("❌ 취소 SMS 전송 실패:", smsError);
                 // SMS 실패해도 예약 취소는 계속 진행
