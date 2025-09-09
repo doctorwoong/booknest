@@ -1,14 +1,16 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const cron = require("node-cron");
 const ical = require("node-ical");
 const mysql = require("mysql2/promise");
 
 // ✅ MySQL 연결 설정
 const db = mysql.createPool({
-    host: '211.254.214.79',
-    user: 'aiabnb',
-    password: 'Rkwoaos12!@',
-    database: 'airbnb',
-    timezone: '+09:00'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    timezone: process.env.DB_TIMEZONE
 });
 
 // ✅ 현재 운영 중인 방 목록

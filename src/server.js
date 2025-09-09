@@ -1,5 +1,7 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 // ✅ 환경변수 설정 (서버 관리자 설정 없이 코드에서 직접)
-process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const express = require('express');
 const cors = require('cors');

@@ -1,9 +1,11 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const axios = require("axios");
 const request = require("request");
 
-const OMNI_API_BASE_URL = "https://omni.ibapi.kr";
-const USER_NAME = "admi_om_16517nw2";
-const PASSWORD = "P6E62SKJGF21FMUO2RDQ";
+const OMNI_API_BASE_URL = process.env.SMS_API_BASE_URL;
+const USER_NAME = process.env.SMS_USER_NAME;
+const PASSWORD = process.env.SMS_PASSWORD;
 
 /**
  * 📌 Access Token 발급 함수
@@ -32,7 +34,7 @@ async function getAccessToken() {
  * @param {string} [param.from="16661734"] - 발신 번호
  * @param {string} param.content - 메시지 내용
  */
-async function sendSMS({ to, from = "16661734", content }) {
+async function sendSMS({ to, from = process.env.SMS_FROM_NUMBER || "16661734", content }) {
     try {
         const token = await getAccessToken();
         // console.log("수신자 번호:", to);
@@ -86,7 +88,14 @@ function toDomesticKRMobile(e164) {
 }
 
 async function sendCancelSMS(resv) {
-    const ADMIN_PHONES = ["01082227855", "01062776765"];
+    // 환경변수에서 전화번호 가져오기 (개발/운영 환경 구분)
+    const adminPhonesEnv = process.env.NODE_ENV === 'production' 
+        ? process.env.ADMIN_PHONES 
+        : process.env.ADMIN_PHONES_DEV;
+    
+    const ADMIN_PHONES = adminPhonesEnv 
+        ? adminPhonesEnv.split(',').map(phone => phone.trim())
+        : ["01082227855", "01062776765"]; // 기본값
 
     const {
         name,

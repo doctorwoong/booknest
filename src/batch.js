@@ -1,13 +1,15 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const cron = require("node-cron");
 const ical = require("node-ical");
 const mysql = require("mysql2/promise");
 
 const db = mysql.createPool({
-    host: '211.254.214.79',
-    user: 'aiabnb',
-    password: 'Rkwoaos12!@',
-    database: 'airbnb',
-    timezone: '+09:00', // DB 타임존은 상관없음(우린 날짜 문자열만 저장)
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    timezone: process.env.DB_TIMEZONE, // DB 타임존은 상관없음(우린 날짜 문자열만 저장)
 });
 
 // iCal 원본 날짜를 그대로 YYYYMMDD로 (UTC 파트 사용)

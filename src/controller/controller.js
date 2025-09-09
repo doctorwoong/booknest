@@ -1,13 +1,15 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const mysql = require('mysql2/promise');
 const { autoExportIcalAfterReservation } = require('./bookingSync');
 
 // MySQL 연결 풀 생성
 const pool = mysql.createPool({
-    host: '211.254.214.79',
-    user: 'aiabnb',
-    password: 'Rkwoaos12!@',
-    database: 'airbnb',
-    timezone: '+09:00'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    timezone: process.env.DB_TIMEZONE
 });
 
 (async () => {
