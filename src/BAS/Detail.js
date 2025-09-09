@@ -229,8 +229,7 @@ const Detail = () => {
                         room_number
                     );
                     
-                    //const recipients = ["01082227855", "01062776765"];
-                    const recipients = ["01092341232"];
+                    const recipients = ["01082227855", "01062776765"];
                     
                     // 번호 배열을 돌면서 문자 보내기
                     for (const phone of recipients) {

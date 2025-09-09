@@ -92,8 +92,7 @@ function ReservationForm() {
                 try {
                     const message = `[노량진 스튜디오] ${formData.name}님이 예약하셨습니다.\n객실: ${room_number}\n체크인: ${formatDate(checkInDate)}\n체크아웃: ${formatDate(checkOutDate)}\n가격: ₩${totalPrice.toLocaleString()}`;
                     
-                    // const recipients = ["01082227855", "01062776765"];
-                    const recipients = ["01092341232"];
+                    const recipients = ["01082227855", "01062776765"];
                     
                     // 번호 배열을 돌면서 문자 보내기
                     for (const phone of recipients) {
