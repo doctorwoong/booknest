@@ -88,9 +88,9 @@ app.post("/send-check-in-email", async (req, res) => {
 
 app.post("/send-check-in-sms", async (req, res) => {
     const { phone, message, imgUrl } = req.body;
-    console.log("보낼 휴대폰번호 : ",phone);
-    console.log("보낼 메세지 내용 : ",message);
-    console.log("바디에 뭐들엇냐 : ",req.body);
+    // console.log("보낼 휴대폰번호 : ",phone);
+    // console.log("보낼 메세지 내용 : ",message);
+    // console.log("바디에 뭐들엇냐 : ",req.body);
 
     try {
         const result = await sendSMS({

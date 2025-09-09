@@ -35,11 +35,11 @@ async function getAccessToken() {
 async function sendSMS({ to, from = "16661734", content }) {
     try {
         const token = await getAccessToken();
-        console.log("수신자 번호:", to);
+        // console.log("수신자 번호:", to);
 
         const url = `${OMNI_API_BASE_URL}/v1/send/sms`;
 
-        console.log("호출 endpoint:", url);
+        // console.log("호출 endpoint:", url);
 
         const payload = {
             from: from,
@@ -62,7 +62,7 @@ async function sendSMS({ to, from = "16661734", content }) {
         return new Promise((resolve, reject) => {
             request(options, function (error, response, body) {
                 if (error) return reject(error);
-                console.log("✅ 문자 전송 응답:", body);
+                // console.log("✅ 문자 전송 응답:", body);
                 try {
                     resolve(JSON.parse(body));
                 } catch (e) {

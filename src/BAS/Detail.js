@@ -172,18 +172,18 @@ const Detail = () => {
                             // 객실 정보 제거로 바이트 절약 (90바이트 제한 고려)
                             const baseMessage = `[예약안내]\n고객: ${name}\n금액: ${price.toLocaleString()}원\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
                         
-                        console.log("🔍 [예약 SMS] 입력 데이터:", { name, price, checkIn, checkOut, room });
-                        console.log("🔍 [예약 SMS] 기본 메시지:", baseMessage);
-                        console.log("🔍 [예약 SMS] 바이트 길이:", getByteLength(baseMessage));
+                        // console.log("🔍 [예약 SMS] 입력 데이터:", { name, price, checkIn, checkOut, room });
+                        // console.log("🔍 [예약 SMS] 기본 메시지:", baseMessage);
+                        // console.log("🔍 [예약 SMS] 바이트 길이:", getByteLength(baseMessage));
                         
                         // 90바이트 이내면 그대로 반환
                         if (getByteLength(baseMessage) <= 90) {
-                            console.log("✅ [예약 SMS] 90바이트 이내, 그대로 사용");
+                            // console.log("✅ [예약 SMS] 90바이트 이내, 그대로 사용");
                             return baseMessage;
                         }
                         
                         // 90바이트 초과시 이름을 자르기
-                        console.log("⚠️ [예약 SMS] 90바이트 초과, 이름 자르기 시작");
+                        // console.log("⚠️ [예약 SMS] 90바이트 초과, 이름 자르기 시작");
                         
                         const nameTruncate = (name, maxBytes) => {
                             let result = '';
@@ -200,17 +200,17 @@ const Detail = () => {
                             const truncatedName = nameTruncate(name, nameLength);
                             const testMessage = `[예약안내]\n고객: ${truncatedName}\n금액: ${price.toLocaleString()}원\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
                             
-                            console.log(`🔍 [예약 SMS] 이름 길이 ${nameLength} 테스트:`, truncatedName, "바이트:", getByteLength(testMessage));
+                            // console.log(`🔍 [예약 SMS] 이름 길이 ${nameLength} 테스트:`, truncatedName, "바이트:", getByteLength(testMessage));
                             
                             if (getByteLength(testMessage) <= 90) {
-                                console.log("✅ [예약 SMS] 90바이트 이내 달성, 최종 메시지:", testMessage);
+                                // console.log("✅ [예약 SMS] 90바이트 이내 달성, 최종 메시지:", testMessage);
                                 return testMessage;
                             }
                         }
                         
                         // 최악의 경우 기본 메시지 반환
-                        const fallbackMessage = `[예약안내]\n고객: ...\n금액: ${price.toLocaleString()}원\n객실: ${room}\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
-                        console.log("⚠️ [예약 SMS] 최악의 경우 메시지:", fallbackMessage);
+                        const fallbackMessage = `[예약안내]\n고객: ...\n금액: ${price.toLocaleString()}원\n체크인: ${checkIn}\n체크아웃: ${checkOut}`;
+                        // console.log("⚠️ [예약 SMS] 최악의 경우 메시지:", fallbackMessage);
                         return fallbackMessage;
                     };
                     
