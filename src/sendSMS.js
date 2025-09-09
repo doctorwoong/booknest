@@ -148,7 +148,20 @@ async function sendCancelSMS(resv) {
         formatFullDate(check_out)
     );
 
-    return await sendSMS({ to: ADMIN_PHONES[0], content: text });
+    // 2개 번호에 각각 SMS 전송
+    const results = [];
+    for (const phone of ADMIN_PHONES) {
+        try {
+            const result = await sendSMS({ to: phone, content: text });
+            results.push({ phone, success: true, result });
+            console.log(`✅ SMS 전송 성공: ${phone}`);
+        } catch (error) {
+            results.push({ phone, success: false, error: error.message });
+            console.error(`❌ SMS 전송 실패: ${phone}`, error.message);
+        }
+    }
+    
+    return results;
 }
 
 module.exports = {
