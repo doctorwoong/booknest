@@ -154,7 +154,7 @@ app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
 app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
 
 // ✅ iCal 내보내기 엔드포인트
-const { generateAndSaveIcal } = require('./controller/bookingSync');
+const { generateAndSaveIcal, manualBookingSync } = require('./controller/bookingSync');
 
 app.get('/export-ical/:roomNumber?', async (req, res) => {
     try {
@@ -176,6 +176,28 @@ app.get('/export-ical/:roomNumber?', async (req, res) => {
     } catch (error) {
         console.error('iCal 내보내기 오류:', error);
         res.status(500).json({ error: 'iCal 내보내기 실패' });
+    }
+});
+
+// ✅ Booking.com 수동 전송 엔드포인트
+app.post('/manual-booking-sync', async (req, res) => {
+    try {
+        const { action } = req.body;
+        
+        if (action === 'export_all') {
+            const result = await manualBookingSync();
+            res.json({ 
+                success: true, 
+                message: 'Booking.com으로 예약정보 전송 완료',
+                files: result.files || []
+            });
+        } else {
+            res.status(400).json({ error: '잘못된 액션입니다.' });
+        }
+
+    } catch (error) {
+        console.error('Booking.com 수동 전송 오류:', error);
+        res.status(500).json({ error: 'Booking.com 전송 실패' });
     }
 });
 

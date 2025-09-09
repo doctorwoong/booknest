@@ -361,7 +361,44 @@ syncWithBookingCom();
 // ✅ iCal URL 목록 출력
 printIcalUrls();
 
-module.exports = { 
+// ✅ Booking.com 수동 전송 함수
+async function manualBookingSync() {
+    try {
+        console.log('🔄 Booking.com 수동 전송 시작...');
+        
+        const files = [];
+        
+        // 전체 예약 내보내기
+        const allResult = await generateAndSaveIcal();
+        if (allResult) {
+            files.push(allResult.filename);
+            console.log(`✅ 전체 예약 iCal 생성: ${allResult.filename}`);
+        }
+        
+        // 각 객실별 예약 내보내기
+        for (const room of roomList) {
+            const roomResult = await generateAndSaveIcal(room.name);
+            if (roomResult) {
+                files.push(roomResult.filename);
+                console.log(`✅ ${room.name} 객실 iCal 생성: ${roomResult.filename}`);
+            }
+        }
+        
+        console.log(`✅ Booking.com 수동 전송 완료! 총 ${files.length}개 파일 생성`);
+        
+        return {
+            success: true,
+            files: files,
+            message: `총 ${files.length}개 iCal 파일이 생성되었습니다.`
+        };
+        
+    } catch (error) {
+        console.error('❌ Booking.com 수동 전송 실패:', error);
+        throw error;
+    }
+}
+
+module.exports = {
     fetchAndStoreBookingBookings,
     sendOurBookingsToBooking,
     syncWithBookingCom,
@@ -369,5 +406,6 @@ module.exports = {
     autoExportIcalAfterReservation,
     generateIcalUrls,
     printIcalUrls,
+    manualBookingSync,
     roomList
 };

@@ -448,7 +448,35 @@ function Admin() {
                         {/* 달력 탭 */}
                         <div className={`tab-pane fade ${activeTab === "calendar" ? "show active" : ""}`} id="calendar"
                              role="tabpanel">
-                            <CalendarTab rooms={rooms} bookings={bookings} airbookings={airbookings}/>
+                            <CalendarTab 
+                                rooms={rooms} 
+                                bookings={bookings} 
+                                airbookings={airbookings}
+                                onExportIcal={async () => {
+                                    try {
+                                        // Booking.com으로 예약정보 수동 전송
+                                        const response = await fetch('/manual-booking-sync', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                action: 'export_all'
+                                            })
+                                        });
+                                        
+                                        if (response.ok) {
+                                            const result = await response.json();
+                                            alert(`Booking.com으로 예약정보 전송 완료!\n전송된 파일: ${result.files?.length || 0}개`);
+                                        } else {
+                                            throw new Error('전송 실패');
+                                        }
+                                    } catch (error) {
+                                        console.error('Booking.com 전송 오류:', error);
+                                        alert('Booking.com으로 예약정보 전송 중 오류가 발생했습니다.');
+                                    }
+                                }}
+                            />
                         </div>
                     </div>
                 </div>

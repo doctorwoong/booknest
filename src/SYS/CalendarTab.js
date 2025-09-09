@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import "../CSS/style/CalendarTab.css";
 
-function CalendarTab({ rooms = [], bookings = [], airbookings = [] }) {
+function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal }) {
     const today = new Date();
     const [year, setYear] = useState(today.getFullYear());
     const [month, setMonth] = useState(today.getMonth());
@@ -244,6 +244,28 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [] }) {
                         ))}
                     </select>
                     <button type="button" onClick={goToday}>오늘</button>
+                    {onExportIcal && (
+                        <button 
+                            type="button" 
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onExportIcal();
+                            }}
+                            style={{
+                                marginLeft: '10px',
+                                padding: '4px 8px',
+                                fontSize: '12px',
+                                backgroundColor: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '3px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            예약정보 보내기
+                        </button>
+                    )}
                 </div>
                 <span>배치 실행시간 : {airbookings[0]?.REG_DTM}</span>
             </div>
