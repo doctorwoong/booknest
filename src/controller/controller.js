@@ -1,12 +1,15 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const mysql = require('mysql2/promise');
+const { autoExportIcalAfterReservation } = require('./bookingSync');
 
 // MySQL 연결 풀 생성
 const pool = mysql.createPool({
-    host: '211.254.214.79',
-    user: 'aiabnb',
-    password: 'Rkwoaos12!@',
-    database: 'airbnb',
-    timezone: '+09:00'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    timezone: process.env.DB_TIMEZONE
 });
 
 (async () => {
@@ -109,6 +112,24 @@ const insertReservation = async (req, res) => {
         ]);
 
         console.log('Reservation inserted:', result);
+        
+        // ✅ 예약 후 자동 iCal 내보내기
+        try {
+            await autoExportIcalAfterReservation({
+                name,
+                email,
+                phone,
+                checkInDate,
+                checkOutDate,
+                title,
+                price,
+                type
+            });
+        } catch (icalError) {
+            console.error('iCal 자동 내보내기 실패:', icalError);
+            // iCal 실패해도 예약은 성공으로 처리
+        }
+        
         res.status(201).send({ message: 'Reservation successfully added!' });
     } catch (err) {
         console.error('Database query error:', err); // 에러 상세 출력
@@ -195,6 +216,7 @@ const getCheckCustomers = async (req, res) => {
         const query = `
             SELECT A.customer_id,
                    A.name,
+                   A.email,
                    A.phone_number,
                    A.check_in,
                    A.check_out,
@@ -266,6 +288,7 @@ const getReviewCustomer = async (req, res) => {
             SELECT
                 A.customer_id,
                 A.name,
+                A.email,
                 A.check_in,
                 A.check_out,
                 A.reserved_room_number,
@@ -505,10 +528,10 @@ const getCalendarAdmin = async (req, res) => {
         const query = `
             SELECT
                 reserved_room_number AS room,
-                DATE_FORMAT(DATE_SUB(STR_TO_DATE(check_in, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_in,
-                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out
+                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out
             FROM CustomerInfo
-            WHERE MDFY_ID != 'batch'
+            WHERE MDFY_ID != 'booking' AND MDFY_ID != 'batch'
         `;
         const [rows] = await pool.query(query);
         res.status(200).json(rows);
@@ -524,11 +547,11 @@ const getCalendarAirbnb = async (req, res) => {
         const query = `
             SELECT
                 reserved_room_number AS room,
-                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
-                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out,
+                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_in, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out,
                 DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i') AS REG_DTM
             FROM CustomerInfo
-            WHERE MDFY_ID = 'batch'
+            WHERE MDFY_ID = 'booking' OR MDFY_ID = 'batch'
             order by customer_id desc
         `;
         const [rows] = await pool.query(query);

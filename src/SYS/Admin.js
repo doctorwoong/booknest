@@ -37,6 +37,7 @@ function Admin() {
         {id : 4, name: 'C302'},
         {id : 5, name: 'C305'},
         {id : 6, name: 'C402'},
+        {id : 7, name: 'N301'},
         {id : 8, name: 'N103'},
         {id : 9, name: 'N202'},
         {id : 10, name: 'R102'},
@@ -123,15 +124,16 @@ function Admin() {
 
     const handleSendEmail = async (customer, type) => {
         if (!window.confirm("메일을 보내시겠습니까?")) return;
+
         let endpoint = "";
         let mailpoint = "";
         let statusKey = "";
 
-        if(type === "checkIn"){
+        if (type === "checkIn") {
             endpoint = "/send-check-in-email";
             mailpoint = "/updateCheckInMailStatus";
             statusKey = "check_in_mail_status";
-        }else if(type === "reservation"){
+        } else if (type === "reservation") {
             endpoint = "/send-reservation";
             mailpoint = "/updateReservationMailStatus";
             statusKey = "reservation_mail_status";
@@ -139,29 +141,33 @@ function Admin() {
 
         try {
             setLoading(true);
-            const [sendResponse, updateResponse] = await Promise.all([
-                apiRequest(endpoint, "POST", customer),
-                apiRequest(mailpoint, "POST", customer)
-            ]);
 
-            if (sendResponse && updateResponse) {
-                // ✅ 상태값 변경하여 UI 업데이트
-                if (type === "checkIn") {
-                    setCheckInCustomers(prev =>
-                        prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
-                    );
-                } else if (type === "reservation") {
-                    setreservationCustomers(prev =>
-                        prev.map(c => c.customer_id === customer.customer_id ? { ...c, [statusKey]: "Y" } : c)
-                    );
-                }
+            // 1) 메일 먼저 보냄 (실패하면 여기서 throw)
+            const sendResponse = await apiRequest(endpoint, "POST", customer);
+            if (!sendResponse) throw new Error("메일 전송 실패");
+
+            // 2) 성공했을 때만 상태 업데이트 호출
+            const updatePayload =
+                type === "checkIn"
+                    ? { id: customer.id } // 서버가 기대하는 키 확인
+                    : { customer_id: customer.customer_id };
+
+            const updateResponse = await apiRequest(mailpoint, "POST", updatePayload);
+            if (!updateResponse) throw new Error("상태 업데이트 실패");
+
+            // 3) UI 반영
+            if (type === "checkIn") {
+                setCheckInCustomers(prev =>
+                    prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
+                );
             } else {
-                alert(t("117"));
+                setreservationCustomers(prev =>
+                    prev.map(c => c.customer_id === customer.customer_id ? { ...c, [statusKey]: "Y" } : c)
+                );
             }
-
         } catch (error) {
-            alert(t("118")+`: ${customer.name}`);
-        }finally {
+            alert(t("118") + `: ${customer.name}`);
+        } finally {
             setLoading(false);
         }
     };
@@ -243,7 +249,7 @@ function Admin() {
                     setCheckInCustomers(prev =>
                         prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
                     );
-                } else if (type === "checkOut") {
+                } else if (type === "checkOut2") {
                     setCheckOutCustomers(prev =>
                         prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
                     );
@@ -322,6 +328,7 @@ function Admin() {
                                     <th>{t("127")}</th>
                                     <th>{t("128")}</th>
                                     <th>{t("129")}</th>
+                                    <th>{t("159")}</th>
                                     <th>결제타입</th>
                                     <th>{t("131")}</th>
                                 </tr>
@@ -335,6 +342,7 @@ function Admin() {
                                         <td>{customer.title}</td>
                                         <td>{customer.checkIn}</td>
                                         <td>{customer.checkOut}</td>
+                                        <td>₩{customer.price?.toLocaleString() || '0'}</td>
                                         <td>
                                             <span style={customer.type === 'cash' ? {
                                                 backgroundColor: '#e0f3ff',
@@ -440,7 +448,35 @@ function Admin() {
                         {/* 달력 탭 */}
                         <div className={`tab-pane fade ${activeTab === "calendar" ? "show active" : ""}`} id="calendar"
                              role="tabpanel">
-                            <CalendarTab rooms={rooms} bookings={bookings} airbookings={airbookings}/>
+                            <CalendarTab 
+                                rooms={rooms} 
+                                bookings={bookings} 
+                                airbookings={airbookings}
+                                onExportIcal={async () => {
+                                    try {
+                                        // Booking.com으로 예약정보 수동 전송
+                                        const response = await fetch('/manual-booking-sync', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                action: 'export_all'
+                                            })
+                                        });
+                                        
+                                        if (response.ok) {
+                                            const result = await response.json();
+                                            alert(`Booking.com으로 예약정보 전송 완료!\n전송된 파일: ${result.files?.length || 0}개`);
+                                        } else {
+                                            throw new Error('전송 실패');
+                                        }
+                                    } catch (error) {
+                                        console.error('Booking.com 전송 오류:', error);
+                                        alert('Booking.com으로 예약정보 전송 중 오류가 발생했습니다.');
+                                    }
+                                }}
+                            />
                         </div>
                     </div>
                 </div>

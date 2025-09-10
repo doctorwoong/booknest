@@ -35,3 +35,23 @@ table button {border:none;}
     #checkOut table{ width: 620px;}
 }
 
+/* 고객, 체크인, 체크아웃 탭 공통: 가로 스크롤 */
+.tab-pane { overflow-x:auto; }
+
+/* 표 셀 스타일 공통 적용 */
+.tab-pane table th,
+.tab-pane table td {
+    padding: 10px 14px;      /* 셀 간격 확대 */
+    white-space: nowrap;     /* 줄바꿈 방지 */
+    vertical-align: middle;  /* 세로 중앙 정렬 */
+}
+
+/* 고객명 좌측 정렬 (세 탭 모두 적용 가능) */
+.customer-name {
+    text-align: left;
+}
+
+/* 스크롤 유도 최소 너비 */
+.tab-pane table {
+    min-width: 700px; /* 필요 시 조정 */
+}

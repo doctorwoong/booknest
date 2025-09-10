@@ -1,10 +1,40 @@
-.date-cell {min-width: 80px;padding: 5px;border-bottom: 1px solid #ccc;text-align: center;font-size: 12px;white-space: nowrap;}
-.cell {position: relative;width: 80px;height: 40px;border: 1px solid #eee;}
-.booking-bar {position: absolute;top: 0;bottom: 0;background-color: #F54D6E;color: white;padding-left: 4px;font-size: 13px;line-height: 40px;white-space: nowrap;}
-.tab-search {display: flex;align-items: center;margin: 20px 0;justify-content: space-between;border-bottom: 1px solid #ddd}
-.tab-search-area {display: flex ;gap: 10px;position: sticky;top: 0;background: white;padding: 10px 0;z-index: 10;}
+:root { --row-h: 40px; --room-w: 120px; }
 
-@media (max-width: 768px) {
-    .tab-search {display: block;}
-    .room-list {width: 70px}
+.calendar-wrapper{
+    /* 높이는 JS가 inline으로 지정 -> 여기선 스크롤만 */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    min-height: 0;
 }
+
+.booking-container{ display:flex; align-items:stretch; min-height:0; }
+
+.room-list{
+    flex: 0 0 var(--room-w);
+    width: auto !important;         /* 옛 width 고정 무력화 */
+    position: sticky; left: 0; z-index: 3;
+    background:#fff; border-right:1px solid #eee;
+}
+.room-item{ height:var(--row-h); line-height:var(--row-h); display:flex; align-items:center; padding:0 8px; }
+
+.calendar-scroll{
+    flex:1 1 auto;
+    overflow-x:auto;                /* 가로 스크롤 전담 */
+    overflow-y:hidden;              /* 세로는 wrapper가 담당 */
+    min-width:0; position:relative;
+}
+
+.calendar-header{ position:sticky; top:0; z-index:10; background:#fff; display:flex; border-bottom:1px solid #f1f1f1; }
+.date-cell{ flex:0 0 80px; min-width:80px; padding:5px; border-bottom:1px solid #ccc; text-align:center; font-size:12px; white-space:nowrap; }
+
+.calendar-body{ display:flex; flex-direction:column; }
+.calendar-row{ display:flex; min-height:var(--row-h); border-bottom:1px solid #fafafa; }
+.cell{ position:relative; flex:0 0 80px; height:var(--row-h); border:1px solid #eee; }
+.booking-bar{ position:absolute; top:0; bottom:0; background:#F54D6E; color:#fff; padding-left:4px; font-size:13px; line-height:var(--row-h); white-space:nowrap; }
+
+/* 플렉스 조상에서 스크롤 막히지 않게 */
+.tab-pane, .tab-content, main, .page-content, html, body { min-height:0; }
+
+/* 모바일에서만 좌측 폭 축소 */
+@media (max-width:768px){ :root{ --room-w: 80px; } }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import "../CSS/style/CalendarTab.css";
 
-function CalendarTab({ rooms = [], bookings = [], airbookings = [] }) {
+function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal }) {
     const today = new Date();
     const [year, setYear] = useState(today.getFullYear());
     const [month, setMonth] = useState(today.getMonth());
@@ -191,7 +191,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [] }) {
         };
     }, [rooms.length]);
 
-    /** ----- 휠 가로 전환: 세로 스크롤 가능할 땐 개입 금지 ----- */
+    /** ----- 휠 가로 전환: 개선된 휠 스크롤 ----- */
     useEffect(() => {
         const horiz = scrollRef.current;
         if (!horiz) return;
@@ -199,16 +199,32 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [] }) {
         const onWheel = (e) => {
             const wrap = wrapperRef.current;
             const canVertScroll = wrap && wrap.scrollHeight > wrap.clientHeight;
-
-            // ✅ 세로 스크롤 가능한 상황이면 건드리지 않음
-            if (canVertScroll) return;
-
-            // 일부러 가로로만 굴리려면 Shift와 함께
-            if (e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            
+            // Shift 키를 누르면 무조건 가로 스크롤
+            if (e.shiftKey) {
                 horiz.scrollLeft += e.deltaY;
                 e.preventDefault();
+                return;
             }
+            
+            // 세로 스크롤이 가능하고, 세로 스크롤이 맨 위/아래에 도달하지 않은 경우
+            if (canVertScroll) {
+                const isAtTop = wrap.scrollTop <= 0;
+                const isAtBottom = wrap.scrollTop >= wrap.scrollHeight - wrap.clientHeight;
+                
+                // 위/아래 끝에 도달했을 때만 가로 스크롤 허용
+                if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
+                    horiz.scrollLeft += e.deltaY;
+                    e.preventDefault();
+                }
+                return;
+            }
+            
+            // 세로 스크롤이 불가능한 경우 가로 스크롤
+            horiz.scrollLeft += e.deltaY;
+            e.preventDefault();
         };
+        
         horiz.addEventListener("wheel", onWheel, { passive: false });
         return () => horiz.removeEventListener("wheel", onWheel);
     }, []);
@@ -228,6 +244,28 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [] }) {
                         ))}
                     </select>
                     <button type="button" onClick={goToday}>오늘</button>
+                    {onExportIcal && (
+                        <button 
+                            type="button" 
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onExportIcal();
+                            }}
+                            style={{
+                                marginLeft: '10px',
+                                padding: '4px 8px',
+                                fontSize: '12px',
+                                backgroundColor: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '3px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            예약정보 보내기
+                        </button>
+                    )}
                 </div>
                 <span>배치 실행시간 : {airbookings[0]?.REG_DTM}</span>
             </div>

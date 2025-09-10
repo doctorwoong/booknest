@@ -1,13 +1,21 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
+// ✅ 환경변수 설정 (서버 관리자 설정 없이 코드에서 직접)
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const { generateContract, sendEmails , sendCheckInEmail} = require("./mail"); // mail.js 호출
-const { sendSMS } = require("./sendSMS");
+const { generateContract, sendEmails , sendCheckInEmail, sendCancelEmail} = require("./Mail"); // mail.js 호출
+const { sendSMS, sendCancelSMS } = require("./sendSMS");
 const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
     updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./controller/controller');
+
+    // ✅ 환경변수 설정 (서버 관리자 설정 없이 코드에서 직접)
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 // express.json() 또는 body-parser 미들웨어 추가
 app.use(express.json());
@@ -80,27 +88,47 @@ app.post("/send-check-in-email", async (req, res) => {
     }
 });
 
-// app.post("/send-check-in-sms", async (req, res) => {
-//     const { phone, message,imgUrl, isInternational } = req.body;
-//     console.log("보낼 휴대폰번호 : ",phone);
-//     console.log("보낼 메세지 내용 : ",message);
-//     console.log("바디에 뭐들엇냐 : ",req.body);
-//
-//     try {
-//         const result = await sendSMS({
-//             to: phone,
-//             content: message, // 줄바꿈 HTML → 문자용
-//             imgUrl : imgUrl,
-//             isInternational : isInternational ?? true
-//         });
-//
-//         res.json({ success: true, result });
-//     } catch (error) {
-//         console.error("SMS 전송 실패:", error.response?.data || error.message);
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
+app.post("/send-check-in-sms", async (req, res) => {
+    const { phone, message, imgUrl } = req.body;
+    // console.log("보낼 휴대폰번호 : ",phone);
+    // console.log("보낼 메세지 내용 : ",message);
+    // console.log("바디에 뭐들엇냐 : ",req.body);
 
+    try {
+        const result = await sendSMS({
+            to: phone,
+            content: message, // 줄바꿈 HTML → 문자용
+            imgUrl : imgUrl
+        });
+
+        res.json({ success: true, result });
+    } catch (error) {
+        console.error("SMS 전송 실패:", error.response?.data || error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ✅ 예약 취소 이메일 전송
+app.post("/send-cancel-email", async (req, res) => {
+    try {
+        await sendCancelEmail(req.body);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ✅ 예약 취소 SMS 전송
+app.post("/send-cancel-sms", async (req, res) => {
+    try {
+        await sendCancelSMS(req.body);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
 
 // 📌 기타 API 라우트 설정
 app.post('/MainSearch', getMainRoom);
@@ -127,7 +155,127 @@ app.post('/updateReservationMailStatus', updateReservationMailStatus);
 app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
 app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
 
+// ✅ iCal 내보내기 엔드포인트
+const { generateAndSaveIcal, manualBookingSync } = require('./controller/bookingSync');
 
+app.get('/export-ical/:roomNumber?', async (req, res) => {
+    try {
+        const { roomNumber } = req.params;
+        const result = await generateAndSaveIcal(roomNumber);
+        
+        if (!result) {
+            return res.status(404).json({ error: '내보낼 예약이 없습니다.' });
+        }
+
+        // 생성된 파일을 직접 응답으로 전송
+        const fs = require('fs');
+        const fileContent = fs.readFileSync(result.filePath, 'utf8');
+        
+        res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+        res.send(fileContent);
+
+    } catch (error) {
+        console.error('iCal 내보내기 오류:', error);
+        res.status(500).json({ error: 'iCal 내보내기 실패' });
+    }
+});
+
+// ✅ Booking.com 수동 전송 엔드포인트
+app.post('/manual-booking-sync', async (req, res) => {
+    try {
+        const { action } = req.body;
+        
+        if (action === 'export_all') {
+            const result = await manualBookingSync();
+            res.json({ 
+                success: true, 
+                message: 'Booking.com으로 예약정보 전송 완료',
+                files: result.files || []
+            });
+        } else {
+            res.status(400).json({ error: '잘못된 액션입니다.' });
+        }
+
+    } catch (error) {
+        console.error('Booking.com 수동 전송 오류:', error);
+        res.status(500).json({ error: 'Booking.com 전송 실패' });
+    }
+});
+
+// 📡 실시간 Booking.com 동기화 API (서버 부담 최소화)
+app.post("/sync-booking-realtime", async (req, res) => {
+    try {
+        console.log("🔄 실시간 Booking.com 동기화 요청...");
+        
+        // Booking.com에서 최신 예약 정보 가져오기 (캐시 우선 사용)
+        const { fetchAndStoreBookingBookings } = require('./controller/bookingSync');
+        const result = await fetchAndStoreBookingBookings(true); // 캐시 사용
+        
+        console.log("✅ 실시간 Booking.com 동기화 완료");
+        res.json({ 
+            success: result.success, 
+            message: result.success ? "Booking.com 동기화가 완료되었습니다." : "동기화 중 일부 오류가 발생했습니다.",
+            timestamp: new Date().toISOString(),
+            duration: result.duration,
+            totalReservations: result.totalReservations,
+            results: result.results
+        });
+        
+    } catch (error) {
+        console.error("❌ 실시간 Booking.com 동기화 실패:", error);
+        res.status(500).json({ 
+            success: false, 
+            error: "동기화 중 오류가 발생했습니다.",
+            message: error.message 
+        });
+    }
+});
+
+// 🚨 오버부킹 체크 API (우리 시스템 예약 시 사용)
+app.post("/check-overbooking", async (req, res) => {
+    try {
+        const { roomNumber, checkIn, checkOut } = req.body;
+        
+        if (!roomNumber || !checkIn || !checkOut) {
+            return res.status(400).json({
+                success: false,
+                error: "객실번호, 체크인, 체크아웃 날짜가 필요합니다."
+            });
+        }
+        
+        console.log(`🔍 오버부킹 체크 요청: ${roomNumber} | ${checkIn} ~ ${checkOut}`);
+        
+        // 오버부킹 체크 함수 import
+        const { checkOverbooking } = require('./controller/bookingSync');
+        const result = await checkOverbooking(roomNumber, checkIn, checkOut);
+        
+        if (result.isOverbooked) {
+            console.log(`🚨 오버부킹 감지: ${roomNumber} | ${checkIn} ~ ${checkOut}`);
+            res.json({
+                success: false,
+                isOverbooked: true,
+                message: "해당 날짜에 이미 예약이 있습니다.",
+                conflictingReservations: result.conflictingReservations
+            });
+        } else {
+            console.log(`✅ 예약 가능: ${roomNumber} | ${checkIn} ~ ${checkOut}`);
+            res.json({
+                success: true,
+                isOverbooked: false,
+                message: "예약 가능한 날짜입니다."
+            });
+        }
+        
+    } catch (error) {
+        console.error("❌ 오버부킹 체크 실패:", error);
+        res.status(500).json({
+            success: false,
+            error: "오버부킹 체크 중 오류가 발생했습니다.",
+            message: error.message
+        });
+    }
+});
 
 const PORT = 30022;
 app.listen(PORT, () => console.log(`🚀 Proxy server running on port ${PORT}`));

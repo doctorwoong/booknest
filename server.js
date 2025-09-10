@@ -1,13 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const { generateContract, sendEmails , sendCheckInEmail, sendCheckOutEmail} = require("./mail"); // mail.js 호출
-const { sendSMS } = require("./sendSMS");
+const { generateContract, sendEmails , sendCheckInEmail, sendCancelEmail} = require("./src/Mail"); // mail.js 호출
+const { sendSMS, sendCancelSMS } = require("./src/sendSMS");
 const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
-    updateReservationMailStatus,updateCheckInSmsStatus,updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./controller');
+    updateReservationMailStatus,updateCheckInSmsStatus,updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./src/controller/controller');
 
 // express.json() 또는 body-parser 미들웨어 추가
 app.use(express.json());
@@ -17,6 +18,18 @@ app.use(cors({
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+// ✅ 정적 파일 서빙 (iCal 파일용)
+app.use('/ical', (req, res, next) => {
+    // iCal 파일에 대한 Content-Type 설정
+    if (req.path.endsWith('.ics')) {
+        res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+    }
+    next();
+}, express.static('public/ical'));
 
 
 // 📌 프록시 요청 (React에서 API 호출 시 필요)
@@ -85,19 +98,43 @@ app.post("/send-check-in-email", async (req, res) => {
     }
 });
 
-app.post("/send-check-in-sms", async (req, res) => {
-    const { phone, message } = req.body;
+// app.post("/send-check-in-sms", async (req, res) => {
+//     const { phone, message, imgUrl } = req.body;
+//     console.log("보낼 휴대폰번호 : ",phone);
+//     console.log("보낼 메세지 내용 : ",message);
+//     console.log("바디에 뭐들엇냐 : ",req.body);
 
+//     try {
+//         const result = await sendSMS({
+//             to: phone,
+//             content: message, // 줄바꿈 HTML → 문자용
+//             imgUrl : imgUrl
+//         });
+
+//         res.json({ success: true, result });
+//     } catch (error) {
+//         console.error("SMS 전송 실패:", error.response?.data || error.message);
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
+
+app.post("/send-cancel-email", async (req, res) => {
     try {
-        const result = await sendSMS({
-            to: phone,
-            content: message,
-        });
+        await sendCancelEmail(req.body);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
 
-        res.json({ success: true, result });
-    } catch (error) {
-        console.error("SMS 전송 실패:", error.response?.data || error.message);
-        res.status(500).json({ success: false, error: error.message });
+app.post("/send-cancel-sms", async (req, res) => {
+    try {
+        await sendCancelSMS(req.body);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 
@@ -122,6 +159,58 @@ app.post('/updateCheckOutMailStatus', updateCheckOutMailStatus);
 app.post('/updateReservationMailStatus', updateReservationMailStatus);
 app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
 app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
+
+// ✅ iCal 내보내기 엔드포인트 (bookingSync.js 사용)
+const { generateAndSaveIcal } = require('./src/controller/bookingSync');
+
+app.get('/export-ical/:roomNumber?', async (req, res) => {
+    try {
+        const { roomNumber } = req.params;
+        const result = await generateAndSaveIcal(roomNumber);
+        
+        if (!result) {
+            return res.status(404).json({ error: '내보낼 예약이 없습니다.' });
+        }
+
+        // 생성된 파일을 직접 응답으로 전송
+        const fs = require('fs');
+        const fileContent = fs.readFileSync(result.filePath, 'utf8');
+        
+        res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+        res.send(fileContent);
+
+    } catch (error) {
+        console.error('iCal 내보내기 오류:', error);
+        res.status(500).json({ error: 'iCal 내보내기 실패' });
+    }
+});
+
+// 📡 실시간 Booking.com 동기화 API
+app.post("/sync-booking-realtime", async (req, res) => {
+    try {
+        console.log("🔄 실시간 Booking.com 동기화 요청...");
+        
+        // Booking.com에서 최신 예약 정보 가져오기
+        const { fetchAndStoreBookingBookings } = require('./src/controller/bookingSync');
+        await fetchAndStoreBookingBookings();
+        
+        console.log("✅ 실시간 Booking.com 동기화 완료");
+        res.json({ 
+            success: true, 
+            message: "Booking.com 동기화가 완료되었습니다.",
+            timestamp: new Date().toISOString()
+        });
+        
+    } catch (error) {
+        console.error("❌ 실시간 Booking.com 동기화 실패:", error);
+        res.status(500).json({ 
+            success: false, 
+            error: "동기화 중 오류가 발생했습니다.",
+            message: error.message 
+        });
+    }
+});
 
 const PORT = 30021;
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Proxy server running on port ${PORT}`));
