@@ -171,5 +171,8 @@
   "155": "Only foreign-issued cards are accepted for card payments.",
   "156": "For cash payment or bank transfer, the rate is 30,000 KRW per night.\nA 15% discount applies for bookings of one week or more, and a 30% discount applies for bookings of one month or more.\n",
   "157": "cash",
-  "158": "credit card"
+  "158": "credit card",
+  "159": "Payment Amount",
+  "160": "Loading room reservation information...",
+  "161": "Loading room reservation information. Please wait a moment."
 }

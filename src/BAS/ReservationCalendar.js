@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css'; // 기본 스타일
 import '../CSS/style/CalendarStyles.css'; // 커스텀 스타일
 import { useNavigate } from "react-router-dom";
 import { formatDateToYYYYMMDD , formatDate } from "../Util/utils";
 import {useTranslation} from "react-i18next"; // 유틸리티 함수 가져오기
+import { apiRequest } from "../Util/api";
 
 function ReservationCalendar() {
     const [dates, setDates] = useState([]); // 기존 예약된 날짜 배열
@@ -12,9 +13,38 @@ function ReservationCalendar() {
     const [checkOutDate, setCheckOutDate] = useState(null); // 체크아웃 날짜
     const [isFormVisible, setFormVisible] = useState(false); // 예약 폼 표시 여부
     const [isValidStay, setIsValidStay] = useState(true); // 최소 3박 유효성 체크
+    const [isSyncing, setIsSyncing] = useState(false); // Booking.com 동기화 중 상태
+    const [syncComplete, setSyncComplete] = useState(false); // 동기화 완료 상태
     const { t, i18n } = useTranslation();
 
     const navigate = useNavigate();
+
+    // 🔄 Booking.com 실시간 동기화 함수
+    const syncBookingData = async () => {
+        try {
+            setIsSyncing(true);
+            console.log("🔄 Booking.com 실시간 동기화 시작...");
+            
+            const response = await apiRequest("/sync-booking-realtime", "POST");
+            
+            if (response.success) {
+                console.log("✅ Booking.com 동기화 완료");
+                setSyncComplete(true);
+            } else {
+                console.warn("⚠️ Booking.com 동기화 실패:", response.message);
+            }
+        } catch (error) {
+            console.error("❌ Booking.com 동기화 오류:", error);
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
+    // 📅 페이지 로드 시 병렬로 동기화 실행
+    useEffect(() => {
+        // 페이지 로드와 동시에 백그라운드에서 동기화 시작
+        syncBookingData();
+    }, []);
 
     // 날짜 선택 핸들러
     const onDateClick = (date) => {
@@ -57,6 +87,12 @@ function ReservationCalendar() {
 
         if (!isValidStay) {
             alert(t("55"));
+            return;
+        }
+
+        // 🔄 동기화 중이면 안내 메시지 표시
+        if (isSyncing) {
+            alert(t("161"));
             return;
         }
 
@@ -112,6 +148,32 @@ function ReservationCalendar() {
             <br/>
             <h2><b>{t("56")}</b></h2>
             <p style={{color:"#5A5A5A",marginBottom:"30px"}}>{t("57")}</p>
+            
+            {/* 🔄 동기화 상태 표시 */}
+            {isSyncing && (
+                <div style={{
+                    backgroundColor: '#e3f2fd',
+                    border: '1px solid #2196f3',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    marginBottom: '20px',
+                    textAlign: 'center',
+                    color: '#1976d2'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        <div style={{
+                            width: '16px',
+                            height: '16px',
+                            border: '2px solid #1976d2',
+                            borderTop: '2px solid transparent',
+                            borderRadius: '50%',
+                            animation: 'spin 1s linear infinite'
+                        }}></div>
+                        <span>{t("160")}</span>
+                    </div>
+                </div>
+            )}
+            
             <Calendar locale={i18n.language === "ko" ? "ko-KR" : "en-US"} tileClassName={tileClassName} onClickDay={onDateClick} />
             {isFormVisible && (
                 <div className="calendarForm">

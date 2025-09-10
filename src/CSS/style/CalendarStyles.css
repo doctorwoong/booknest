@@ -8,3 +8,9 @@
 .selected-checkout {background-color: #F54D6E !important;color: white;font-weight: bold;}
 .checkDate {margin-bottom: 50px;}
 .checkDate b {font-size: 20px;}
+
+/* 🔄 동기화 로딩 애니메이션 */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

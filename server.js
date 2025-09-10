@@ -186,6 +186,32 @@ app.get('/export-ical/:roomNumber?', async (req, res) => {
     }
 });
 
+// 📡 실시간 Booking.com 동기화 API
+app.post("/sync-booking-realtime", async (req, res) => {
+    try {
+        console.log("🔄 실시간 Booking.com 동기화 요청...");
+        
+        // Booking.com에서 최신 예약 정보 가져오기
+        const { fetchAndStoreBookingBookings } = require('./src/controller/bookingSync');
+        await fetchAndStoreBookingBookings();
+        
+        console.log("✅ 실시간 Booking.com 동기화 완료");
+        res.json({ 
+            success: true, 
+            message: "Booking.com 동기화가 완료되었습니다.",
+            timestamp: new Date().toISOString()
+        });
+        
+    } catch (error) {
+        console.error("❌ 실시간 Booking.com 동기화 실패:", error);
+        res.status(500).json({ 
+            success: false, 
+            error: "동기화 중 오류가 발생했습니다.",
+            message: error.message 
+        });
+    }
+});
+
 const PORT = 30021;
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Proxy server running on port ${PORT}`));
 

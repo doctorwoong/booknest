@@ -203,5 +203,34 @@ app.post('/manual-booking-sync', async (req, res) => {
     }
 });
 
+// 📡 실시간 Booking.com 동기화 API (서버 부담 최소화)
+app.post("/sync-booking-realtime", async (req, res) => {
+    try {
+        console.log("🔄 실시간 Booking.com 동기화 요청...");
+        
+        // Booking.com에서 최신 예약 정보 가져오기 (캐시 우선 사용)
+        const { fetchAndStoreBookingBookings } = require('./controller/bookingSync');
+        const result = await fetchAndStoreBookingBookings(true); // 캐시 사용
+        
+        console.log("✅ 실시간 Booking.com 동기화 완료");
+        res.json({ 
+            success: result.success, 
+            message: result.success ? "Booking.com 동기화가 완료되었습니다." : "동기화 중 일부 오류가 발생했습니다.",
+            timestamp: new Date().toISOString(),
+            duration: result.duration,
+            totalReservations: result.totalReservations,
+            results: result.results
+        });
+        
+    } catch (error) {
+        console.error("❌ 실시간 Booking.com 동기화 실패:", error);
+        res.status(500).json({ 
+            success: false, 
+            error: "동기화 중 오류가 발생했습니다.",
+            message: error.message 
+        });
+    }
+});
+
 const PORT = 30022;
 app.listen(PORT, () => console.log(`🚀 Proxy server running on port ${PORT}`));

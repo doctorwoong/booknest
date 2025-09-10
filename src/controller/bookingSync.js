@@ -3,6 +3,7 @@ require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const cron = require("node-cron");
 const ical = require("node-ical");
 const mysql = require("mysql2/promise");
+const fs = require('fs').promises;
 
 // ✅ MySQL 연결 설정
 const db = mysql.createPool({
@@ -32,6 +33,21 @@ const roomList = [
     { id: 16, name: 'N301' }
 ];
 
+// 🚀 캐시 및 성능 최적화 설정
+const CACHE_DIR = path.join(__dirname, '../../cache');
+const CACHE_DURATION = 10 * 60 * 1000; // 10분 캐시 (더 길게)
+const MAX_CONCURRENT_REQUESTS = 2; // 동시 요청 제한 (보수적으로)
+const REQUEST_DELAY = 1000; // 요청 간 1초 지연
+
+// 캐시 디렉토리 생성
+const ensureCacheDir = async () => {
+    try {
+        await fs.access(CACHE_DIR);
+    } catch {
+        await fs.mkdir(CACHE_DIR, { recursive: true });
+    }
+};
+
 // ✅ Booking.com 숙소 리스트 (iCal URL만 사용)
 const bookingListings = [
     // 예시:
@@ -53,86 +69,220 @@ const bookingListings = [
     // 실제 booking.com iCal URL을 여기에 추가하세요
 ];
 
-// ✅ Booking.com iCal로 예약 가져오기
-const fetchBookingsFromBookingIcal = async (listing) => {
+// 🚀 캐시된 데이터 확인
+const getCachedData = async (roomName) => {
+    try {
+        const cacheFile = path.join(CACHE_DIR, `${roomName}_cache.json`);
+        const stats = await fs.stat(cacheFile);
+        const now = Date.now();
+        
+        if (now - stats.mtime.getTime() < CACHE_DURATION) {
+            const cached = await fs.readFile(cacheFile, 'utf8');
+            return JSON.parse(cached);
+        }
+        return null;
+    } catch {
+        return null;
+    }
+};
+
+// 🚀 데이터 캐시 저장
+const setCachedData = async (roomName, data) => {
+    try {
+        await ensureCacheDir();
+        const cacheFile = path.join(CACHE_DIR, `${roomName}_cache.json`);
+        await fs.writeFile(cacheFile, JSON.stringify({
+            data,
+            timestamp: Date.now()
+        }));
+    } catch (error) {
+        console.warn(`⚠️ 캐시 저장 실패 (${roomName}):`, error.message);
+    }
+};
+
+// 🚀 동시 요청 제한을 위한 세마포어
+class Semaphore {
+    constructor(max) {
+        this.max = max;
+        this.current = 0;
+        this.queue = [];
+    }
+
+    async acquire() {
+        return new Promise((resolve) => {
+            if (this.current < this.max) {
+                this.current++;
+                resolve();
+            } else {
+                this.queue.push(resolve);
+            }
+        });
+    }
+
+    release() {
+        this.current--;
+        if (this.queue.length > 0) {
+            const resolve = this.queue.shift();
+            this.current++;
+            resolve();
+        }
+    }
+}
+
+const semaphore = new Semaphore(MAX_CONCURRENT_REQUESTS);
+
+// ✅ Booking.com iCal로 예약 가져오기 (캐시 + 최적화)
+const fetchBookingsFromBookingIcal = async (listing, useCache = true) => {
     try {
         if (!listing.bookingIcalUrl) {
             console.log(`⚠️ ${listing.name} iCal URL이 설정되지 않음`);
             return [];
         }
+
+        // 🚀 캐시 확인
+        if (useCache) {
+            const cached = await getCachedData(listing.name);
+            if (cached) {
+                console.log(`⚡ ${listing.name} 캐시에서 데이터 로드 (${cached.data.length}개 예약)`);
+                return cached.data;
+            }
+        }
         
-        console.log(`📡 ${listing.name} iCal에서 예약 가져오는 중...`);
-        const events = await ical.async.fromURL(listing.bookingIcalUrl);
-        const reservations = Object.values(events).filter(event => event.start && event.end);
+        // 🚀 동시 요청 제한
+        await semaphore.acquire();
         
-        console.log(`✅ ${listing.name} iCal에서 ${reservations.length}개 예약 조회됨`);
-        return reservations;
+        try {
+            console.log(`📡 ${listing.name} iCal에서 예약 가져오는 중...`);
+            const events = await ical.async.fromURL(listing.bookingIcalUrl);
+            const reservations = Object.values(events).filter(event => event.start && event.end);
+            
+            // 🚀 캐시 저장
+            await setCachedData(listing.name, reservations);
+            
+            console.log(`✅ ${listing.name} iCal에서 ${reservations.length}개 예약 조회됨`);
+            return reservations;
+        } finally {
+            semaphore.release();
+        }
     } catch (error) {
         console.error(`❌ ${listing.name} iCal 예약 조회 실패:`, error.message);
+        
+        // 🚀 실패 시 캐시된 데이터 사용
+        const cached = await getCachedData(listing.name);
+        if (cached) {
+            console.log(`🔄 ${listing.name} 캐시된 데이터 사용 (${cached.data.length}개 예약)`);
+            return cached.data;
+        }
+        
         return [];
     }
 };
 
-// ✅ Booking.com에서 예약 가져오기 (iCal만 사용)
-const fetchAndStoreBookingBookings = async () => {
+// 🚀 지연 함수
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// ✅ Booking.com에서 예약 가져오기 (배치 처리 + 서버 부담 최소화)
+const fetchAndStoreBookingBookings = async (useCache = true) => {
     try {
         console.log("🔄 Booking.com → 우리 시스템 동기화 시작...");
+        const startTime = Date.now();
+        const results = [];
 
-        for (const listing of bookingListings) {
-            console.log(`📡 ${listing.name} Booking.com 예약 가져오는 중...`);
+        // 🚀 배치 처리: 2개씩 묶어서 순차 처리
+        const batchSize = 2;
+        for (let i = 0; i < bookingListings.length; i += batchSize) {
+            const batch = bookingListings.slice(i, i + batchSize);
+            console.log(`📦 배치 ${Math.floor(i/batchSize) + 1}/${Math.ceil(bookingListings.length/batchSize)} 처리 중...`);
 
-            // 💥 기존 예약 삭제
-            await db.query(
-                "DELETE FROM CustomerInfo WHERE reserved_room_number = ? AND name = 'batch' AND REG_ID = 'booking'",
-                [listing.name]
-            );
-            console.log(`🗑️ 기존 Booking.com 예약 삭제됨: ${listing.name}`);
+            // 배치 내에서만 병렬 처리 (서버 부담 최소화)
+            const batchPromises = batch.map(async (listing) => {
+                try {
+                    console.log(`📡 ${listing.name} Booking.com 예약 가져오는 중...`);
 
-            // iCal로 예약 가져오기
-            const reservations = await fetchBookingsFromBookingIcal(listing);
+                    // 💥 기존 예약 삭제
+                    await db.query(
+                        "DELETE FROM CustomerInfo WHERE reserved_room_number = ? AND name = 'batch' AND REG_ID = 'booking'",
+                        [listing.name]
+                    );
+                    console.log(`🗑️ 기존 Booking.com 예약 삭제됨: ${listing.name}`);
 
-            // 예약 데이터 저장
-            for (const reservation of reservations) {
-                let checkIn, checkOut, guestName = 'batch', guestEmail = '', guestPhone = '';
+                    // iCal로 예약 가져오기 (캐시 사용)
+                    const reservations = await fetchBookingsFromBookingIcal(listing, useCache);
 
-                if (reservation.start && reservation.end) {
-                    // ✅ 한국 시간대 고려한 날짜 변환
-                    const startDate = new Date(reservation.start);
-                    const endDate = new Date(reservation.end);
-                    
-                    // 한국 시간대로 변환 (UTC+9)
-                    const koreaStart = new Date(startDate.getTime() + (9 * 60 * 60 * 1000));
-                    const koreaEnd = new Date(endDate.getTime() + (9 * 60 * 60 * 1000));
-                    
-                    checkIn = koreaStart.toISOString().split("T")[0].replace(/-/g, '');
-                    checkOut = koreaEnd.toISOString().split("T")[0].replace(/-/g, '');
-                } else {
-                    continue;
+                    // 예약 데이터 저장 (배치 INSERT로 최적화)
+                    if (reservations.length > 0) {
+                        const insertData = reservations
+                            .filter(reservation => reservation.start && reservation.end)
+                            .map(reservation => {
+                                const startDate = new Date(reservation.start);
+                                const endDate = new Date(reservation.end);
+                                
+                                // 한국 시간대로 변환 (UTC+9)
+                                const koreaStart = new Date(startDate.getTime() + (9 * 60 * 60 * 1000));
+                                const koreaEnd = new Date(endDate.getTime() + (9 * 60 * 60 * 1000));
+                                
+                                const checkIn = koreaStart.toISOString().split("T")[0].replace(/-/g, '');
+                                const checkOut = koreaEnd.toISOString().split("T")[0].replace(/-/g, '');
+                                
+                                return [listing.name, checkIn, checkOut];
+                            });
+
+                        if (insertData.length > 0) {
+                            // 🚀 개별 INSERT로 안전하게 처리 (배치 INSERT 문법 오류 수정)
+                            for (const [room, checkIn, checkOut] of insertData) {
+                                await db.query(
+                                    `INSERT INTO CustomerInfo (
+                                        name, email, phone_number, passport_number,
+                                        check_in, check_out,
+                                        check_in_message_status, check_out_message_status,
+                                        check_in_mail_status, check_out_mail_status, reservation_mail_status,
+                                        reserved_room_number, review_id, totalprice,
+                                        MDFY_DTM, MDFY_ID, REG_DTM, REG_ID
+                                    ) VALUES (
+                                        ?, ?, ?, '', ?, ?,
+                                        'N', 'N', 'N', 'N', 'N',
+                                        ?, 0, 0, NOW(), 'booking', NOW(), 'booking'
+                                    )`,
+                                    ['batch', '', '', checkIn, checkOut, room]
+                                );
+                            }
+                        }
+
+                        console.log(`✅ ${listing.name} 예약 ${insertData.length}개 처리 완료`);
+                    }
+
+                    return { room: listing.name, count: reservations.length, success: true };
+                } catch (error) {
+                    console.error(`❌ ${listing.name} 처리 실패:`, error.message);
+                    return { room: listing.name, count: 0, success: false, error: error.message };
                 }
+            });
 
-                await db.query(
-                    `INSERT INTO CustomerInfo (
-                        name, email, phone_number, passport_number,
-                        check_in, check_out,
-                        check_in_message_status, check_out_message_status,
-                        check_in_mail_status, check_out_mail_status, reservation_mail_status,
-                        reserved_room_number, review_id, totalprice,
-                        MDFY_DTM, MDFY_ID, REG_DTM, REG_ID
-                    ) VALUES (
-                        ?, ?, ?, '', ?, ?,
-                        'N', 'N', 'N', 'N', 'N',
-                        ?, 0, 0, NOW(), 'booking', NOW(), 'booking'
-                    )`,
-                    [guestName, guestEmail, guestPhone, checkIn, checkOut, listing.name]
-                );
+            // 배치 처리 완료 대기
+            const batchResults = await Promise.all(batchPromises);
+            results.push(...batchResults);
 
-                console.log(`✅ Booking.com 예약 삽입됨: ${listing.name} | ${checkIn} ~ ${checkOut} | ${guestName}`);
+            // 🚀 배치 간 지연 (서버 부담 최소화)
+            if (i + batchSize < bookingListings.length) {
+                console.log(`⏳ 서버 부담 최소화를 위해 ${REQUEST_DELAY/1000}초 대기...`);
+                await delay(REQUEST_DELAY);
             }
         }
 
-        console.log("🎉 Booking.com → 우리 시스템 동기화 완료!");
+        const endTime = Date.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+        // 결과 요약
+        const successCount = results.filter(r => r.success).length;
+        const totalReservations = results.reduce((sum, r) => sum + r.count, 0);
+        
+        console.log(`🎉 Booking.com → 우리 시스템 동기화 완료!`);
+        console.log(`📊 처리 결과: ${successCount}/${bookingListings.length} 객실 성공, 총 ${totalReservations}개 예약, 소요시간: ${duration}초`);
+
+        return { success: true, results, duration, totalReservations };
     } catch (error) {
         console.error("❌ Booking.com 동기화 오류 발생:", error);
+        return { success: false, error: error.message };
     }
 };
 
@@ -221,6 +371,7 @@ const generateAndSaveIcal = async (roomNumber = null) => {
                 REG_ID, MDFY_DTM
             FROM CustomerInfo 
             WHERE check_in >= DATE_FORMAT(NOW(), '%Y%m%d')
+            AND REG_ID != 'booking'
             ORDER BY check_in, reserved_room_number
         `;
         
