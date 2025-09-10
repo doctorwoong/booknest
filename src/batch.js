@@ -10,6 +10,7 @@ const db = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     timezone: process.env.DB_TIMEZONE, // DB 타임존은 상관없음(우린 날짜 문자열만 저장)
+
 });
 
 // iCal 원본 날짜를 그대로 YYYYMMDD로 (UTC 파트 사용)
