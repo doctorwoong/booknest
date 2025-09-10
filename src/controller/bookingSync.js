@@ -138,7 +138,7 @@ const fetchBookingsFromBookingIcal = async (listing, useCache = true) => {
             console.log(`⚠️ ${listing.name} iCal URL이 설정되지 않음`);
             return [];
         }
-
+        
         // 🚀 캐시 확인
         if (useCache) {
             const cached = await getCachedData(listing.name);
@@ -152,15 +152,15 @@ const fetchBookingsFromBookingIcal = async (listing, useCache = true) => {
         await semaphore.acquire();
         
         try {
-            console.log(`📡 ${listing.name} iCal에서 예약 가져오는 중...`);
-            const events = await ical.async.fromURL(listing.bookingIcalUrl);
-            const reservations = Object.values(events).filter(event => event.start && event.end);
+        console.log(`📡 ${listing.name} iCal에서 예약 가져오는 중...`);
+        const events = await ical.async.fromURL(listing.bookingIcalUrl);
+        const reservations = Object.values(events).filter(event => event.start && event.end);
             
             // 🚀 캐시 저장
             await setCachedData(listing.name, reservations);
-            
-            console.log(`✅ ${listing.name} iCal에서 ${reservations.length}개 예약 조회됨`);
-            return reservations;
+        
+        console.log(`✅ ${listing.name} iCal에서 ${reservations.length}개 예약 조회됨`);
+        return reservations;
         } finally {
             semaphore.release();
         }
@@ -181,10 +181,283 @@ const fetchBookingsFromBookingIcal = async (listing, useCache = true) => {
 // 🚀 지연 함수
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+// 🗄️ 백업 테이블 생성 (취소된 예약 보관용)
+const createBackupTable = async () => {
+    try {
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS CustomerInfo_Backup (
+                customer_id INT PRIMARY KEY,
+                name VARCHAR(100),
+                email VARCHAR(100),
+                phone_number VARCHAR(20),
+                passport_number VARCHAR(50),
+                check_in VARCHAR(8),
+                check_out VARCHAR(8),
+                check_in_message_status CHAR(1),
+                check_out_message_status CHAR(1),
+                check_in_mail_status CHAR(1),
+                check_out_mail_status CHAR(1),
+                reservation_mail_status CHAR(1),
+                reserved_room_number VARCHAR(10),
+                review_id INT,
+                totalprice INT,
+                MDFY_DTM DATETIME,
+                MDFY_ID VARCHAR(50),
+                REG_DTM DATETIME,
+                REG_ID VARCHAR(50),
+                cancelled_at DATETIME,
+                cancellation_reason VARCHAR(100)
+            )
+        `);
+        console.log("✅ 백업 테이블 확인/생성 완료");
+    } catch (error) {
+        console.warn("⚠️ 백업 테이블 생성 실패:", error.message);
+    }
+};
+
+// 🚨 오버부킹 방지 시스템
+const checkOverbooking = async (roomName, checkIn, checkOut) => {
+    try {
+        // 해당 객실의 모든 예약 조회 (우리 시스템 + Booking.com)
+        const [allReservations] = await db.query(`
+            SELECT customer_id, name, check_in, check_out, REG_ID, MDFY_DTM
+            FROM CustomerInfo 
+            WHERE reserved_room_number = ? 
+            AND (
+                (check_in <= ? AND check_out > ?) OR  -- 기존 예약이 새 예약과 겹침
+                (check_in < ? AND check_out >= ?) OR  -- 새 예약이 기존 예약과 겹침
+                (check_in >= ? AND check_out <= ?)    -- 새 예약이 기존 예약을 포함
+            )
+            ORDER BY check_in
+        `, [roomName, checkOut, checkIn, checkOut, checkIn, checkIn, checkOut]);
+
+        if (allReservations.length > 0) {
+            console.log(`🚨 오버부킹 감지: ${roomName} | ${checkIn} ~ ${checkOut}`);
+            allReservations.forEach(reservation => {
+                const source = reservation.REG_ID === 'booking' ? 'Booking.com' : '우리 시스템';
+                console.log(`   ⚠️ 겹치는 예약: ${reservation.check_in} ~ ${reservation.check_out} (${source})`);
+            });
+            return { isOverbooked: true, conflictingReservations: allReservations };
+        }
+
+        return { isOverbooked: false, conflictingReservations: [] };
+    } catch (error) {
+        console.error(`❌ 오버부킹 체크 실패 (${roomName}):`, error);
+        return { isOverbooked: false, conflictingReservations: [] };
+    }
+};
+
+// 🔄 실시간 예약 충돌 해결 시스템
+const resolveBookingConflicts = async (roomName, newReservations) => {
+    try {
+        console.log(`🔄 ${roomName} 예약 충돌 해결 중...`);
+        
+        const conflicts = [];
+        
+        for (const reservation of newReservations) {
+            if (reservation.start && reservation.end) {
+                const startDate = new Date(reservation.start);
+                const endDate = new Date(reservation.end);
+                const koreaStart = new Date(startDate.getTime() + (9 * 60 * 60 * 1000));
+                const koreaEnd = new Date(endDate.getTime() + (9 * 60 * 60 * 1000));
+                const checkIn = koreaStart.toISOString().split("T")[0].replace(/-/g, '');
+                const checkOut = koreaEnd.toISOString().split("T")[0].replace(/-/g, '');
+                
+                const overbookingCheck = await checkOverbooking(roomName, checkIn, checkOut);
+                
+                if (overbookingCheck.isOverbooked) {
+                    conflicts.push({
+                        reservation,
+                        checkIn,
+                        checkOut,
+                        conflictingReservations: overbookingCheck.conflictingReservations
+                    });
+                }
+            }
+        }
+        
+        if (conflicts.length > 0) {
+            console.log(`⚠️ ${roomName} 예약 충돌 ${conflicts.length}건 발견`);
+            
+            // 충돌 해결 전략 적용
+            for (const conflict of conflicts) {
+                await resolveSingleConflict(roomName, conflict);
+            }
+        }
+        
+        return conflicts.length;
+    } catch (error) {
+        console.error(`❌ ${roomName} 예약 충돌 해결 실패:`, error);
+        return 0;
+    }
+};
+
+// 🔧 단일 예약 충돌 해결
+const resolveSingleConflict = async (roomName, conflict) => {
+    try {
+        const { checkIn, checkOut, conflictingReservations } = conflict;
+        
+        // 충돌 해결 전략: Booking.com 예약 우선 (더 최신 정보)
+        const bookingConflicts = conflictingReservations.filter(r => r.REG_ID === 'booking');
+        const ourConflicts = conflictingReservations.filter(r => r.REG_ID !== 'booking');
+        
+        if (bookingConflicts.length > 0) {
+            console.log(`🔄 ${roomName} Booking.com 예약 우선 적용: ${checkIn} ~ ${checkOut}`);
+            
+            // 우리 시스템 예약을 백업으로 이동
+            for (const ourConflict of ourConflicts) {
+                try {
+                    await db.query(`
+                        INSERT INTO CustomerInfo_Backup 
+                        SELECT *, NOW() as cancelled_at, 'overbooking_resolved' as cancellation_reason
+                        FROM CustomerInfo 
+                        WHERE customer_id = ?
+                    `, [ourConflict.customer_id]);
+                    
+                    await db.query(
+                        `DELETE FROM CustomerInfo WHERE customer_id = ?`,
+                        [ourConflict.customer_id]
+                    );
+                    
+                    console.log(`✅ ${roomName} 충돌 예약 백업: ${ourConflict.check_in} ~ ${ourConflict.check_out} (ID: ${ourConflict.customer_id})`);
+                } catch (error) {
+                    console.error(`❌ ${roomName} 충돌 예약 백업 실패:`, error);
+                }
+            }
+        } else {
+            console.log(`⚠️ ${roomName} 우리 시스템 예약만 존재: ${checkIn} ~ ${checkOut} (Booking.com 예약 추가 예정)`);
+        }
+        
+    } catch (error) {
+        console.error(`❌ ${roomName} 단일 충돌 해결 실패:`, error);
+    }
+};
+
+// 🚀 중복 데이터 확인 함수 (삭제하지 않음)
+const checkDuplicateBookings = async () => {
+    try {
+        console.log("🔍 중복 Booking.com 예약 데이터 확인 중...");
+        
+        // 중복 데이터 찾기 (같은 객실, 같은 체크인/아웃 날짜)
+        const [duplicates] = await db.query(`
+            SELECT 
+                reserved_room_number, check_in, check_out, 
+                COUNT(*) as count,
+                GROUP_CONCAT(customer_id) as customer_ids
+            FROM CustomerInfo 
+            WHERE REG_ID = 'booking' AND name = 'batch'
+            GROUP BY reserved_room_number, check_in, check_out
+            HAVING COUNT(*) > 1
+        `);
+
+        if (duplicates.length > 0) {
+            console.log(`⚠️ 중복 데이터 ${duplicates.length}건 발견 (삭제하지 않음)`);
+            
+            for (const duplicate of duplicates) {
+                const customerIds = duplicate.customer_ids.split(',');
+                console.log(`📋 ${duplicate.reserved_room_number} | ${duplicate.check_in} ~ ${duplicate.check_out} | 중복 ID: ${customerIds.join(', ')}`);
+            }
+        } else {
+            console.log("✅ 중복 데이터 없음");
+        }
+        
+        return duplicates.length;
+    } catch (error) {
+        console.error("❌ 중복 데이터 확인 실패:", error);
+        return 0;
+    }
+};
+
+// 🔄 Booking.com 예약 변경/취소 감지 및 처리
+const handleBookingChanges = async (roomName, newReservations) => {
+    try {
+        console.log(`🔄 ${roomName} 예약 변경사항 확인 중...`);
+        
+        // 현재 DB에 있는 Booking.com 예약 조회
+        const [existingReservations] = await db.query(`
+            SELECT customer_id, check_in, check_out, MDFY_DTM
+            FROM CustomerInfo 
+            WHERE reserved_room_number = ? AND REG_ID = 'booking' AND name = 'batch'
+            ORDER BY check_in
+        `, [roomName]);
+        
+        // 새로운 예약 데이터를 키-값 맵으로 변환
+        const newReservationMap = new Map();
+        newReservations.forEach(reservation => {
+            if (reservation.start && reservation.end) {
+                const startDate = new Date(reservation.start);
+                const endDate = new Date(reservation.end);
+                const koreaStart = new Date(startDate.getTime() + (9 * 60 * 60 * 1000));
+                const koreaEnd = new Date(endDate.getTime() + (9 * 60 * 60 * 1000));
+                const checkIn = koreaStart.toISOString().split("T")[0].replace(/-/g, '');
+                const checkOut = koreaEnd.toISOString().split("T")[0].replace(/-/g, '');
+                
+                const key = `${checkIn}_${checkOut}`;
+                newReservationMap.set(key, { checkIn, checkOut, reservation });
+            }
+        });
+        
+        // 기존 예약과 비교하여 변경사항 확인
+        const changes = {
+            added: [],      // 새로 추가된 예약
+            removed: [],    // 취소된 예약
+            unchanged: []   // 변경되지 않은 예약
+        };
+        
+        // 기존 예약 확인
+        for (const existing of existingReservations) {
+            const key = `${existing.check_in}_${existing.check_out}`;
+            
+            if (newReservationMap.has(key)) {
+                // 변경되지 않은 예약
+                changes.unchanged.push(existing);
+                newReservationMap.delete(key); // 처리된 예약 제거
+            } else {
+                // 취소된 예약 (Booking.com에서 제거됨)
+                changes.removed.push(existing);
+            }
+        }
+        
+        // 남은 예약들은 새로 추가된 것들
+        for (const [key, data] of newReservationMap) {
+            changes.added.push(data);
+        }
+        
+        // 변경사항 로깅
+        if (changes.added.length > 0) {
+            console.log(`➕ ${roomName} 새 예약 ${changes.added.length}건 추가됨`);
+            changes.added.forEach(item => {
+                console.log(`   📅 ${item.checkIn} ~ ${item.checkOut}`);
+            });
+        }
+        
+        if (changes.removed.length > 0) {
+            console.log(`➖ ${roomName} 취소된 예약 ${changes.removed.length}건 발견`);
+            changes.removed.forEach(item => {
+                console.log(`   📅 ${item.check_in} ~ ${item.check_out} (ID: ${item.customer_id})`);
+            });
+        }
+        
+        if (changes.unchanged.length > 0) {
+            console.log(`✅ ${roomName} 기존 예약 ${changes.unchanged.length}건 유지됨`);
+        }
+        
+        return changes;
+        
+    } catch (error) {
+        console.error(`❌ ${roomName} 예약 변경사항 확인 실패:`, error);
+        return { added: [], removed: [], unchanged: [] };
+    }
+};
+
 // ✅ Booking.com에서 예약 가져오기 (배치 처리 + 서버 부담 최소화)
 const fetchAndStoreBookingBookings = async (useCache = true) => {
     try {
         console.log("🔄 Booking.com → 우리 시스템 동기화 시작...");
+
+        // 🗄️ 백업 테이블 생성 (취소된 예약 보관용)
+        await createBackupTable();
+        
         const startTime = Date.now();
         const results = [];
 
@@ -197,55 +470,154 @@ const fetchAndStoreBookingBookings = async (useCache = true) => {
             // 배치 내에서만 병렬 처리 (서버 부담 최소화)
             const batchPromises = batch.map(async (listing) => {
                 try {
-                    console.log(`📡 ${listing.name} Booking.com 예약 가져오는 중...`);
+            console.log(`📡 ${listing.name} Booking.com 예약 가져오는 중...`);
 
-                    // 💥 기존 예약 삭제
-                    await db.query(
-                        "DELETE FROM CustomerInfo WHERE reserved_room_number = ? AND name = 'batch' AND REG_ID = 'booking'",
-                        [listing.name]
-                    );
-                    console.log(`🗑️ 기존 Booking.com 예약 삭제됨: ${listing.name}`);
+                    // 🔍 기존 Booking.com 예약 확인 (삭제하지 않음)
+                    const [existingCount] = await db.query(
+                        "SELECT COUNT(*) as count FROM CustomerInfo WHERE reserved_room_number = ? AND name = 'batch' AND REG_ID = 'booking'",
+                [listing.name]
+            );
+                    
+                    if (existingCount[0].count > 0) {
+                        console.log(`📋 기존 Booking.com 예약 ${existingCount[0].count}개 확인됨: ${listing.name} (삭제하지 않음)`);
+                    }
 
                     // iCal로 예약 가져오기 (캐시 사용)
                     const reservations = await fetchBookingsFromBookingIcal(listing, useCache);
+                    
+                    // 🔍 중복 데이터 진단 로깅
+                    console.log(`📊 ${listing.name} iCal에서 받은 예약 수: ${reservations.length}`);
+                    
+                    // 중복 예약 체크 (iCal 레벨)
+                    const uniqueReservations = new Map();
+                    const duplicateInIcal = [];
+                    
+                    reservations.forEach((reservation, index) => {
+                if (reservation.start && reservation.end) {
+                            const startDate = new Date(reservation.start);
+                            const endDate = new Date(reservation.end);
+                            const koreaStart = new Date(startDate.getTime() + (9 * 60 * 60 * 1000));
+                            const koreaEnd = new Date(endDate.getTime() + (9 * 60 * 60 * 1000));
+                            const checkIn = koreaStart.toISOString().split("T")[0].replace(/-/g, '');
+                            const checkOut = koreaEnd.toISOString().split("T")[0].replace(/-/g, '');
+                            
+                            const key = `${checkIn}_${checkOut}`;
+                            if (uniqueReservations.has(key)) {
+                                duplicateInIcal.push({ index, key, checkIn, checkOut });
+                                console.log(`⚠️ iCal 내 중복 발견: ${listing.name} | ${checkIn} ~ ${checkOut} (인덱스: ${index})`);
+                            } else {
+                                uniqueReservations.set(key, reservation);
+                            }
+                        }
+                    });
+                    
+                    if (duplicateInIcal.length > 0) {
+                        console.log(`🔍 ${listing.name} iCal 내 중복: ${duplicateInIcal.length}건 (Booking.com에서 중복 전송)`);
+                    } else {
+                        console.log(`✅ ${listing.name} iCal 내 중복 없음 (정상 데이터)`);
+                    }
 
-                    // 예약 데이터 저장 (배치 INSERT로 최적화)
+                    // 🔄 예약 변경사항 감지 및 처리
+                    const changes = await handleBookingChanges(listing.name, reservations);
+
+                    // 🚨 오버부킹 방지 체크 (새로운 예약 추가 전)
+                    const conflictCount = await resolveBookingConflicts(listing.name, reservations);
+                    if (conflictCount > 0) {
+                        console.log(`⚠️ ${listing.name} 오버부킹 충돌 ${conflictCount}건 해결됨`);
+                    }
+
+                    // 🚨 취소된 예약 처리 (안전한 방식)
+                    if (changes.removed.length > 0) {
+                        console.log(`⚠️ ${listing.name} 취소된 예약 ${changes.removed.length}건 발견 - 안전하게 처리 중...`);
+                        
+                        for (const cancelledReservation of changes.removed) {
+                            // 취소된 예약을 별도 테이블로 이동 (완전 삭제하지 않음)
+                            try {
+                                // 취소된 예약을 백업 테이블로 이동
+                                await db.query(`
+                                    INSERT INTO CustomerInfo_Backup 
+                                    SELECT *, NOW() as cancelled_at, 'booking_cancelled' as cancellation_reason
+                                    FROM CustomerInfo 
+                                    WHERE customer_id = ?
+                                `, [cancelledReservation.customer_id]);
+                                
+                                // 원본 테이블에서 삭제 (백업 후)
+                                await db.query(
+                                    `DELETE FROM CustomerInfo WHERE customer_id = ?`,
+                                    [cancelledReservation.customer_id]
+                                );
+                                
+                                console.log(`✅ ${listing.name} 취소된 예약 백업 완료: ${cancelledReservation.check_in} ~ ${cancelledReservation.check_out} (ID: ${cancelledReservation.customer_id})`);
+                                
+                            } catch (error) {
+                                console.error(`❌ ${listing.name} 취소된 예약 처리 실패:`, error);
+                                // 백업 테이블이 없으면 그냥 로그만 남기고 계속 진행
+                                console.log(`⚠️ 백업 테이블이 없어서 취소된 예약을 그대로 유지합니다.`);
+                            }
+                        }
+                    }
+
+                    // 예약 데이터 저장 (중복 방지 + 배치 INSERT)
                     if (reservations.length > 0) {
                         const insertData = reservations
                             .filter(reservation => reservation.start && reservation.end)
                             .map(reservation => {
-                                const startDate = new Date(reservation.start);
-                                const endDate = new Date(reservation.end);
-                                
-                                // 한국 시간대로 변환 (UTC+9)
-                                const koreaStart = new Date(startDate.getTime() + (9 * 60 * 60 * 1000));
-                                const koreaEnd = new Date(endDate.getTime() + (9 * 60 * 60 * 1000));
-                                
+                    const startDate = new Date(reservation.start);
+                    const endDate = new Date(reservation.end);
+                    
+                    // 한국 시간대로 변환 (UTC+9)
+                    const koreaStart = new Date(startDate.getTime() + (9 * 60 * 60 * 1000));
+                    const koreaEnd = new Date(endDate.getTime() + (9 * 60 * 60 * 1000));
+                    
                                 const checkIn = koreaStart.toISOString().split("T")[0].replace(/-/g, '');
                                 const checkOut = koreaEnd.toISOString().split("T")[0].replace(/-/g, '');
                                 
-                                return [listing.name, checkIn, checkOut];
+                                // 🚀 고유 식별자 생성 (중복 방지용)
+                                const uniqueId = `${listing.name}_${checkIn}_${checkOut}_${reservation.uid || 'booking'}`;
+                                
+                                return [listing.name, checkIn, checkOut, uniqueId];
                             });
 
                         if (insertData.length > 0) {
-                            // 🚀 개별 INSERT로 안전하게 처리 (배치 INSERT 문법 오류 수정)
-                            for (const [room, checkIn, checkOut] of insertData) {
-                                await db.query(
-                                    `INSERT INTO CustomerInfo (
-                                        name, email, phone_number, passport_number,
-                                        check_in, check_out,
-                                        check_in_message_status, check_out_message_status,
-                                        check_in_mail_status, check_out_mail_status, reservation_mail_status,
-                                        reserved_room_number, review_id, totalprice,
-                                        MDFY_DTM, MDFY_ID, REG_DTM, REG_ID
-                                    ) VALUES (
-                                        ?, ?, ?, '', ?, ?,
-                                        'N', 'N', 'N', 'N', 'N',
-                                        ?, 0, 0, NOW(), 'booking', NOW(), 'booking'
-                                    )`,
-                                    ['batch', '', '', checkIn, checkOut, room]
+                            // 🚀 중복 체크 후 INSERT (상세 로깅)
+                            let insertedCount = 0;
+                            let skippedCount = 0;
+                            
+                            for (const [room, checkIn, checkOut, uniqueId] of insertData) {
+                                // 중복 체크
+                                const [existing] = await db.query(
+                                    `SELECT customer_id FROM CustomerInfo 
+                                     WHERE reserved_room_number = ? AND check_in = ? AND check_out = ? 
+                                     AND REG_ID = 'booking' AND name = 'batch'`,
+                                    [room, checkIn, checkOut]
                                 );
+
+                                if (existing.length === 0) {
+                                    // 중복이 없으면 INSERT
+                await db.query(
+                    `INSERT INTO CustomerInfo (
+                        name, email, phone_number, passport_number,
+                        check_in, check_out,
+                        check_in_message_status, check_out_message_status,
+                        check_in_mail_status, check_out_mail_status, reservation_mail_status,
+                        reserved_room_number, review_id, totalprice,
+                        MDFY_DTM, MDFY_ID, REG_DTM, REG_ID
+                    ) VALUES (
+                        ?, ?, ?, '', ?, ?,
+                        'N', 'N', 'N', 'N', 'N',
+                        ?, 0, 0, NOW(), 'booking', NOW(), 'booking'
+                    )`,
+                                        ['batch', '', '', checkIn, checkOut, room]
+                                    );
+                                    insertedCount++;
+                                    console.log(`✅ 새 예약 추가: ${room} | ${checkIn} ~ ${checkOut}`);
+                                } else {
+                                    skippedCount++;
+                                    console.log(`⚠️ DB 중복 예약 건너뛰기: ${room} | ${checkIn} ~ ${checkOut} (기존 ID: ${existing[0].customer_id})`);
+                                }
                             }
+                            
+                            console.log(`📊 ${listing.name} 저장 결과: ${insertedCount}개 추가, ${skippedCount}개 건너뛰기`);
                         }
 
                         console.log(`✅ ${listing.name} 예약 ${insertData.length}개 처리 완료`);
@@ -276,6 +648,9 @@ const fetchAndStoreBookingBookings = async (useCache = true) => {
         const successCount = results.filter(r => r.success).length;
         const totalReservations = results.reduce((sum, r) => sum + r.count, 0);
         
+        // 🔍 중복 데이터 확인 (삭제하지 않음)
+        const duplicateCount = await checkDuplicateBookings();
+
         console.log(`🎉 Booking.com → 우리 시스템 동기화 완료!`);
         console.log(`📊 처리 결과: ${successCount}/${bookingListings.length} 객실 성공, 총 ${totalReservations}개 예약, 소요시간: ${duration}초`);
 
@@ -560,5 +935,7 @@ module.exports = {
     generateIcalUrls,
     printIcalUrls,
     manualBookingSync,
-    roomList
+    roomList,
+    checkOverbooking,
+    resolveBookingConflicts
 };

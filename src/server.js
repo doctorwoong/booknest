@@ -232,5 +232,50 @@ app.post("/sync-booking-realtime", async (req, res) => {
     }
 });
 
+// 🚨 오버부킹 체크 API (우리 시스템 예약 시 사용)
+app.post("/check-overbooking", async (req, res) => {
+    try {
+        const { roomNumber, checkIn, checkOut } = req.body;
+        
+        if (!roomNumber || !checkIn || !checkOut) {
+            return res.status(400).json({
+                success: false,
+                error: "객실번호, 체크인, 체크아웃 날짜가 필요합니다."
+            });
+        }
+        
+        console.log(`🔍 오버부킹 체크 요청: ${roomNumber} | ${checkIn} ~ ${checkOut}`);
+        
+        // 오버부킹 체크 함수 import
+        const { checkOverbooking } = require('./controller/bookingSync');
+        const result = await checkOverbooking(roomNumber, checkIn, checkOut);
+        
+        if (result.isOverbooked) {
+            console.log(`🚨 오버부킹 감지: ${roomNumber} | ${checkIn} ~ ${checkOut}`);
+            res.json({
+                success: false,
+                isOverbooked: true,
+                message: "해당 날짜에 이미 예약이 있습니다.",
+                conflictingReservations: result.conflictingReservations
+            });
+        } else {
+            console.log(`✅ 예약 가능: ${roomNumber} | ${checkIn} ~ ${checkOut}`);
+            res.json({
+                success: true,
+                isOverbooked: false,
+                message: "예약 가능한 날짜입니다."
+            });
+        }
+        
+    } catch (error) {
+        console.error("❌ 오버부킹 체크 실패:", error);
+        res.status(500).json({
+            success: false,
+            error: "오버부킹 체크 중 오류가 발생했습니다.",
+            message: error.message
+        });
+    }
+});
+
 const PORT = 30022;
 app.listen(PORT, () => console.log(`🚀 Proxy server running on port ${PORT}`));
