@@ -424,8 +424,7 @@ const getReservationCustomers = async (req, res) => {
                 reservation_mail_status,
                 TYPE as type
             from CustomerInfo
-            where 1=1
-                AND REG_ID != 'batch'
+            WHERE MDFY_ID NOT IN ('booking','batch')
             order by customer_id desc
         `;
         const [rows] = await pool.query(query);
@@ -531,7 +530,7 @@ const getCalendarAdmin = async (req, res) => {
                 DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
                 DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out
             FROM CustomerInfo
-            WHERE MDFY_ID != 'booking' AND MDFY_ID != 'batch'
+            WHERE MDFY_ID != 'booking' OR MDFY_ID != 'batch'
         `;
         const [rows] = await pool.query(query);
         res.status(200).json(rows);

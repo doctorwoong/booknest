@@ -337,8 +337,17 @@ function Admin() {
                                 {reservationCustomers.map((customer) => (
                                     <tr key={customer.customer_id}>
                                         <td>{customer.customer_id}</td>
-                                        <td style={{textAlign:'left'}}>{customer.name}</td>
-                                        <td style={{textAlign:'left'}}>{customer.phone}</td>
+                                        <td
+                                            style={{
+                                                textAlign: 'left',
+                                                overflow: 'hidden',
+                                                whiteSpace: 'nowrap',
+                                                textOverflow: 'ellipsis',
+                                            }}
+                                        >
+                                            {customer.name}
+                                        </td>
+                                        <td style={{textAlign: 'left'}}>{customer.phone}</td>
                                         <td>{customer.title}</td>
                                         <td>{customer.checkIn}</td>
                                         <td>{customer.checkOut}</td>
