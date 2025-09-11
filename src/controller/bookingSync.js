@@ -309,7 +309,12 @@ const resolveSingleConflict = async (roomName, conflict) => {
                 try {
                     await db.query(`
                         INSERT INTO CustomerInfo_Backup 
-                        SELECT *, NOW() as cancelled_at, 'overbooking_resolved' as cancellation_reason
+                        (customer_id, name, email, phone_number, passport_number, check_in, check_out, 
+                         reserved_room_number, totalprice, MDFY_DTM, MDFY_ID, 
+                         REG_DTM, REG_ID, cancelled_at, cancellation_reason)
+                        SELECT customer_id, name, email, phone_number, passport_number, check_in, check_out, 
+                               reserved_room_number, totalprice, MDFY_DTM, MDFY_ID, 
+                               REG_DTM, REG_ID, NOW() as cancelled_at, 'overbooking_resolved' as cancellation_reason
                         FROM CustomerInfo 
                         WHERE customer_id = ?
                     `, [ourConflict.customer_id]);
@@ -455,8 +460,6 @@ const fetchAndStoreBookingBookings = async (useCache = true) => {
     try {
         console.log("🔄 Booking.com → 우리 시스템 동기화 시작...");
 
-        // 🗄️ 백업 테이블 생성 (취소된 예약 보관용)
-        await createBackupTable();
         
         const startTime = Date.now();
         const results = [];
@@ -536,7 +539,12 @@ const fetchAndStoreBookingBookings = async (useCache = true) => {
                                 // 취소된 예약을 백업 테이블로 이동
                                 await db.query(`
                                     INSERT INTO CustomerInfo_Backup 
-                                    SELECT *, NOW() as cancelled_at, 'booking_cancelled' as cancellation_reason
+                                    (customer_id, name, email, phone_number, passport_number, check_in, check_out, 
+                                     reserved_room_number, totalprice, MDFY_DTM, MDFY_ID, 
+                                     REG_DTM, REG_ID, cancelled_at, cancellation_reason)
+                                    SELECT customer_id, name, email, phone_number, passport_number, check_in, check_out, 
+                                           reserved_room_number, totalprice, MDFY_DTM, MDFY_ID, 
+                                           REG_DTM, REG_ID, NOW() as cancelled_at, 'booking_cancelled' as cancellation_reason
                                     FROM CustomerInfo 
                                     WHERE customer_id = ?
                                 `, [cancelledReservation.customer_id]);
@@ -594,7 +602,7 @@ const fetchAndStoreBookingBookings = async (useCache = true) => {
 
                                 if (existing.length === 0) {
                                     // 중복이 없으면 INSERT
-                await db.query(
+                                await db.query(
                     `INSERT INTO CustomerInfo (
                         name, email, phone_number, passport_number,
                         check_in, check_out,

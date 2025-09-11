@@ -179,9 +179,9 @@ app.get('/export-ical/:roomNumber?', async (req, res) => {
 });
 
 // ✅ Booking.com 수동 전송 엔드포인트
-app.post('/manual-booking-sync', async (req, res) => {
+app.get('/manual-booking-sync', async (req, res) => {
     try {
-        const { action } = req.body;
+        const { action } = req.query;
         
         if (action === 'export_all') {
             const result = await manualBookingSync();
