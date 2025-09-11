@@ -601,8 +601,8 @@ const getUnavailablePeriods = async (req, res) => {
                 // 날짜 차이 계산 (일수)
                 const daysBetween = Math.floor((nextCheckInDate - checkOutDate) / (1000 * 60 * 60 * 24));
                 
-                // 3박4일(4일) 미만인 경우 예약불가 기간으로 추가
-                if (daysBetween > 0 && daysBetween < 4) {
+                // 3박 미만인 경우에만 예약불가 기간으로 추가 (3박 이상이면 예약 가능)
+                if (daysBetween > 0 && daysBetween < 3) {
                     const unavailableStart = new Date(checkOutDate);
                     const unavailableEnd = new Date(nextCheckInDate);
                     
@@ -611,7 +611,7 @@ const getUnavailablePeriods = async (req, res) => {
                         start_date: unavailableStart.toISOString().split('T')[0],
                         end_date: unavailableEnd.toISOString().split('T')[0],
                         days_between: daysBetween,
-                        reason: `예약 간격 ${daysBetween}일 (최소 4일 필요)`
+                        reason: `예약 간격 ${daysBetween}일 (최소 3박 위해 3일 필요)`
                     });
                 }
             }
