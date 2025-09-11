@@ -35,8 +35,8 @@ table button {border:none;}
     #checkOut table{ width: 620px;}
 }
 
-/* 고객, 체크인, 체크아웃 탭 공통: 가로 스크롤 */
-.tab-pane { overflow-x:auto; }
+/* 고객, 체크인, 체크아웃 탭 공통: 가로 스크롤, 세로는 자동 */
+.tab-pane { overflow-x:auto; overflow-y:visible; }
 
 /* 표 셀 스타일 공통 적용 */
 .tab-pane table th,

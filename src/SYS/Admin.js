@@ -310,7 +310,7 @@ function Admin() {
                     </div>
                 </div>
 
-                <div style={{overflowY: "auto", height: "77vh"}}>
+                <div style={{overflowY: "visible", height: "auto", minHeight: "85vh"}}>
                     <div className="tab-content">
                         {/* 고객관리 탭 */}
                         <div className={`tab-pane fade ${activeTab === "customer" ? "show active" : ""}`} id="customer" role="tabpanel">

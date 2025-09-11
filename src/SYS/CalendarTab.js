@@ -170,8 +170,12 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
         const headerH = header.offsetHeight || 0;
         const bodyH   = body.scrollHeight || 0;
         const tableH  = headerH + bodyH;
+        
+        // 방 개수에 따른 최소 높이 계산 (방당 40px + 헤더 + 여유)
+        const roomCount = rooms.length;
+        const minRequiredHeight = headerH + (roomCount * 40) + 100; // 방당 40px + 충분한 여유
 
-        // ② 화면 가용 높이(푸터/플로팅버튼 보정 포함)
+        // ② 화면 가용 높이를 크게 늘려서 내부 스크롤 방지
         const top = wrap.getBoundingClientRect().top;
 
         // 현재 뷰포트 하단에 겹쳐 보이는 푸터 높이만큼 차감
@@ -189,44 +193,44 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
             }
         }
 
-        // 하단 플로팅버튼(예: 채팅버튼) 같은 것도 보정하고 싶으면 높이 더해주기
-        const floatingGap = 0; // px 필요시 56 등으로 설정
-
-        const baseGap = 8; // 기본 여유
-        const avail = Math.max(
-            200,
-            window.innerHeight - top - baseGap - footerOverlap - floatingGap
-        );
-
-        // ③ 최종 높이
-        setWrapH(Math.min(tableH, avail));
+        // 테이블 전체를 담을 수 있는 컨테이너 높이 계산
+        const baseGap = 20; // 기본 여유
+        
+        // 테이블이 모두 보이려면 필요한 높이 = 실제 테이블 높이 또는 계산된 최소 높이
+        const requiredHeight = Math.max(tableH, minRequiredHeight);
+        
+        // ③ 최종 높이 - 테이블 전체가 스크롤 없이 보이도록 설정
+        const finalHeight = requiredHeight + 50; // 테이블 높이 + 여유
+        
+        setWrapH(finalHeight);
     };
 
-    useEffect(() => {
-        recomputeHeight();
-        const onResize = () => recomputeHeight();
-        window.addEventListener("resize", onResize);
-        window.addEventListener("orientationchange", onResize);
+    // 높이 자동 조정으로 변경 - JavaScript 높이 계산 비활성화
+    // useEffect(() => {
+    //     recomputeHeight();
+    //     const onResize = () => recomputeHeight();
+    //     window.addEventListener("resize", onResize);
+    //     window.addEventListener("orientationchange", onResize);
 
-        const ro = new ResizeObserver(recomputeHeight);
-        ro.observe(document.body);
-        // 푸터 자체 변화도 감시(선택)
-        const footerEl = getFooterEl();
-        let footerRO;
-        if (footerEl) {
-            footerRO = new ResizeObserver(recomputeHeight);
-            footerRO.observe(footerEl);
-        }
+    //     const ro = new ResizeObserver(recomputeHeight);
+    //     ro.observe(document.body);
+    //     // 푸터 자체 변화도 감시(선택)
+    //     const footerEl = getFooterEl();
+    //     let footerRO;
+    //     if (footerEl) {
+    //         footerRO = new ResizeObserver(recomputeHeight);
+    //         footerRO.observe(footerEl);
+    //     }
 
-        const t = setTimeout(recomputeHeight, 0);
-        return () => {
-            window.removeEventListener("resize", onResize);
-            window.removeEventListener("orientationchange", onResize);
-            ro.disconnect();
-            footerRO?.disconnect();
-            clearTimeout(t);
-        };
-    }, [rooms.length]);
+    //     const t = setTimeout(recomputeHeight, 0);
+    //     return () => {
+    //         window.removeEventListener("resize", onResize);
+    //         window.removeEventListener("orientationchange", onResize);
+    //         ro.disconnect();
+    //         footerRO?.disconnect();
+    //         clearTimeout(t);
+    //     };
+    // }, [rooms.length]);
 
     /** ----- 휠 가로 전환: 개선된 휠 스크롤 ----- */
     useEffect(() => {
@@ -311,7 +315,6 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
             <div
                 className="calendar-wrapper"
                 ref={wrapperRef}
-                style={wrapH ? { height: `${wrapH}px`, overflowY: 'auto' } : undefined}
                 onClick={hideTooltip}
             >
                 <div className="booking-container">
