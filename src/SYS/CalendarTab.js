@@ -81,24 +81,14 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
     };
 
     const showTooltip = (e, content) => {
-        // 마우스 이벤트인 경우 마우스 위치 사용, 그 외에는 요소 중앙 사용
-        let x, y;
-        
-        if (e.type === 'mouseenter') {
-            // 마우스 진입: 실제 마우스 위치 사용
-            x = e.clientX;
-            y = e.clientY;
-        } else {
-            // 클릭/터치 이벤트: 요소 중앙 사용
-            const rect = e.currentTarget.getBoundingClientRect();
-            x = rect.left + rect.width / 2;
-            y = rect.top + rect.height / 2;
-        }
+        // 클릭/탭한 정확한 위치 사용
+        const x = e.clientX;
+        const y = e.clientY;
         
         setTooltip({
             show: true,
             x: x,
-            y: y - 15, // 마우스/터치 위치에서 약간 위쪽에 표시
+            y: y - 15, // 클릭 위치에서 약간 위로
             content: content
         });
     };
@@ -322,6 +312,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
                 className="calendar-wrapper"
                 ref={wrapperRef}
                 style={wrapH ? { height: `${wrapH}px`, overflowY: 'auto' } : undefined}
+                onClick={hideTooltip}
             >
                 <div className="booking-container">
                     <div className="room-list">
@@ -362,17 +353,8 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
                                                             left: "40px", zIndex: 1, borderRadius: "5px",
                                                             cursor: "pointer"
                                                         }}
-                                                        onMouseEnter={(e) => {
-                                                            const originalDates = getOriginalDates(booking);
-                                                            showTooltip(e, {
-                                                                type: "홈페이지 예약",
-                                                                customer: booking.name || booking.NAME || "이름 없음",
-                                                                room: room.name,
-                                                                dates: `${originalDates.checkIn} ~ ${originalDates.checkOut}`
-                                                            });
-                                                        }}
-                                                        onMouseLeave={hideTooltip}
                                                         onClick={(e) => {
+                                                            e.stopPropagation(); // 이벤트 전파 막기
                                                             const originalDates = getOriginalDates(booking);
                                                             showTooltip(e, {
                                                                 type: "홈페이지 예약",
@@ -393,17 +375,8 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
                                                             left: "-40px", zIndex: 2, borderRadius: "5px",
                                                             cursor: "pointer"
                                                         }}
-                                                        onMouseEnter={(e) => {
-                                                            const originalDates = getOriginalDates(airBooking, true); // 외부 예약이므로 true
-                                                            showTooltip(e, {
-                                                                type: "외부 플랫폼 예약",
-                                                                customer: "외부 고객",
-                                                                room: room.name,
-                                                                dates: `${originalDates.checkIn} ~ ${originalDates.checkOut}`
-                                                            });
-                                                        }}
-                                                        onMouseLeave={hideTooltip}
                                                         onClick={(e) => {
+                                                            e.stopPropagation(); // 이벤트 전파 막기
                                                             const originalDates = getOriginalDates(airBooking, true); // 외부 예약이므로 true
                                                             showTooltip(e, {
                                                                 type: "외부 플랫폼 예약",

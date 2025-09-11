@@ -624,8 +624,6 @@ const getUnavailablePeriods = async (req, res) => {
     }
 };
 
-
-
 module.exports = {getMainRoom, insertReservation, getCheckInCustomers,getCheckOutCustomers,getCheckCustomers,
     getReviews ,deleteReservation ,getReviewCustomer, getCustmerReview,updateReview,writeReview ,deleteReview
     ,getReservationCustomers ,updateCheckInMailStatus ,updateCheckOutMailStatus ,updateReservationMailStatus, updateCheckInSmsStatus,updateCheckOutSmsStatus

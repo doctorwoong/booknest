@@ -11,6 +11,9 @@ const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomer
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
     updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods } = require('./controller/controller');
 
+
+
+
     // ✅ 환경변수 설정 (서버 관리자 설정 없이 코드에서 직접)
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
@@ -274,6 +277,13 @@ app.post("/check-overbooking", async (req, res) => {
         });
     }
 });
+
+// 오버부킹 체크 컨트롤러 함수들 import
+const { checkAllOverbookingsController, checkRoomOverbookingsController } = require('./controller/bookingSync');
+
+// 🔍 오버부킹 체크 API
+app.get('/check-all-overbookings', checkAllOverbookingsController);
+app.get('/check-room-overbookings/:roomNumber', checkRoomOverbookingsController);
 
 const PORT = 30022;
 app.listen(PORT, () => console.log(`🚀 Proxy server running on port ${PORT}`));
