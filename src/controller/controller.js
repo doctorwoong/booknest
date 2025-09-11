@@ -153,7 +153,7 @@ const getCheckInCustomers = async (req, res) => {
             FROM
                 CustomerInfo
             where 1=1
-              AND REG_ID != 'batch'
+              AND name != 'batch'
             ORDER BY
                 CASE
                     WHEN STR_TO_DATE(check_in, '%Y%m%d') BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) THEN 1
@@ -187,7 +187,7 @@ const getCheckOutCustomers = async (req, res) => {
             FROM
                 CustomerInfo
             where 1=1
-              AND REG_ID != 'batch'
+              AND name != 'batch'
             ORDER BY
                 CASE
                     WHEN STR_TO_DATE(check_out, '%Y%m%d') >= CURDATE() THEN 1

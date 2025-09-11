@@ -51,21 +51,21 @@ const ensureCacheDir = async () => {
 // ✅ Booking.com 숙소 리스트 (iCal URL만 사용)
 const bookingListings = [
     // 예시:
-    { id: 1, name: 'C106', bookingIcalUrl: "https://ical.booking.com/v1/export?t=51cb0da8-08b0-48d2-9c4f-3fca0c82d68a" },
-    { id: 2, name: 'C107', bookingIcalUrl: "https://ical.booking.com/v1/export?t=3b79344b-f655-431e-a242-e341d6687bff" },
-    { id: 3, name: 'C201', bookingIcalUrl: "https://ical.booking.com/v1/export?t=7ebb76a4-e64e-4aa8-b10f-f44563ddad77" },
-    { id: 4, name: 'C302', bookingIcalUrl: "https://ical.booking.com/v1/export?t=2c7fbc09-1679-4c98-841d-b36c8c812397" },
-    { id: 5, name: 'C305', bookingIcalUrl: "https://ical.booking.com/v1/export?t=78750e6c-6e83-4492-bc68-5d6ee839d94b" },
-    { id: 6, name: 'C402', bookingIcalUrl: "https://ical.booking.com/v1/export?t=a439a607-0b82-49f5-81ba-1300804f411a" },
-    { id: 8, name: 'N103', bookingIcalUrl: "https://ical.booking.com/v1/export?t=e2dc5702-7e08-4803-975b-055a9b4c1aa7" },
-    { id: 9, name: 'N202', bookingIcalUrl: "https://ical.booking.com/v1/export?t=76fa03f1-22fa-4947-9b10-8b4636a82858" },
-    { id: 10, name: 'R102', bookingIcalUrl: "https://ical.booking.com/v1/export?t=e544dbe8-c51f-4b7b-9738-5a7cb76a014e" },
-    { id: 11, name: 'N303', bookingIcalUrl: "https://ical.booking.com/v1/export?t=84c3f453-f96a-45b1-94f0-673f56424970" },
-    { id: 12, name: 'N306', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c669d6fe-66ae-4dbd-8e8a-5238c67dcaaf" },
-    { id: 13, name: 'N307', bookingIcalUrl: "https://ical.booking.com/v1/export?t=cb9785c5-513e-4588-8d9b-dc51eddca58e" },
-    { id: 14, name: 'N203', bookingIcalUrl: "https://ical.booking.com/v1/export?t=d140a2b7-b3f5-4148-b2d6-09b727dc9585" },
-    { id: 15, name: 'N207', bookingIcalUrl: "https://ical.booking.com/v1/export?t=6757631a-ce0c-4458-80f8-e286ecee7ca6" },
-    { id: 16, name: 'N301', bookingIcalUrl: "https://ical.booking.com/v1/export?t=be72ae8b-c9f8-4eef-8904-e9287d99e8ca" }
+    { id: 1, name: 'C106', bookingIcalUrl: "https://ical.booking.com/v1/export?t=5120ca8a-2302-456a-ab0d-41e3377e2bb2" },
+    { id: 2, name: 'C107', bookingIcalUrl: "https://ical.booking.com/v1/export?t=229cde29-1ca4-4942-8f07-948b89a167a0" },
+    { id: 3, name: 'C201', bookingIcalUrl: "https://ical.booking.com/v1/export?t=36a02f7d-32fe-4c79-bc31-6a6759a2cf64" },
+    { id: 4, name: 'C302', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c54da310-4974-4357-b3db-1ce8d8606462" },
+    { id: 5, name: 'C305', bookingIcalUrl: "https://ical.booking.com/v1/export?t=4439e712-56ea-46d1-ae4a-8f747604ad7d" },
+    { id: 6, name: 'C402', bookingIcalUrl: "https://ical.booking.com/v1/export?t=01675ad5-c9ae-46e0-be6d-2d55ee8d210f" },
+    { id: 8, name: 'N103', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c10c31a2-ca3b-4896-a838-4c751d990e01" },
+    { id: 9, name: 'N202', bookingIcalUrl: "https://ical.booking.com/v1/export?t=5c3ad545-f5cc-4ce8-8ac6-1e110f4f1b0c" },
+    { id: 10, name: 'R102', bookingIcalUrl: "https://ical.booking.com/v1/export?t=16714330-23ee-4cb9-8010-c98da5456252" },
+    { id: 11, name: 'N303', bookingIcalUrl: "https://ical.booking.com/v1/export?t=faf99c38-84e7-4590-8930-f86177fa0222" },
+    { id: 12, name: 'N306', bookingIcalUrl: "https://ical.booking.com/v1/export?t=bb6a7524-17a2-4f62-9ca9-e122721c8186" },
+    { id: 13, name: 'N307', bookingIcalUrl: "https://ical.booking.com/v1/export?t=dacc2722-ed53-4675-b9cc-5b62ff2e86db" },
+    { id: 14, name: 'N203', bookingIcalUrl: "https://ical.booking.com/v1/export?t=b4709d87-2fec-4d51-b96d-2d21822bb970" },
+    { id: 15, name: 'N207', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c2836cbb-b99e-48ec-a669-7e80b073278a" },
+    { id: 16, name: 'N301', bookingIcalUrl: "https://ical.booking.com/v1/export?t=e170891a-ed13-483f-b6ae-cca83405328e" }
     // 실제 booking.com iCal URL을 여기에 추가하세요
 ];
 
@@ -769,7 +769,7 @@ const generateAndSaveIcal = async (roomNumber = null) => {
         // 파일 시스템에 저장 (public 폴더에)
         const fs = require('fs');
         const path = require('path');
-        const publicPath = path.join(__dirname, '../../public/ical');
+        const publicPath = path.join(__dirname, './public/ical');
         
         // ical 폴더가 없으면 생성
         if (!fs.existsSync(publicPath)) {
@@ -877,9 +877,9 @@ const syncWithBookingCom = async () => {
     }
 };
 
-// 🕐 매일 새벽 1시에 자동 실행 설정 (UTC 기준 16:00)
-cron.schedule("0 16 * * *", () => {
-    console.log("⏰ Booking.com 양방향 동기화 배치 실행 중...");
+// 🕐 2시간마다 자동 실행 설정
+cron.schedule("0 */2 * * *", () => {
+    console.log("⏰ Booking.com 양방향 동기화 배치 실행 중... (2시간마다)");
     syncWithBookingCom();
 });
 

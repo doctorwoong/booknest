@@ -212,6 +212,29 @@ app.post("/sync-booking-realtime", async (req, res) => {
     }
 });
 
+// ✅ Booking.com 수동 전송 엔드포인트
+app.post('/manual-booking-sync', async (req, res) => {
+    try {
+        const { action } = req.body;
+        
+        if (action === 'export_all') {
+            const { manualBookingSync } = require('./src/controller/bookingSync');
+            const result = await manualBookingSync();
+            res.json({ 
+                success: true, 
+                message: 'Booking.com으로 예약정보 전송 완료',
+                files: result.files || []
+            });
+        } else {
+            res.status(400).json({ error: '잘못된 액션입니다.' });
+        }
+
+    } catch (error) {
+        console.error('Booking.com 수동 전송 오류:', error);
+        res.status(500).json({ error: 'Booking.com 전송 실패' });
+    }
+});
+
 const PORT = 30021;
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Proxy server running on port ${PORT}`));
 

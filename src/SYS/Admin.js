@@ -464,19 +464,10 @@ function Admin() {
                                 onExportIcal={async () => {
                                     try {
                                         // Booking.com으로 예약정보 수동 전송
-                                        const response = await fetch('/manual-booking-sync', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            },
-                                            body: JSON.stringify({
-                                                action: 'export_all'
-                                            })
-                                        });
+                                        const response = await apiRequest('/manual-booking-sync', 'GET', { action: 'export_all' });
                                         
-                                        if (response.ok) {
-                                            const result = await response.json();
-                                            alert(`Booking.com으로 예약정보 전송 완료!\n전송된 파일: ${result.files?.length || 0}개`);
+                                        if (response.success) {
+                                            alert(`Booking.com으로 예약정보 전송 완료!\n전송된 파일: ${response.files?.length || 0}개`);
                                         } else {
                                             throw new Error('전송 실패');
                                         }
