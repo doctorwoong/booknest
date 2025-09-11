@@ -526,11 +526,12 @@ const getCalendarAdmin = async (req, res) => {
     try {
         const query = `
             SELECT
+                name,
                 reserved_room_number AS room,
                 DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
                 DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out
             FROM CustomerInfo
-            WHERE MDFY_ID != 'booking' OR MDFY_ID != 'batch'
+            WHERE MDFY_ID != 'booking' AND MDFY_ID != 'batch'
         `;
         const [rows] = await pool.query(query);
         res.status(200).json(rows);
@@ -545,6 +546,7 @@ const getCalendarAirbnb = async (req, res) => {
     try {
         const query = `
             SELECT
+                name,
                 reserved_room_number AS room,
                 DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_in, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_in,
                 DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out,
@@ -563,9 +565,68 @@ const getCalendarAirbnb = async (req, res) => {
     }
 };
 
+const getUnavailablePeriods = async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                reserved_room_number AS room,
+                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out
+            FROM CustomerInfo
+            ORDER BY reserved_room_number, STR_TO_DATE(check_in, '%Y%m%d')
+        `;
+        const [allBookings] = await pool.query(query);
+        
+        // 각 방별로 예약불가 기간 계산
+        const unavailablePeriods = [];
+        const roomBookings = {};
+        
+        // 방별로 예약 그룹화
+        allBookings.forEach(booking => {
+            if (!roomBookings[booking.room]) {
+                roomBookings[booking.room] = [];
+            }
+            roomBookings[booking.room].push(booking);
+        });
+        
+        // 각 방별로 예약불가 기간 찾기
+        Object.entries(roomBookings).forEach(([room, bookings]) => {
+            for (let i = 0; i < bookings.length - 1; i++) {
+                const currentBooking = bookings[i];
+                const nextBooking = bookings[i + 1];
+                
+                const checkOutDate = new Date(currentBooking.check_out);
+                const nextCheckInDate = new Date(nextBooking.check_in);
+                
+                // 날짜 차이 계산 (일수)
+                const daysBetween = Math.floor((nextCheckInDate - checkOutDate) / (1000 * 60 * 60 * 24));
+                
+                // 3박4일(4일) 미만인 경우 예약불가 기간으로 추가
+                if (daysBetween > 0 && daysBetween < 4) {
+                    const unavailableStart = new Date(checkOutDate);
+                    const unavailableEnd = new Date(nextCheckInDate);
+                    
+                    unavailablePeriods.push({
+                        room: room,
+                        start_date: unavailableStart.toISOString().split('T')[0],
+                        end_date: unavailableEnd.toISOString().split('T')[0],
+                        days_between: daysBetween,
+                        reason: `예약 간격 ${daysBetween}일 (최소 4일 필요)`
+                    });
+                }
+            }
+        });
+        
+        res.status(200).json(unavailablePeriods);
+    } catch (err) {
+        console.error('Error fetching unavailable periods:', err);
+        res.status(500).send('Error fetching unavailable periods');
+    }
+};
+
 
 
 module.exports = {getMainRoom, insertReservation, getCheckInCustomers,getCheckOutCustomers,getCheckCustomers,
     getReviews ,deleteReservation ,getReviewCustomer, getCustmerReview,updateReview,writeReview ,deleteReview
     ,getReservationCustomers ,updateCheckInMailStatus ,updateCheckOutMailStatus ,updateReservationMailStatus, updateCheckInSmsStatus,updateCheckOutSmsStatus
-    ,getCalendarAdmin,getCalendarAirbnb };
+    ,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods };

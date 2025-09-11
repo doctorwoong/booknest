@@ -22,6 +22,7 @@ function Admin() {
 
     const [bookings ,setBookings] = useState([]);
     const [airbookings ,setAirbookings] = useState([]);
+    const [unavailablePeriods, setUnavailablePeriods] = useState([]);
     const [loading, setLoading] = useState(false);
     const [manualPhone, setManualPhone] = useState("");
 
@@ -97,6 +98,10 @@ function Admin() {
                         ...customer,
                     }));
                     setAirbookings(formattedData2);
+
+                    // 예약불가 기간 가져오기
+                    const data3 = await apiRequest("/unavailable-periods","POST");
+                    setUnavailablePeriods(data3);
                 }else{
                     const data = await apiRequest("/getReservation","POST");
 
@@ -461,6 +466,7 @@ function Admin() {
                                 rooms={rooms} 
                                 bookings={bookings} 
                                 airbookings={airbookings}
+                                unavailablePeriods={unavailablePeriods}
                                 onExportIcal={async () => {
                                     try {
                                         // Booking.com으로 예약정보 수동 전송

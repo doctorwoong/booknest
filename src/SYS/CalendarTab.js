@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import "../CSS/style/CalendarTab.css";
 
-function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal }) {
+function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailablePeriods = [], onExportIcal }) {
     const today = new Date();
     const [year, setYear] = useState(today.getFullYear());
     const [month, setMonth] = useState(today.getMonth());
+    const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, content: null });
 
     const scrollRef = useRef(null);    // 가로 스크롤(달력)
     const wrapperRef = useRef(null);   // 세로 스크롤 주체
@@ -77,6 +78,52 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
         s.setDate(s.getDate() - 1); // check-in 하루 전부터
         const e = new Date(end);
         return Math.max((e - s) / (1000 * 60 * 60 * 24), 1);
+    };
+
+    const showTooltip = (e, content) => {
+        // 마우스 이벤트인 경우 마우스 위치 사용, 그 외에는 요소 중앙 사용
+        let x, y;
+        
+        if (e.type === 'mouseenter') {
+            // 마우스 진입: 실제 마우스 위치 사용
+            x = e.clientX;
+            y = e.clientY;
+        } else {
+            // 클릭/터치 이벤트: 요소 중앙 사용
+            const rect = e.currentTarget.getBoundingClientRect();
+            x = rect.left + rect.width / 2;
+            y = rect.top + rect.height / 2;
+        }
+        
+        setTooltip({
+            show: true,
+            x: x,
+            y: y - 15, // 마우스/터치 위치에서 약간 위쪽에 표시
+            content: content
+        });
+    };
+
+    const hideTooltip = () => {
+        setTooltip({ show: false, x: 0, y: 0, content: null });
+    };
+
+    // 화면 날짜에서 -1일 해서 원본 날짜 계산
+    const getOriginalDates = (booking, isExternal = false) => {
+        const checkInDate = new Date(booking.check_in);
+        const checkOutDate = new Date(booking.check_out);
+        
+        // 체크아웃에서 1일 빼기 (화면용 +1일을 되돌림)
+        checkOutDate.setDate(checkOutDate.getDate() - 1);
+        
+        // 외부 예약은 체크인에서도 1일 빼기
+        if (isExternal) {
+            checkInDate.setDate(checkInDate.getDate() - 1);
+        }
+        
+        return {
+            checkIn: isExternal ? checkInDate.toISOString().split('T')[0] : booking.check_in,
+            checkOut: checkOutDate.toISOString().split('T')[0]
+        };
     };
 
     /** ----- 초기 today로 가로 스크롤 (1회) ----- */
@@ -295,27 +342,93 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
                                         const d = toLocalYMD(date);
                                         const roomBookings    = bookings.filter(b => b.room === room.name);
                                         const roomAirBookings = airbookings.filter(b => b.room === room.name);
+                                        const roomUnavailable = unavailablePeriods.filter(u => u.room === room.name);
+                                        
                                         const booking     = roomBookings.find(b => d >= b.check_in && d < b.check_out);
                                         const isCheckIn   = roomBookings.find(b => d === b.check_in);
                                         const airBooking  = roomAirBookings.find(b => d >= b.check_in && d < b.check_out);
                                         const isAirCheckIn= roomAirBookings.find(b => d === b.check_in);
+                                        const unavailable = roomUnavailable.find(u => d >= u.start_date && d < u.end_date);
+                                        const isUnavailableStart = roomUnavailable.find(u => d === u.start_date);
                                         return (
                                             <div className="cell" key={`${room.id}-${d}`}>
                                                 {isCheckIn && booking && (
-                                                    <div className="booking-bar" style={{
-                                                        width: `${(getBookingSpanInDates(booking.check_in, booking.check_out) - 2) * CELL_WIDTH}px`,
-                                                        backgroundColor: "#1E90FF", height: "70%",
-                                                        position: "absolute", top: "50%", transform: "translateY(-50%)",
-                                                        left: "40px", zIndex: 1, borderRadius: "5px"
-                                                    }}/>
+                                                    <div 
+                                                        className="booking-bar" 
+                                                        style={{
+                                                            width: `${(getBookingSpanInDates(booking.check_in, booking.check_out) - 2) * CELL_WIDTH}px`,
+                                                            backgroundColor: "#1E90FF", height: "70%",
+                                                            position: "absolute", top: "50%", transform: "translateY(-50%)",
+                                                            left: "40px", zIndex: 1, borderRadius: "5px",
+                                                            cursor: "pointer"
+                                                        }}
+                                                        onMouseEnter={(e) => {
+                                                            const originalDates = getOriginalDates(booking);
+                                                            showTooltip(e, {
+                                                                type: "홈페이지 예약",
+                                                                customer: booking.name || booking.NAME || "이름 없음",
+                                                                room: room.name,
+                                                                dates: `${originalDates.checkIn} ~ ${originalDates.checkOut}`
+                                                            });
+                                                        }}
+                                                        onMouseLeave={hideTooltip}
+                                                        onClick={(e) => {
+                                                            const originalDates = getOriginalDates(booking);
+                                                            showTooltip(e, {
+                                                                type: "홈페이지 예약",
+                                                                customer: booking.name || booking.NAME || "이름 없음",
+                                                                room: room.name,
+                                                                dates: `${originalDates.checkIn} ~ ${originalDates.checkOut}`
+                                                            });
+                                                        }}
+                                                    />
                                                 )}
                                                 {isAirCheckIn && airBooking && (
-                                                    <div className="booking-bar" style={{
-                                                        width: `${(getBookingSpanInDates(airBooking.check_in, airBooking.check_out) - 1) * CELL_WIDTH}px`,
-                                                        backgroundColor: "#F54D6E", height: "70%",
-                                                        position: "absolute", top: "50%", transform: "translateY(-50%)",
-                                                        left: "-40px", zIndex: 2, borderRadius: "5px"
-                                                    }}/>
+                                                    <div 
+                                                        className="booking-bar" 
+                                                        style={{
+                                                            width: `${(getBookingSpanInDates(airBooking.check_in, airBooking.check_out) - 1) * CELL_WIDTH}px`,
+                                                            backgroundColor: "#F54D6E", height: "70%",
+                                                            position: "absolute", top: "50%", transform: "translateY(-50%)",
+                                                            left: "-40px", zIndex: 2, borderRadius: "5px",
+                                                            cursor: "pointer"
+                                                        }}
+                                                        onMouseEnter={(e) => {
+                                                            const originalDates = getOriginalDates(airBooking, true); // 외부 예약이므로 true
+                                                            showTooltip(e, {
+                                                                type: "외부 플랫폼 예약",
+                                                                customer: "외부 고객",
+                                                                room: room.name,
+                                                                dates: `${originalDates.checkIn} ~ ${originalDates.checkOut}`
+                                                            });
+                                                        }}
+                                                        onMouseLeave={hideTooltip}
+                                                        onClick={(e) => {
+                                                            const originalDates = getOriginalDates(airBooking, true); // 외부 예약이므로 true
+                                                            showTooltip(e, {
+                                                                type: "외부 플랫폼 예약",
+                                                                customer: "외부 고객",
+                                                                room: room.name,
+                                                                dates: `${originalDates.checkIn} ~ ${originalDates.checkOut}`
+                                                            });
+                                                        }}
+                                                    />
+                                                )}
+                                                {isUnavailableStart && unavailable && (
+                                                    <div 
+                                                        className="booking-bar" 
+                                                        style={{
+                                                            width: `${getBookingSpanInDates(unavailable.start_date, unavailable.end_date) * CELL_WIDTH}px`,
+                                                            backgroundColor: "#9E9E9E", height: "70%",
+                                                            position: "absolute", top: "50%", transform: "translateY(-50%)",
+                                                            left: "0px", zIndex: 0, borderRadius: "3px",
+                                                            opacity: 0.7,
+                                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                                            fontSize: "10px", color: "white", fontWeight: "bold"
+                                                        }}
+                                                    >
+                                                        예약불가
+                                                    </div>
                                                 )}
                                             </div>
                                         );
@@ -326,6 +439,36 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
                     </div>
                 </div>
             </div>
+            
+            {/* 툴팁 */}
+            {tooltip.show && tooltip.content && (
+                <div 
+                    style={{
+                        position: "fixed",
+                        left: Math.max(5, Math.min(tooltip.x - 70, window.innerWidth - 170)), // 화면 좌우 경계
+                        top: Math.max(5, Math.min(tooltip.y - 90, window.innerHeight - 120)), // 화면 상하 경계
+                        backgroundColor: "rgba(0, 0, 0, 0.9)",
+                        color: "white",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        fontSize: "11px",
+                        zIndex: 1000,
+                        pointerEvents: "none",
+                        minWidth: "140px",
+                        maxWidth: "200px",
+                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+                        lineHeight: "1.3",
+                        whiteSpace: "nowrap"
+                    }}
+                >
+                    <div style={{ fontWeight: "bold", marginBottom: "5px" }}>
+                        {tooltip.content.type}
+                    </div>
+                    <div>고객: {tooltip.content.customer}</div>
+                    <div>객실: {tooltip.content.room}</div>
+                    <div>날짜: {tooltip.content.dates}</div>
+                </div>
+            )}
         </div>
     );
 }

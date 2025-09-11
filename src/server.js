@@ -9,7 +9,7 @@ const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
-    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./controller/controller');
+    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods } = require('./controller/controller');
 
     // ✅ 환경변수 설정 (서버 관리자 설정 없이 코드에서 직접)
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
@@ -142,6 +142,7 @@ app.post('/getReservation', getReservationCustomers);
 
 app.post('/calendar_admin', getCalendarAdmin);
 app.post('/calendar_airbnb', getCalendarAirbnb);
+app.post('/unavailable-periods', getUnavailablePeriods);
 
 app.get('/api/reviews/:roomNumber', getReviews);
 app.get('/review/:customer_id', getCustmerReview);
