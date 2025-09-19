@@ -10,6 +10,7 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function Admin() {
     const [activeTab, setActiveTab] = useState("customer");
+    console.log('Admin 컴포넌트 렌더링됨, 현재 활성 탭:', activeTab);
     const [reservationCustomers, setreservationCustomers] = useState([]);
     const [checkInCustomers, setCheckInCustomers] = useState([]);
     const [checkOutCustomers, setCheckOutCustomers] = useState([]);
@@ -480,6 +481,30 @@ function Admin() {
                                     } catch (error) {
                                         console.error('Booking.com 전송 오류:', error);
                                         alert('Booking.com으로 예약정보 전송 중 오류가 발생했습니다.');
+                                    }
+                                }}
+                                onRefresh={async () => {
+                                    // 캘린더 데이터만 새로고침
+                                    try {
+                                        const data = await apiRequest("/calendar_admin","POST");
+                                        const formattedData = data.map((customer) => ({
+                                            ...customer,
+                                        }));
+                                        setBookings(formattedData);
+
+                                        const data2 = await apiRequest("/calendar_airbnb","POST");
+                                        const formattedData2 = data2.map((customer) => ({
+                                            ...customer,
+                                        }));
+                                        setAirbookings(formattedData2);
+
+                                        const data3 = await apiRequest("/unavailable-periods","POST");
+                                        const formattedData3 = data3.map((period) => ({
+                                            ...period,
+                                        }));
+                                        setUnavailablePeriods(formattedData3);
+                                    } catch (error) {
+                                        console.error('캘린더 데이터 새로고침 오류:', error);
                                     }
                                 }}
                             />

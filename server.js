@@ -8,7 +8,7 @@ const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
-    updateReservationMailStatus,updateCheckInSmsStatus,updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./src/controller/controller');
+    updateReservationMailStatus,updateCheckInSmsStatus,updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods, getReservationById, updateReservation } = require('./src/controller/controller');
 
 // express.json() 또는 body-parser 미들웨어 추가
 app.use(express.json());
@@ -159,6 +159,8 @@ app.post('/updateCheckOutMailStatus', updateCheckOutMailStatus);
 app.post('/updateReservationMailStatus', updateReservationMailStatus);
 app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
 app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
+app.post('/unavailable-periods', getUnavailablePeriods);
+app.post('/update-reservation', updateReservation);
 
 // ✅ iCal 내보내기 엔드포인트 (bookingSync.js 사용)
 const { generateAndSaveIcal } = require('./src/controller/bookingSync');

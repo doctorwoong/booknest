@@ -1020,6 +1020,7 @@ const generateAndSaveIcal = async (roomNumber = null) => {
             FROM CustomerInfo 
             WHERE check_in >= DATE_FORMAT(NOW(), '%Y%m%d')
             AND REG_ID != 'booking'
+            AND TYPE != 'UNAV'
             ORDER BY check_in, reserved_room_number
         `;
         

@@ -9,7 +9,7 @@ const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
-    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods } = require('./controller/controller');
+    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods, getReservationById, updateReservation, addUnavailablePeriod, deleteUnavailablePeriod, updateExternalReservation, getCalendarDataForUnavailable } = require('./controller/controller');
 
 
 
@@ -146,6 +146,7 @@ app.post('/getReservation', getReservationCustomers);
 app.post('/calendar_admin', getCalendarAdmin);
 app.post('/calendar_airbnb', getCalendarAirbnb);
 app.post('/unavailable-periods', getUnavailablePeriods);
+app.post('/calendar-data-for-unavailable', getCalendarDataForUnavailable);
 
 app.get('/api/reviews/:roomNumber', getReviews);
 app.get('/review/:customer_id', getCustmerReview);
@@ -155,6 +156,15 @@ app.post('/updateReservationMailStatus', updateReservationMailStatus);
 
 app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
 app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
+
+// 예약 수정 관련 API
+app.get('/reservation/:customer_id', getReservationById);
+app.post('/update-reservation', updateReservation);
+app.post('/update-external-reservation', updateExternalReservation);
+
+// 예약불가 기간 관련 API
+app.post('/add-unavailable-period', addUnavailablePeriod);
+app.delete('/delete-unavailable-period/:customer_id', deleteUnavailablePeriod);
 
 // ✅ iCal 내보내기 엔드포인트
 const { generateAndSaveIcal, manualBookingSync } = require('./controller/bookingSync');
