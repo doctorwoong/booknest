@@ -450,7 +450,7 @@ const sendCheckInEmail = async (customerEmail, title) => {
     }
 
     const customerMailOptions = {
-        from: "teamtoys717@gmail.com",
+        from: `"airbnbnoryangjin" <teamtoys717@gmail.com>`,
         to: customerEmail,
         subject: "체크인 1주일 전 안내",
         cc: ["bakho2@naver.com", "kangmd78@nate.com"],
@@ -463,9 +463,6 @@ const sendCheckInEmail = async (customerEmail, title) => {
 
 async function sendCancelEmail(resv) {
     // 필요한 필드만 방어적으로 추출
-
-    console.log("resv",resv);
-
     const email = resv.email;
     const name = resv.name;
     const room = resv.reserved_room_number;

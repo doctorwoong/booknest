@@ -88,7 +88,7 @@ function ReservationForm() {
             const insertResponse = await apiRequest("/insertReservation", "POST", reservationData);
 
             if (insertResponse) {
-                // ✅ 예약 신청 시 사장님께 SMS 전송
+                //  예약 신청 시 사장님께 SMS 전송
                 try {
                     const message = `[노량진 스튜디오] ${formData.name}님이 예약하셨습니다.\n객실: ${room_number}\n체크인: ${formatDate(checkInDate)}\n체크아웃: ${formatDate(checkOutDate)}\n가격: ₩${totalPrice.toLocaleString()}`;
                     
@@ -99,7 +99,7 @@ function ReservationForm() {
                     
                     const recipients = adminPhonesEnv 
                         ? adminPhonesEnv.split(',').map(phone => phone.trim())
-                        : ["01092341232"]; // 기본값
+                        : ["01022041720"]; // 기본값
                     
                     // 번호 배열을 돌면서 문자 보내기
                     for (const phone of recipients) {
@@ -108,9 +108,9 @@ function ReservationForm() {
                             message: message
                         });
                     }
-                    console.log("✅ 예약 신청 SMS 전송 완료");
+                    console.log(" 예약 신청 SMS 전송 완료");
                 } catch (smsError) {
-                    console.error("❌ 예약 신청 SMS 전송 실패:", smsError);
+                    console.error(" 예약 신청 SMS 전송 실패:", smsError);
                     // SMS 실패해도 예약은 성공으로 처리
                 }
 

@@ -1126,9 +1126,8 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Charset>utf8mb4</Charset>
     </collation>
     <schema id="288" parent="1" name="airbnb">
-      <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
-      <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-08-07.04:32:26</LastIntrospectionLocalTimestamp>
+      <Current>1</Current>
+      <LastIntrospectionLocalTimestamp>2025-09-26.10:52:51</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
@@ -1169,263 +1168,461 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Host>localhost</Host>
       <Plugin>auth_socket</Plugin>
     </user>
-    <table id="299" parent="288" name="CustomerInfo">
-      <DetailsLevel>3</DetailsLevel>
+    <table id="299" parent="288" name="COMMENTS">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="300" parent="288" name="Review">
-      <DetailsLevel>3</DetailsLevel>
+    <table id="300" parent="288" name="CustomerInfo">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="301" parent="288" name="RoomInfo">
+    <table id="301" parent="288" name="CustomerInfo_Backup">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="302" parent="288" name="QUESTIONS">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="303" parent="288" name="Review">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="304" parent="288" name="RoomInfo">
       <Comment>객실 정보 테이블</Comment>
-      <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <column id="302" parent="299" name="customer_id">
-      <AutoIncrement>9764</AutoIncrement>
+    <column id="305" parent="299" name="ID">
+      <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="303" parent="299" name="name">
+    <column id="306" parent="299" name="QUESTION_ID">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="307" parent="299" name="CONTENT">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="308" parent="299" name="REG_DTM">
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+      <Position>4</Position>
+      <StoredType>timestamp|0s</StoredType>
+    </column>
+    <column id="309" parent="299" name="MDFY_DTM">
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+      <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
+      <Position>5</Position>
+      <StoredType>timestamp|0s</StoredType>
+    </column>
+    <foreign-key id="310" parent="299" name="COMMENTS_ibfk_1">
+      <ColNames>QUESTION_ID</ColNames>
+      <OnDelete>cascade</OnDelete>
+      <RefColNames>ID</RefColNames>
+      <RefTableName>QUESTIONS</RefTableName>
+    </foreign-key>
+    <index id="311" parent="299" name="PRIMARY">
+      <ColNames>ID</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="312" parent="299" name="QUESTION_ID">
+      <ColNames>QUESTION_ID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="313" parent="299" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="314" parent="300" name="customer_id">
+      <AutoIncrement>52194</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="315" parent="300" name="name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="304" parent="299" name="email">
+    <column id="316" parent="300" name="email">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="305" parent="299" name="phone_number">
+    <column id="317" parent="300" name="phone_number">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(20)|0s</StoredType>
     </column>
-    <column id="306" parent="299" name="passport_number">
+    <column id="318" parent="300" name="passport_number">
       <Position>5</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="307" parent="299" name="check_in">
+    <column id="319" parent="300" name="check_in">
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>varchar(8)|0s</StoredType>
     </column>
-    <column id="308" parent="299" name="check_out">
+    <column id="320" parent="300" name="check_out">
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StoredType>varchar(8)|0s</StoredType>
     </column>
-    <column id="309" parent="299" name="check_in_message_status">
+    <column id="321" parent="300" name="check_in_message_status">
       <DefaultExpression>&apos;N&apos;</DefaultExpression>
       <Position>8</Position>
       <StoredType>enum(&apos;Y&apos;, &apos;N&apos;)|0e</StoredType>
     </column>
-    <column id="310" parent="299" name="check_out_message_status">
+    <column id="322" parent="300" name="check_out_message_status">
       <DefaultExpression>&apos;N&apos;</DefaultExpression>
       <Position>9</Position>
       <StoredType>enum(&apos;Y&apos;, &apos;N&apos;)|0e</StoredType>
     </column>
-    <column id="311" parent="299" name="check_in_mail_status">
+    <column id="323" parent="300" name="check_in_mail_status">
       <DefaultExpression>&apos;N&apos;</DefaultExpression>
       <Position>10</Position>
       <StoredType>enum(&apos;Y&apos;, &apos;N&apos;)|0e</StoredType>
     </column>
-    <column id="312" parent="299" name="check_out_mail_status">
+    <column id="324" parent="300" name="check_out_mail_status">
       <DefaultExpression>&apos;N&apos;</DefaultExpression>
       <Position>11</Position>
       <StoredType>enum(&apos;Y&apos;, &apos;N&apos;)|0e</StoredType>
     </column>
-    <column id="313" parent="299" name="reservation_mail_status">
+    <column id="325" parent="300" name="reservation_mail_status">
       <DefaultExpression>&apos;N&apos;</DefaultExpression>
       <Position>12</Position>
       <StoredType>enum(&apos;Y&apos;, &apos;N&apos;)|0e</StoredType>
     </column>
-    <column id="314" parent="299" name="reserved_room_number">
+    <column id="326" parent="300" name="reserved_room_number">
       <NotNull>1</NotNull>
       <Position>13</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="315" parent="299" name="review_id">
+    <column id="327" parent="300" name="review_id">
       <Position>14</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="316" parent="299" name="totalprice">
+    <column id="328" parent="300" name="totalprice">
       <Position>15</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="317" parent="299" name="TYPE">
+    <column id="329" parent="300" name="TYPE">
       <Position>16</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="318" parent="299" name="MDFY_DTM">
+    <column id="330" parent="300" name="MDFY_DTM">
       <Comment>수정일</Comment>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
       <Position>17</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="319" parent="299" name="MDFY_ID">
+    <column id="331" parent="300" name="MDFY_ID">
       <Comment>수정자</Comment>
       <Position>18</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="320" parent="299" name="REG_DTM">
+    <column id="332" parent="300" name="REG_DTM">
       <Comment>등록일</Comment>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>19</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="321" parent="299" name="REG_ID">
+    <column id="333" parent="300" name="REG_ID">
       <Comment>등록자</Comment>
       <Position>20</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <index id="322" parent="299" name="PRIMARY">
+    <index id="334" parent="300" name="PRIMARY">
       <ColNames>customer_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="323" parent="299" name="PRIMARY">
+    <key id="335" parent="300" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <check id="324" parent="300" name="Review_chk_1">
+    <column id="336" parent="301" name="customer_id">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="337" parent="301" name="name">
+      <Position>2</Position>
+      <StoredType>varchar(100)|0s</StoredType>
+    </column>
+    <column id="338" parent="301" name="email">
+      <Position>3</Position>
+      <StoredType>varchar(100)|0s</StoredType>
+    </column>
+    <column id="339" parent="301" name="phone_number">
+      <Position>4</Position>
+      <StoredType>varchar(20)|0s</StoredType>
+    </column>
+    <column id="340" parent="301" name="passport_number">
+      <Position>5</Position>
+      <StoredType>varchar(50)|0s</StoredType>
+    </column>
+    <column id="341" parent="301" name="check_in">
+      <Position>6</Position>
+      <StoredType>varchar(8)|0s</StoredType>
+    </column>
+    <column id="342" parent="301" name="check_out">
+      <Position>7</Position>
+      <StoredType>varchar(8)|0s</StoredType>
+    </column>
+    <column id="343" parent="301" name="check_in_message_status">
+      <Position>8</Position>
+      <StoredType>char(1)|0s</StoredType>
+    </column>
+    <column id="344" parent="301" name="check_out_message_status">
+      <Position>9</Position>
+      <StoredType>char(1)|0s</StoredType>
+    </column>
+    <column id="345" parent="301" name="check_in_mail_status">
+      <Position>10</Position>
+      <StoredType>char(1)|0s</StoredType>
+    </column>
+    <column id="346" parent="301" name="check_out_mail_status">
+      <Position>11</Position>
+      <StoredType>char(1)|0s</StoredType>
+    </column>
+    <column id="347" parent="301" name="reservation_mail_status">
+      <Position>12</Position>
+      <StoredType>char(1)|0s</StoredType>
+    </column>
+    <column id="348" parent="301" name="reserved_room_number">
+      <Position>13</Position>
+      <StoredType>varchar(10)|0s</StoredType>
+    </column>
+    <column id="349" parent="301" name="review_id">
+      <Position>14</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="350" parent="301" name="totalprice">
+      <Position>15</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="351" parent="301" name="MDFY_DTM">
+      <Position>16</Position>
+      <StoredType>datetime|0s</StoredType>
+    </column>
+    <column id="352" parent="301" name="MDFY_ID">
+      <Position>17</Position>
+      <StoredType>varchar(50)|0s</StoredType>
+    </column>
+    <column id="353" parent="301" name="REG_DTM">
+      <Position>18</Position>
+      <StoredType>datetime|0s</StoredType>
+    </column>
+    <column id="354" parent="301" name="REG_ID">
+      <Position>19</Position>
+      <StoredType>varchar(50)|0s</StoredType>
+    </column>
+    <column id="355" parent="301" name="cancelled_at">
+      <Position>20</Position>
+      <StoredType>datetime|0s</StoredType>
+    </column>
+    <column id="356" parent="301" name="cancellation_reason">
+      <Position>21</Position>
+      <StoredType>varchar(100)|0s</StoredType>
+    </column>
+    <index id="357" parent="301" name="PRIMARY">
+      <ColNames>customer_id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="358" parent="301" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="359" parent="302" name="ID">
+      <AutoIncrement>1</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="360" parent="302" name="TITLE">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="361" parent="302" name="CONTENT">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="362" parent="302" name="NAME">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>varchar(100)|0s</StoredType>
+    </column>
+    <column id="363" parent="302" name="EMAIL">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="364" parent="302" name="REG_DTM">
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+      <Position>6</Position>
+      <StoredType>timestamp|0s</StoredType>
+    </column>
+    <column id="365" parent="302" name="MDFY_DTM">
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+      <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
+      <Position>7</Position>
+      <StoredType>timestamp|0s</StoredType>
+    </column>
+    <index id="366" parent="302" name="PRIMARY">
+      <ColNames>ID</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="367" parent="302" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <check id="368" parent="303" name="Review_chk_1">
       <NameSurrogate>1</NameSurrogate>
       <Predicate>`rating` between 1 and 5</Predicate>
     </check>
-    <column id="325" parent="300" name="review_id">
+    <column id="369" parent="303" name="review_id">
       <AutoIncrement>601</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="326" parent="300" name="customer_id">
+    <column id="370" parent="303" name="customer_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(8)|0s</StoredType>
     </column>
-    <column id="327" parent="300" name="customer_name">
+    <column id="371" parent="303" name="customer_name">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="328" parent="300" name="room_number">
+    <column id="372" parent="303" name="room_number">
       <Comment>방 번호</Comment>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(20)|0s</StoredType>
     </column>
-    <column id="329" parent="300" name="review_text">
+    <column id="373" parent="303" name="review_text">
       <Position>5</Position>
       <StoredType>varchar(3000)|0s</StoredType>
     </column>
-    <column id="330" parent="300" name="rating">
+    <column id="374" parent="303" name="rating">
       <Position>6</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="331" parent="300" name="MDFY_DTM">
+    <column id="375" parent="303" name="MDFY_DTM">
       <Comment>수정일</Comment>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
       <Position>7</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="332" parent="300" name="MDFY_ID">
+    <column id="376" parent="303" name="MDFY_ID">
       <Comment>수정자</Comment>
       <Position>8</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="333" parent="300" name="REG_DTM">
+    <column id="377" parent="303" name="REG_DTM">
       <Comment>등록일</Comment>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>9</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="334" parent="300" name="REG_ID">
+    <column id="378" parent="303" name="REG_ID">
       <Comment>등록자</Comment>
       <Position>10</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <index id="335" parent="300" name="PRIMARY">
+    <index id="379" parent="303" name="PRIMARY">
       <ColNames>review_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="336" parent="300" name="customer_id">
+    <index id="380" parent="303" name="customer_id">
       <ColNames>customer_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="337" parent="300" name="PRIMARY">
+    <key id="381" parent="303" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="338" parent="301" name="seq">
-      <AutoIncrement>17</AutoIncrement>
+    <column id="382" parent="304" name="seq">
+      <AutoIncrement>19</AutoIncrement>
       <Comment>seq</Comment>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="339" parent="301" name="room_number">
+    <column id="383" parent="304" name="room_number">
       <Comment>방 번호</Comment>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(20)|0s</StoredType>
     </column>
-    <column id="340" parent="301" name="images">
+    <column id="384" parent="304" name="images">
       <Comment>이미지 목록 (JSON 형식)</Comment>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>json|0s</StoredType>
     </column>
-    <column id="341" parent="301" name="price">
+    <column id="385" parent="304" name="price">
       <Comment>금액</Comment>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <column id="342" parent="301" name="reservation_status">
+    <column id="386" parent="304" name="reservation_status">
       <Comment>예약 상태값</Comment>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>enum(&apos;available&apos;, &apos;reserved&apos;, &apos;unavailable&apos;)|0e</StoredType>
     </column>
-    <column id="343" parent="301" name="MDFY_DTM">
+    <column id="387" parent="304" name="MDFY_DTM">
       <Comment>수정일</Comment>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
       <Position>6</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="344" parent="301" name="MDFY_ID">
+    <column id="388" parent="304" name="MDFY_ID">
       <Comment>수정자</Comment>
       <Position>7</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="345" parent="301" name="REG_DTM">
+    <column id="389" parent="304" name="REG_DTM">
       <Comment>등록일</Comment>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>8</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="346" parent="301" name="REG_ID">
+    <column id="390" parent="304" name="REG_ID">
       <Comment>등록자</Comment>
       <Position>9</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <index id="347" parent="301" name="PRIMARY">
+    <index id="391" parent="304" name="PRIMARY">
       <ColNames>seq</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="348" parent="301" name="PRIMARY">
+    <key id="392" parent="304" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

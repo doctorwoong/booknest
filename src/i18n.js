@@ -19,7 +19,7 @@ i18n
         interpolation: { escapeValue: false },
     });
 
-// ✅ 한국어(ko)가 아니면 자동으로 영어(en)로 변경
+// 한국어(ko)가 아니면 자동으로 영어(en)로 변경
 if (i18n.language !== "ko") {
     i18n.changeLanguage("en");
 }

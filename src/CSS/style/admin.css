@@ -22,8 +22,11 @@ table button {border:none;}
 .calendar-header {display: flex;position: sticky;top: 0;background: white;z-index: 1;}
 .date-cell {min-width: 80px;padding: 5px;border-bottom: 1px solid #ccc;text-align: center;}
 .calendar-row {display: flex;}
-.cell.booked { background: teal; }
-.cell.available { background: white; }
+.cell.booked { background: teal;}
+.cell.available { background: white;}
+
+.container .admin-row {margin-top:100px}
+.container .admin-row .customer-tab{overflow-y:visible;height: auto;min-height: 85vh}
 
 .cell {position: relative;width: 100px;min-width: 80px;height: 40px;border: 1px solid #eee;}
 .booking-bar {position: absolute;top: 0;bottom: 0;background-color: #F54D6E;color: white;padding-left: 4px;font-size: 13px;line-height: 30px;white-space: nowrap;}

@@ -70,10 +70,15 @@
 .phone-input-group .country-code {flex: 0 0 100px;max-width: 100px;}
 .phone-input-group .phone-number {flex: 1;}
 
+.tabs {display: flex;gap: 10px;margin: 80px 0 20px 0;}
+.tabs button {padding: 10px 20px;border: 1px solid #ccc;background: none;cursor: pointer;}
+.tabs button.active {background: #F54D6E;color: #fff;font-weight: bold;}
+
+
 
 #stars {color: #F54D6E;}
 
-/* 📱 모바일 반응형 */
+/* 모바일 반응형 */
 @media (max-width: 768px) {
     .position-relative #startDate {width: 170px;}
     .position-relative #adults{width: 70px;}
@@ -93,7 +98,5 @@
     .reserCost span#costCheck {font-size: 14px;}
     .reserCost span#costCheck2 {font-size: 16px;font-weight: bold;}
     .reviewContainer img {width: 100% !important;height: 100px !important;}
-
-
 }
 

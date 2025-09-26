@@ -4,15 +4,99 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="2025.08.22 예약 취소 조건 변경 (전화번호 비교 -&gt; 전화번호 뒷 4자리 비교)" />
+    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="0910 서버세팅 수정">
+      <change afterPath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Util/data.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Util/dbconnect.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/09bedcf0-a960-45f9-bb59-c7b886808c34.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/09bedcf0-a960-45f9-bb59-c7b886808c34.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/C106_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C106_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/C107_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C107_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/C201_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C201_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/C302_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C302_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/C305_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C305_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/C402_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C402_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/N103_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N103_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/N202_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N202_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/N203_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N203_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/N207_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N207_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/N301_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N301_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/N303_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N303_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/N306_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N306_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/N307_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N307_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cache/R102_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/R102_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_back.js" beforeDir="false" afterPath="$PROJECT_DIR$/server_back.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BAS/Detail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/Detail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BAS/Main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/Main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BAS/ReservationCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/ReservationCalendar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BAS/ReservationForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/ReservationForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/COMPONENT/BASIC/Footer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/COMPONENT/BASIC/Footer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/COMPONENT/BASIC/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/COMPONENT/BASIC/Header.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/COMPONENT/PayPalCheckout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/COMPONENT/PayPalCheckout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CSS/layout/Header.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/layout/Header.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CSS/layout/Header_old.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/layout/Header_old.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CSS/style/CalendarStyles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/CalendarStyles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CSS/style/CalendarTab.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/CalendarTab.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CSS/style/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/admin.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CSS/style/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SYS/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/SYS/Admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SYS/CalendarTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/SYS/CalendarTab.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SYS/checkCale.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Util/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Util/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/batch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/batch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/batch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/batch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/bookingSync.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/bookingSync.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N103.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N103.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N207.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N207.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/i18n.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/i18n.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mail_remote2.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/mail_remote2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/outputDocx/6mxqeiwu_2025-08-08.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/outputDocx/8hujteyg_2025-08-08.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/outputDocx/v6q80glo_2025-08-08.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/outputDocx/z7szxm1l_2025-08-08.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sendSMS.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/sendSMS.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/server.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "doctorwoong"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/doctorwoong/booknest.git",
+    "accountId": "7a92d5cc-427a-4ac5-a01c-56b735bd1fdf"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -21,41 +105,53 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;20.19.4&quot;,
-    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;20.19.9&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;C:/Users/user/Desktop/work/node-v20.19.4-win-x64/node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.start.executor&quot;: &quot;Run&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Node.js.ReservationCalendar.js.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "javascript.nodejs.core.library.configured.version": "20.19.4",
+    "javascript.nodejs.core.library.typings.version": "20.19.9",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "npm",
+    "npm.start.executor": "Run",
+    "settings.editor.selected.configurable": "terminal",
+    "ts.external.directory.path": "/Users/admin/workspace/booknest/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\user\Desktop\workspace\booknest\src\template" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration name="ReservationCalendar.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/BAS/ReservationCalendar.js" working-dir="$PROJECT_DIR$/src/BAS">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.ReservationCalendar.js" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.23892.409" />
-        <option value="bundled-js-predefined-d6986cc7102b-e03c56caf84a-JavaScript-IU-252.23892.409" />
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
       </set>
     </attachedChunks>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
       <changelist id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="" />
@@ -85,6 +181,7 @@
       <workItem from="1755680180504" duration="1468000" />
       <workItem from="1755737157110" duration="1102000" />
       <workItem from="1755844193559" duration="1223000" />
+      <workItem from="1758508354084" duration="9697000" />
     </task>
     <task id="LOCAL-00001" summary="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중">
       <option name="closed" value="true" />
@@ -134,11 +231,40 @@
       <option name="project" value="LOCAL" />
       <updated>1755845419573</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="0910 서버세팅 수정">
+      <option name="closed" value="true" />
+      <created>1757492616583</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1757492616583</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="0eb9ff0a-41b8-4db2-9a83-673cc6ee503c" value="TOOL_WINDOW" />
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="0eb9ff0a-41b8-4db2-9a83-673cc6ee503c">
+          <value>
+            <State />
+          </value>
+        </entry>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중" />
@@ -147,17 +273,9 @@
     <MESSAGE value="2025.08.13 Detail.js 지도API 기본 위치 하드코딩" />
     <MESSAGE value="2025.08.19 달력 탭 세로 스크롤 구현" />
     <MESSAGE value="2025.08.22 예약 취소 조건 변경 (전화번호 비교 -&gt; 전화번호 뒷 4자리 비교)" />
-    <option name="LAST_COMMIT_MESSAGE" value="2025.08.22 예약 취소 조건 변경 (전화번호 비교 -&gt; 전화번호 뒷 4자리 비교)" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/SYS/Admin.js</url>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="0908 수정" />
+    <MESSAGE value="0910 서버세팅 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="0910 서버세팅 수정" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

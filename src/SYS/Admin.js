@@ -6,66 +6,20 @@ import {useTranslation} from "react-i18next";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CalendarTab from "./CalendarTab";
 import Spinner from 'react-bootstrap/Spinner';
+import {isWithinAWeek,isWithinAWeek2} from "../Util/utils"
+import {paymentTypeMap,rooms} from "../Util/data"
 
 
 function Admin() {
     const [activeTab, setActiveTab] = useState("customer");
-    console.log('Admin 컴포넌트 렌더링됨, 현재 활성 탭:', activeTab);
     const [reservationCustomers, setreservationCustomers] = useState([]);
     const [checkInCustomers, setCheckInCustomers] = useState([]);
     const [checkOutCustomers, setCheckOutCustomers] = useState([]);
     const { t } = useTranslation();
-
-    const [showModal, setShowModal] = useState(false);
-    const [smsContent, setSmsContent] = useState("");  // 수정 가능한 메시지
-    const [selectedCustomer, setSelectedCustomer] = useState(null);
-    const [smsType, setSmsType] = useState(""); // checkIn2 / checkOut2
-
     const [bookings ,setBookings] = useState([]);
     const [airbookings ,setAirbookings] = useState([]);
     const [unavailablePeriods, setUnavailablePeriods] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [manualPhone, setManualPhone] = useState("");
-
-    const paymentTypeMap = {
-        card: '카드결제',
-        cash: '현장결제',
-    };
-
-    const rooms = [
-        {id : 1, name: 'C106'},
-        {id : 2, name: 'C107'},
-        {id : 3, name: 'C201'},
-        {id : 4, name: 'C302'},
-        {id : 5, name: 'C305'},
-        {id : 6, name: 'C402'},
-        {id : 7, name: 'N301'},
-        {id : 8, name: 'N103'},
-        {id : 9, name: 'N202'},
-        {id : 10, name: 'R102'},
-        {id : 11, name: 'N303'},
-        {id : 12, name: 'N306'},
-        {id : 13, name: 'N307'},
-        {id : 14, name: 'N203'},
-        {id : 15, name: 'N207'},
-    ];
-
-    const isWithinAWeek = (dateString) => {
-        const today = new Date();
-        const targetDate = new Date(dateString);
-        const diffTime = Math.abs(today - targetDate);
-        return diffTime <= 7 * 24 * 60 * 60 * 1000; // 7일 이내
-    };
-
-    const isWithinAWeek2 = (dateString) => {
-        const today = new Date();
-        const targetDate = new Date(dateString);
-        today.setHours(0, 0, 0, 0);
-        const twoDaysAfterToday = new Date(today);
-        twoDaysAfterToday.setDate(today.getDate() + 2);
-
-        return targetDate >= today && targetDate <= twoDaysAfterToday;
-    };
 
     useEffect(() => {
         const fetchCustomers = async () => {
@@ -172,100 +126,9 @@ function Admin() {
                 );
             }
         } catch (error) {
-            alert(t("118") + `: ${customer.name}`);
+            alert(`메일이 전송되었습니다. ${customer.name}`);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleOpenSMSModal = (customer, type) => {
-        let message = ""; // 여기에 기본 message 생성 로직 재사용
-
-        // 간단하게 예시:
-        if (type === "checkOut2") {
-            message = t("checkout_msg");
-        } else if (type === "newMsg") {
-            message = "";
-        } else {
-            message = t(`send_${customer.room}`);
-        }
-
-        setSelectedCustomer(customer);
-        setSmsType(type);
-        setSmsContent(message);
-        setShowModal(true);
-    };
-
-    const handleSendSMSConfirm = async () => {
-        if (!window.confirm("문자를 보내시겠습니까?")) return;
-
-        const targetPhone = selectedCustomer?.phone || manualPhone;
-        if (!targetPhone) {
-            alert("전화번호를 입력해주세요.");
-            return;
-        }
-
-        try {
-            setLoading(true);
-            await handleSendSMS(
-                {
-                    ...(selectedCustomer || {}),
-                    phone: targetPhone,
-                    message: smsContent,
-                },
-                smsType
-            );
-            setShowModal(false);
-        } catch (err) {
-            alert("문자 전송 중 오류가 발생했습니다.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSendSMS = async (customer, type) => {
-
-        let endpoint = "";
-        let smspoint = "";
-        let statusKey = "";
-        let imgUrl = "";
-
-        if(type === "checkIn2"){
-            endpoint = "/send-check-in-sms";
-            smspoint = "/updateCheckInSmsStatus";
-            statusKey = "check_in_message_status";
-            imgUrl = 'Y';
-
-        } else if(type === "checkOut2"){
-            endpoint = "/send-check-in-sms";
-            smspoint = "/updateCheckOutSmsStatus";
-            statusKey = "check_out_message_status";
-            imgUrl = 'N';
-        }
-
-        try {
-            const [sendResponse2, updateResponse2] = await Promise.all([
-                //apiRequest(endpoint, "POST", { ...customer, imgUrl }),
-                apiRequest(smspoint, "POST", customer)
-            ]);
-
-            if (sendResponse2 && updateResponse2) {
-                // ✅ 상태값 변경하여 UI 업데이트
-                if (type === "checkIn2") {
-                    setCheckInCustomers(prev =>
-                        prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
-                    );
-                } else if (type === "checkOut2") {
-                    setCheckOutCustomers(prev =>
-                        prev.map(c => c.id === customer.id ? { ...c, [statusKey]: "Y" } : c)
-                    );
-                }
-            } else {
-                alert(t("119"));
-            }
-
-        } catch (error) {
-            alert(t("120"));
         }
     };
 
@@ -277,7 +140,7 @@ function Admin() {
                     <p>로딩 중...</p>
                 </div>
             )}
-            <div className="row" style={{marginTop:"100px"}}>
+            <div className="admin-row">
                 <div className="col-12">
                     <div className="nav nav-tabs" role="tablist">
                         <button
@@ -285,21 +148,21 @@ function Admin() {
                             onClick={() => handleTabClick("customer")}
                             role="tab"
                         >
-                            {t("121")}
+                            고객관리
                         </button>
                         <button
                             className={`nav-link ${activeTab === "checkIn" ? "active" : ""}`}
                             onClick={() => handleTabClick("checkIn")}
                             role="tab"
                         >
-                            {t("122")}
+                            체크인
                         </button>
                         <button
                             className={`nav-link ${activeTab === "checkOut" ? "active" : ""}`}
                             onClick={() => handleTabClick("checkOut")}
                             role="tab"
                         >
-                            {t("123")}
+                            체크아웃
                         </button>
                         <button
                             className={`nav-link ${activeTab === "calendar" ? "active" : ""}`}
@@ -311,7 +174,7 @@ function Admin() {
                     </div>
                 </div>
 
-                <div style={{overflowY: "visible", height: "auto", minHeight: "85vh"}}>
+                <div className='customer-tab'>
                     <div className="tab-content">
                         {/* 고객관리 탭 */}
                         <div className={`tab-pane fade ${activeTab === "customer" ? "show active" : ""}`} id="customer" role="tabpanel">
@@ -328,15 +191,15 @@ function Admin() {
                                 </colgroup>
                                 <thead>
                                 <tr>
-                                    <th>{t("124")}</th>
-                                    <th>{t("125")}</th>
-                                    <th>{t("126")}</th>
-                                    <th>{t("127")}</th>
-                                    <th>{t("128")}</th>
-                                    <th>{t("129")}</th>
-                                    <th>{t("159")}</th>
+                                    <th>고객번호</th>
+                                    <th>고객명</th>
+                                    <th>전화번호</th>
+                                    <th>호실</th>
+                                    <th>체크인일</th>
+                                    <th>체크아웃일</th>
+                                    <th>결제 금액</th>
                                     <th>결제타입</th>
-                                    <th>{t("131")}</th>
+                                    <th>메일 전송</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -371,10 +234,10 @@ function Admin() {
                                         <td>
                                             {customer.reservation_mail_status === "N" ? (
                                                 <button onClick={() => handleSendEmail(customer, "reservation")}>
-                                                    {t("131")}
+                                                    메일 전송
                                                 </button>
                                             ) : (
-                                                <span>{t("132")}</span>
+                                                <span>메일 보냄</span>
                                             )}
                                         </td>
                                     </tr>
@@ -394,11 +257,11 @@ function Admin() {
                                 </colgroup>
                                 <thead>
                                 <tr>
-                                    <th>{t("133")}</th>
-                                    <th>{t("134")}</th>
-                                    <th>{t("135")}</th>
-                                    <th>{t("136")}</th>
-                                    <th>{t("137")}</th>
+                                    <th>고객번호</th>
+                                    <th>고객명</th>
+                                    <th>호실</th>
+                                    <th>체크인일</th>
+                                    <th>메일전송</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -416,10 +279,10 @@ function Admin() {
                                         <td>
                                             {customer.check_in_mail_status === "N" ? (
                                                 <button onClick={() => handleSendEmail(customer, "checkIn")}>
-                                                    {t("145")}
+                                                    메일 전송
                                                 </button>
                                             ) : (
-                                                <span>{t("132")}</span>
+                                                <span>메일 보냄</span>
                                             )}
                                         </td>
                                     </tr>
@@ -440,10 +303,10 @@ function Admin() {
                                 </colgroup>
                                 <thead>
                                 <tr>
-                                    <th>{t("133")}</th>
-                                    <th>{t("134")}</th>
-                                    <th>{t("135")}</th>
-                                    <th>{t("129")}</th>
+                                    <th>고객번호</th>
+                                    <th>고객명</th>
+                                    <th>호실</th>
+                                    <th>체크아웃일</th>
                                 </tr>
                                 </thead>
                                 <tbody>

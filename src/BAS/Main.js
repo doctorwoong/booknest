@@ -33,6 +33,9 @@ const Main = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [isCancelling, setIsCancelling] = useState(false);
 
+    const [activeTab, setActiveTab] = useState("reservation"); // reservation | inquiry
+
+
     const [filters, setFilters] = useState({
         startDate: checkInDate || null,
         endDate: checkOutDate || null,
@@ -117,21 +120,10 @@ const Main = () => {
         setShowPopup(true);
     };
 
-    const toE164 = (countryCode, localNumber) => {
-        if (!countryCode || !localNumber) return null;
-        let n = String(localNumber).trim().replace(/[^\d]/g, ''); // 숫자만
-
-        // 한국만 trunk '0' 제거 (010 -> 10...)
-        if (countryCode === '+82' && n.startsWith('0')) {
-            n = n.slice(1);
-        }
-        return countryCode + n; // 예: +82 + 1012345678 -> +821012345678
-    };
-
     // 숫자만 추출
     const digitsOnly = (v = "") => String(v).replace(/\D/g, "");
 
-// 뒤 4자리
+    // 뒤 4자리
     const last4 = (v = "") => {
         const d = digitsOnly(v);
         return d.slice(-4); // 길이가 4 미만이면 그대로(비교 전에 길이 체크)
@@ -164,7 +156,7 @@ const Main = () => {
                 const mailOk = await apiRequest("/send-cancel-email", "POST", selectedReservation);
                 if (!mailOk) throw new Error("cancel email failed");
             } catch (mailError) {
-                console.error("❌ 취소 이메일 전송 실패:", mailError);
+                console.error("취소 이메일 전송 실패:", mailError);
                 // 이메일 실패해도 예약 취소는 계속 진행
             }
 
@@ -173,7 +165,7 @@ const Main = () => {
                 const smsOk = await apiRequest("/send-cancel-sms", "POST", selectedReservation);
                 if (!smsOk) throw new Error("cancel sms failed");
             } catch (smsError) {
-                console.error("❌ 취소 SMS 전송 실패:", smsError);
+                console.error("취소 SMS 전송 실패:", smsError);
                 // SMS 실패해도 예약 취소는 계속 진행
             }
 
@@ -263,216 +255,244 @@ const Main = () => {
 
     return (
         <>
-            <br/><br/>
+            <div className="tabs">
+                <button
+                    className={activeTab === "reservation" ? "active" : ""}
+                    onClick={() => setActiveTab("reservation")}
+                >
+                    예약
+                </button>
+                <button
+                    className={activeTab === "inquiry" ? "active" : ""}
+                    onClick={() => setActiveTab("inquiry")}
+                >
+                    문의
+                </button>
+            </div>
             <div className="channelTalk">
                 <b>{t("152")}<img src={channeltalk}/></b>
             </div>
-            <br/>
-            <h3 style={{marginBottom: "10px"}}><b>{t("1")}</b></h3>
-            <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("2")}</p>
-            <div style={{overflowY: "hidden"}}>
-                <div className="d-flex gap-2" style={{marginBottom: "50px"}}>
-                    {/* 날짜 선택 */}
-                    <div className="position-relative">
-                        <input type="text" id="startDate" name="startDate" value={checkDate} onClick={handleCalendar}
-                               className="form-control ps-5" readOnly/>
-                        <FaCalendarAlt className="position-absolute top-50 start-0 translate-middle-y ms-3" size={16}
-                                       color="#555"/>
-                    </div>
 
-                    {/* 인원 선택 */}
-                    <div className="position-relative">
-                        <input type="number" id="adults" name="adults" min="1" value={filters.adults}
-                               className="form-control ps-5" onChange={handleChange} readOnly/>
-                        <FaUser className="position-absolute top-50 start-0 translate-middle-y ms-3" size={16}
-                                color="#555"/>
-                    </div>
+            {activeTab === "reservation" && (
+                <>
+                    <h3 style={{marginBottom: "10px"}}><b>{t("1")}</b></h3>
+                    <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("2")}</p>
+                    <div style={{overflowY: "hidden"}}>
+                        <div className="d-flex gap-2" style={{marginBottom: "50px"}}>
+                            {/* 날짜 선택 */}
+                            <div className="position-relative">
+                                <input type="text" id="startDate" name="startDate" value={checkDate}
+                                       onClick={handleCalendar}
+                                       className="form-control ps-5" readOnly/>
+                                <FaCalendarAlt className="position-absolute top-50 start-0 translate-middle-y ms-3"
+                                               size={16}
+                                               color="#555"/>
+                            </div>
 
-                    {/* 검색 버튼 */}
-                    <button className="reverseBtn" onClick={handleSearch}>{t("3")}</button>
-                </div>
-                {showContainer && (
-                    <div className="container" style={{height: "45vh", overflow: "auto"}}>
-                        <ul className="list-group">
-                            {rooms.map((room) => (
-                                <li key={room.seq} className="list-group-item d-flex align-items-center2">
-                                    <img
-                                        src={`${url}/${room.room_number}/${room.images[0]}`}
-                                        alt={`Hotel ${room.room_number}`}
-                                        className="img-thumbnail me-3"
-                                        style={{width: "180px", height: "120px", objectFit: "cover"}}
-                                        onClick={() => handleNavigate(room)}
-                                    />
-                                    <div className="container-main">
-                                        <h5 className="mb-1">{room.room_number}</h5>
-                                        <p className="mb-1"></p>
-                                        <p className="mb-1" style={{color: "#5A5A5A"}}>
-                                            ★ {room.rating}
-                                            <span style={{cursor: "pointer"}}
-                                                  onClick={() => handleReview(room)}>({room.reviewNum})
+                            {/* 인원 선택 */}
+                            <div className="position-relative">
+                                <input type="number" id="adults" name="adults" min="1" value={filters.adults}
+                                       className="form-control ps-5" onChange={handleChange} readOnly/>
+                                <FaUser className="position-absolute top-50 start-0 translate-middle-y ms-3" size={16}
+                                        color="#555"/>
+                            </div>
+
+                            {/* 검색 버튼 */}
+                            <button className="reverseBtn" onClick={handleSearch}>{t("3")}</button>
+                        </div>
+                        {showContainer && (
+                            <div className="container" style={{height: "45vh", overflow: "auto"}}>
+                                <ul className="list-group">
+                                    {rooms.map((room) => (
+                                        <li key={room.seq} className="list-group-item d-flex align-items-center2">
+                                            <img
+                                                src={`${url}/${room.room_number}/${room.images[0]}`}
+                                                alt={`Hotel ${room.room_number}`}
+                                                className="img-thumbnail me-3"
+                                                style={{width: "180px", height: "120px", objectFit: "cover"}}
+                                                onClick={() => handleNavigate(room)}
+                                            />
+                                            <div className="container-main">
+                                                <h5 className="mb-1">{room.room_number}</h5>
+                                                <p className="mb-1"></p>
+                                                <p className="mb-1" style={{color: "#5A5A5A"}}>
+                                                    ★ {room.rating}
+                                                    <span style={{cursor: "pointer"}}
+                                                          onClick={() => handleReview(room)}>({room.reviewNum})
                                         </span>
-                                        </p>
-                                        <p className="mb-0">
-                                            <span>{t("4")}</span><br/>
-                                            <b>{room.price}{t("5")}~</b>
-                                        </p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-            </div>
-
-            <hr className="footer-divider"/>
-            <h3 style={{marginBottom: "10px", marginTop: "50px"}}><b>{t("6")}</b></h3>
-            <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("7")}</p>
-            <div className="reservationCheck" style={{marginBottom: "50px"}}>
-                <div className="col-md-10">
-                    <input type="text" className="form-control" id="name" name="name" placeholder={t("8")}
-                           onKeyDown={handleKeyDown}
-                           value={names.name} onChange={handleChange}/>
-                </div>
-                <div className="col-md-2">
-                    <button className="reverseBtn" onClick={handleSearch2}>{t("3")}</button>
-                </div>
-            </div>
-            {showContainer2 && (
-                <div style={{overflowY: "hidden", height: "22vh"}}>
-                    <div className="container" style={{height: "100%", overflow: "auto"}}>
-                        <ul className="list-group">
-                            {checkRooms.map((checkRoom) => (
-                                <li key={checkRoom.customer_id} className="list-group-item d-flex align-items-center">
-                                    <div className="reservation">
-                                        <h5 className="horse">{checkRoom.reserved_room_number}{t("9")}</h5>
-                                        <p>
-                                            <span>{t("10")} : </span>
-                                            <span>{formatDate(checkRoom.check_in)}</span> ~ <span>{formatDate(checkRoom.check_out)}</span>
-                                        </p>
-                                    </div>
-                                    <div className="reservation2">
-                                        <input type={"button"} value={t("11")}
-                                               onClick={() => handleCancelClick(checkRoom)}/>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-
-            )}
-            {showPopup && (
-                <div className="password-popup">
-                    <div className="popup-content">
-                        <h4>{t("12")}</h4>
-
-                        <div className="phone-input-group">
-                            <select
-                                className="form-select country-code"
-                                value={countryCode}
-                                onChange={(e) => setCountryCode(e.target.value)}
-                            >
-                                <option value="+82">+82</option>
-                                <option value="+34">+34</option>
-                                <option value="+86">+86</option>
-                                <option value="+81">+81</option>
-                                <option value="+33">+33</option>
-                                <option value="+49">+49</option>
-                                <option value="+63">+63</option>
-                                <option value="+60">+60</option>
-                                <option value="+1">+1</option>
-                                <option value="+84">+84</option>
-                                <option value="+66">+66</option>
-                                <option value="+46">+46</option>
-                                <option value="+39">+39</option>
-                                <option value="+61">+61</option>
-                            </select>
-
-                            <input
-                                type="tel"
-                                className="form-control phone-number"
-                                placeholder={t("13")}
-                                value={inputPhone}
-                                onKeyDown={handleKeyDown2}
-                                onChange={(e) => setInputPhone(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="checkBtn">
-                            <button className="btn btn-danger" onClick={handleConfirm}>{t("14")}</button>
-                            <button className="btn btn-secondary" onClick={handleClosePopup}>{t("15")}</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-            <hr className="footer-divider"/>
-            <h3 style={{marginBottom: "10px", marginTop: "50px"}}><b>{t("16")}</b></h3>
-            <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("17")}</p>
-
-            <div style={{overflowY: "hidden", marginBottom: "50px"}}>
-                {showContainer3 && (
-                    <div className="container" style={{height: "35vh", overflow: "auto"}}>
-                        <ul className="list-group">
-                            {reviews.map((review) => (
-                                <li key={review.customer_id} className="list-group-item d-flex align-items-center">
-                                    <div className="reservation">
-                                        <h5 className="horse">{review.reserved_room_number}{t("9")}</h5>
-                                        <p>
-                                            <span>{formatDate(review.check_in)}</span> ~ <span>{formatDate(review.check_out)}</span>
-                                        </p>
-                                    </div>
-                                    <div className="reservation2">
-                                        <input type={"button"} value={t("18")}
-                                               onClick={() => handleReviewWrite(review)}/>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-                {showPasswordPopup && (
-                    <div className="password-popup">
-                        <div className="popup-content">
-                            <h3>{t("19")}</h3>
-                            <p>{t("20")}</p>
-                            <div className="phone-input-group">
-                                <select
-                                    className="form-select country-code"
-                                    value={countryCode}
-                                    onChange={(e) => setCountryCode(e.target.value)}
-                                >
-                                    <option value="+82">+82</option>
-                                    <option value="+34">+34</option>
-                                    <option value="+86">+86</option>
-                                    <option value="+81">+81</option>
-                                    <option value="+33">+33</option>
-                                    <option value="+49">+49</option>
-                                    <option value="+63">+63</option>
-                                    <option value="+60">+60</option>
-                                    <option value="+1">+1</option>
-                                    <option value="+84">+84</option>
-                                    <option value="+66">+66</option>
-                                    <option value="+46">+46</option>
-                                    <option value="+39">+39</option>
-                                    <option value="+61">+61</option>
-                                </select>
-                                <input
-                                    type="tel"
-                                    className="form-control phone-number"
-                                    value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
-                                    onKeyDown={handleKeyDown3}
-                                    placeholder={t("13")}
-                                />
+                                                </p>
+                                                <p className="mb-0">
+                                                    <span>{t("4")}</span><br/>
+                                                    <b>{room.price}{t("5")}~</b>
+                                                </p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                            <div className="checkBtn">
-                                <button onClick={handlePasswordSubmit}>{t("14")}</button>
-                                <button onClick={() => setShowPasswordPopup(false)}>{t("15")}</button>
+                        )}
+                    </div>
+
+                    <hr className="footer-divider"/>
+                    <h3 style={{marginBottom: "10px", marginTop: "50px"}}><b>{t("6")}</b></h3>
+                    <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("7")}</p>
+                    <div className="reservationCheck" style={{marginBottom: "50px"}}>
+                        <div className="col-md-10">
+                            <input type="text" className="form-control" id="name" name="name" placeholder={t("8")}
+                                   onKeyDown={handleKeyDown}
+                                   value={names.name} onChange={handleChange}/>
+                        </div>
+                        <div className="col-md-2">
+                            <button className="reverseBtn" onClick={handleSearch2}>{t("3")}</button>
+                        </div>
+                    </div>
+                    {showContainer2 && (
+                        <div style={{overflowY: "hidden", height: "22vh"}}>
+                            <div className="container" style={{height: "100%", overflow: "auto"}}>
+                                <ul className="list-group">
+                                    {checkRooms.map((checkRoom) => (
+                                        <li key={checkRoom.customer_id}
+                                            className="list-group-item d-flex align-items-center">
+                                            <div className="reservation">
+                                                <h5 className="horse">{checkRoom.reserved_room_number}{t("9")}</h5>
+                                                <p>
+                                                    <span>{t("10")} : </span>
+                                                    <span>{formatDate(checkRoom.check_in)}</span> ~ <span>{formatDate(checkRoom.check_out)}</span>
+                                                </p>
+                                            </div>
+                                            <div className="reservation2">
+                                                <input type={"button"} value={t("11")}
+                                                       onClick={() => handleCancelClick(checkRoom)}/>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
                         </div>
+
+                    )}
+                    {showPopup && (
+                        <div className="password-popup">
+                            <div className="popup-content">
+                                <h4>{t("12")}</h4>
+
+                                <div className="phone-input-group">
+                                    <select
+                                        className="form-select country-code"
+                                        value={countryCode}
+                                        onChange={(e) => setCountryCode(e.target.value)}
+                                    >
+                                        <option value="+82">+82</option>
+                                        <option value="+34">+34</option>
+                                        <option value="+86">+86</option>
+                                        <option value="+81">+81</option>
+                                        <option value="+33">+33</option>
+                                        <option value="+49">+49</option>
+                                        <option value="+63">+63</option>
+                                        <option value="+60">+60</option>
+                                        <option value="+1">+1</option>
+                                        <option value="+84">+84</option>
+                                        <option value="+66">+66</option>
+                                        <option value="+46">+46</option>
+                                        <option value="+39">+39</option>
+                                        <option value="+61">+61</option>
+                                    </select>
+
+                                    <input
+                                        type="tel"
+                                        className="form-control phone-number"
+                                        placeholder={t("13")}
+                                        value={inputPhone}
+                                        onKeyDown={handleKeyDown2}
+                                        onChange={(e) => setInputPhone(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="checkBtn">
+                                    <button className="btn btn-danger" onClick={handleConfirm}>{t("14")}</button>
+                                    <button className="btn btn-secondary" onClick={handleClosePopup}>{t("15")}</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    <hr className="footer-divider"/>
+                    <h3 style={{marginBottom: "10px", marginTop: "50px"}}><b>{t("16")}</b></h3>
+                    <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("17")}</p>
+
+                    <div style={{overflowY: "hidden", marginBottom: "50px"}}>
+                        {showContainer3 && (
+                            <div className="container" style={{height: "35vh", overflow: "auto"}}>
+                                <ul className="list-group">
+                                    {reviews.map((review) => (
+                                        <li key={review.customer_id}
+                                            className="list-group-item d-flex align-items-center">
+                                            <div className="reservation">
+                                                <h5 className="horse">{review.reserved_room_number}{t("9")}</h5>
+                                                <p>
+                                                    <span>{formatDate(review.check_in)}</span> ~ <span>{formatDate(review.check_out)}</span>
+                                                </p>
+                                            </div>
+                                            <div className="reservation2">
+                                                <input type={"button"} value={t("18")}
+                                                       onClick={() => handleReviewWrite(review)}/>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                        {showPasswordPopup && (
+                            <div className="password-popup">
+                                <div className="popup-content">
+                                    <h3>{t("19")}</h3>
+                                    <p>{t("20")}</p>
+                                    <div className="phone-input-group">
+                                        <select
+                                            className="form-select country-code"
+                                            value={countryCode}
+                                            onChange={(e) => setCountryCode(e.target.value)}
+                                        >
+                                            <option value="+82">+82</option>
+                                            <option value="+34">+34</option>
+                                            <option value="+86">+86</option>
+                                            <option value="+81">+81</option>
+                                            <option value="+33">+33</option>
+                                            <option value="+49">+49</option>
+                                            <option value="+63">+63</option>
+                                            <option value="+60">+60</option>
+                                            <option value="+1">+1</option>
+                                            <option value="+84">+84</option>
+                                            <option value="+66">+66</option>
+                                            <option value="+46">+46</option>
+                                            <option value="+39">+39</option>
+                                            <option value="+61">+61</option>
+                                        </select>
+                                        <input
+                                            type="tel"
+                                            className="form-control phone-number"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            onKeyDown={handleKeyDown3}
+                                            placeholder={t("13")}
+                                        />
+                                    </div>
+                                    <div className="checkBtn">
+                                        <button onClick={handlePasswordSubmit}>{t("14")}</button>
+                                        <button onClick={() => setShowPasswordPopup(false)}>{t("15")}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
+                </>
+            )}
+
+            {activeTab === "inquiry" && (
+                // <InquiryBoard/>
+                <span>문의 게시판</span>
+            )}
+
+
         </>
     );
 };

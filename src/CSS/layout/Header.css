@@ -31,7 +31,7 @@
 .popup-content button:first-of-type {background-color: #e43c5c;color: #fff;}
 .popup-content button:last-of-type {background-color: #F5F5F5;color: #000;}
 
-/* 📱 모바일 반응형 */
+/* 모바일 반응형 */
 @media (max-width: 768px) {
     .logo img { width:100px;height:100px }
     .popup-content {background: #fff;padding: 20px;border-radius: 8px;text-align: center;width: 90%;}

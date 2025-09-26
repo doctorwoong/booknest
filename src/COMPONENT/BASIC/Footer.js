@@ -1,6 +1,6 @@
 import React from "react";
 import '../../CSS/layout/Header.css';
-import {useTranslation} from "react-i18next"; // CSS 파일 경로를 확인 후 변경하세요
+import {useTranslation} from "react-i18next";
 
 const Footer = () => {
     const { t } = useTranslation();
@@ -18,7 +18,7 @@ const Footer = () => {
             </div>
             <hr className="footer-divider"/>
             <div className="footer-bottom">
-                <p>&copy; 2024 Abcd, Inc</p>
+                <p>&copy; 2024 Abcd, Pw</p>
             </div>
         </footer>
     );

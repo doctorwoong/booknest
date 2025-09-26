@@ -1,132 +1,25 @@
-/* ✅ 헤더 고정 및 글래스모피즘 효과 추가 */
+/* 헤더 고정 및 글래스모피즘 효과 추가 */
 .header {display: flex;width: 700px;justify-content: center;align-items: center;padding: 10px 20px;position: fixed;top: 0;left: 0;width: 100%;height: 80px;z-index: 1000;background: rgba(255, 255, 255, 0.2);backdrop-filter: blur(10px);border-bottom: 1px solid rgba(255, 255, 255, 0.2);box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);}
 .logo {display: flex;justify-content: center;flex-grow: 1;}
 .header > div:nth-child(2) {position: absolute;left: 20px;}
+.admin {position: absolute;right: 20px;display: flex;align-items: center;gap: 15px;}
 
-.admin {
-    position: absolute;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+/* 관리자 버튼 스타일 */
+.adminBtn {background: rgba(255, 255, 255, 0.3);color: white;height: 38px;width: 100px;display: flex;align-items: center;justify-content: center;border-radius: 8px;font-weight: bold;cursor: pointer;transition: background 0.3s ease;font-size: 12px;border: 1px solid rgba(255, 255, 255, 0.5);}
+.adminBtn:hover {background: rgba(255, 255, 255, 0.5);}
 
-/* ✅ 관리자 버튼 스타일 */
-.adminBtn {
-    background: rgba(255, 255, 255, 0.3); /* 투명한 버튼 */
-    color: white;
-    height: 38px;
-    width: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    font-size: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-}
+/*  언어 선택 드롭다운 스타일 */
+.dropdown {position: relative;}
+.dropdown-toggle {background: none !important;border: none !important;box-shadow: none !important;padding: 0 !important;display: flex;align-items: center;}
+.dropdown-toggle img {width: 30px;height: 30px;cursor: pointer;}
+.dropdown-menu {position: absolute;top: 45px;left: 50%;transform: translateX(-50%);background: rgba(255, 255, 255, 0.7);border-radius: 8px;backdrop-filter: blur(10px);box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);padding: 10px 0;min-width: 120px;z-index: 1000;}
+.dropdown-item {padding: 8px 15px;cursor: pointer;display: flex;align-items: center;gap: 5px;}
+.dropdown-item:hover {background: rgba(255, 255, 255, 0.5);}
 
-.adminBtn:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-/* ✅ 언어 선택 드롭다운 스타일 */
-.dropdown {
-    position: relative;
-}
-
-.dropdown-toggle {
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    display: flex;
-    align-items: center;
-}
-
-.dropdown-toggle img {
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 45px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.7); /* 반투명 배경 */
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 10px 0;
-    min-width: 120px;
-    z-index: 1000;
-}
-
-.dropdown-item {
-    padding: 8px 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-/* ✅ 패스워드 입력 팝업 글래스모피즘 적용 */
-.password-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.popup-content {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 40px;
-    border-radius: 12px;
-    text-align: center;
-    width: 500px;
-    backdrop-filter: blur(15px); /* 🔥 글래스모피즘 효과 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.popup-content input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: none;
-    background: rgba(255, 255, 255, 0.5);
-    text-align: center;
-    color: #000;
-}
-
-.popup-content button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.popup-content button:first-of-type {
-    background: rgba(255, 255, 255, 0.3);
-    color: black;
-}
-
-.popup-content button:last-of-type {
-    background: rgba(255, 255, 255, 0.5);
-    color: black;
-}
+/* 패스워드 입력 팝업 글래스모피즘 적용 */
+.password-popup {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0, 0, 0, 0.5);display: flex;justify-content: center;align-items: center;z-index: 1000;}
+.popup-content {background: rgba(255, 255, 255, 0.2);padding: 40px;border-radius: 12px;text-align: center;width: 500px;backdrop-filter: blur(15px);box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);border: 1px solid rgba(255, 255, 255, 0.3);}
+.popup-content input {width: 100%;padding: 10px;margin: 10px 0;border-radius: 8px;border: none;background: rgba(255, 255, 255, 0.5);text-align: center;color: #000;}
+.popup-content button {padding: 10px 20px;border: none;border-radius: 8px;cursor: pointer;}
+.popup-content button:first-of-type {background: rgba(255, 255, 255, 0.3);color: black;}
+.popup-content button:last-of-type {background: rgba(255, 255, 255, 0.5);color: black;}

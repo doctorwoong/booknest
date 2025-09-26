@@ -8,7 +8,7 @@ const USER_NAME = process.env.SMS_USER_NAME;
 const PASSWORD = process.env.SMS_PASSWORD;
 
 /**
- * 📌 Access Token 발급 함수
+ *  Access Token 발급 함수
  */
 async function getAccessToken() {
     try {
@@ -22,13 +22,13 @@ async function getAccessToken() {
         });
         return response.data?.data?.token;
     } catch (error) {
-        console.error("🚨 [AccessToken] 요청 실패:", error.message);
+        console.error("[AccessToken] 요청 실패:", error.message);
         throw error;
     }
 }
 
 /**
- * 📦 문자 전송 함수 (국내/국제 지원)
+ * 문자 전송 함수 (국내/국제 지원)
  * @param {Object} param
  * @param {string} param.to - 수신자 번호
  * @param {string} [param.from="16661734"] - 발신 번호
@@ -64,7 +64,7 @@ async function sendSMS({ to, from = process.env.SMS_FROM_NUMBER || "16661734", c
         return new Promise((resolve, reject) => {
             request(options, function (error, response, body) {
                 if (error) return reject(error);
-                // console.log("✅ 문자 전송 응답:", body);
+                // console.log("문자 전송 응답:", body);
                 try {
                     resolve(JSON.parse(body));
                 } catch (e) {
@@ -73,18 +73,9 @@ async function sendSMS({ to, from = process.env.SMS_FROM_NUMBER || "16661734", c
             });
         });
     } catch (error) {
-        console.error("🚨 [SMS] 전송 실패:", error.message);
+        console.error("[SMS] 전송 실패:", error.message);
         throw error;
     }
-}
-
-// 헬퍼
-function toDomesticKRMobile(e164) {
-    const numStr = String(e164 || ""); // 항상 문자열로 변환
-    if (numStr.startsWith("+8210")) {
-        return "0" + numStr.slice(3); // +8210xxxx → 010xxxx
-    }
-    return numStr;
 }
 
 async function sendCancelSMS(resv) {
@@ -162,10 +153,10 @@ async function sendCancelSMS(resv) {
         try {
             const result = await sendSMS({ to: phone, content: text });
             results.push({ phone, success: true, result });
-            console.log(`✅ SMS 전송 성공: ${phone}`);
+            console.log(`SMS 전송 성공: ${phone}`);
         } catch (error) {
             results.push({ phone, success: false, error: error.message });
-            console.error(`❌ SMS 전송 실패: ${phone}`, error.message);
+            console.error(`SMS 전송 실패: ${phone}`, error.message);
         }
     }
     

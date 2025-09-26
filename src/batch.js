@@ -40,10 +40,10 @@ const airbnbListings = [
 
 const fetchAndStoreAirbnbBookings = async () => {
     try {
-        console.log("🔄 Airbnb 캘린더 동기화 시작...");
+        console.log("Airbnb 캘린더 동기화 시작...");
 
         for (const listing of airbnbListings) {
-            console.log(`📡 ${listing.name} 캘린더 가져오는 중...`);
+            console.log(`${listing.name} 캘린더 가져오는 중...`);
             const events = await ical.async.fromURL(listing.airbnbIcalUrl);
 
             // 기존 배치 예약 삭제
@@ -51,10 +51,10 @@ const fetchAndStoreAirbnbBookings = async () => {
                 "DELETE FROM CustomerInfo WHERE reserved_room_number = ? AND name = 'batch'",
                 [listing.name]
             );
-            console.log(`🗑️ 기존 예약 삭제됨: ${listing.name}`);
+            console.log(`기존 예약 삭제됨: ${listing.name}`);
 
             for (const ev of Object.values(events)) {
-                console.log('👉 EVENT:', ev);
+                console.log('EVENT:', ev);
                 if (!ev || ev.type !== 'VEVENT') continue;
                 if (!ev.start || !ev.end) continue;
 
@@ -79,13 +79,13 @@ const fetchAndStoreAirbnbBookings = async () => {
           )`,
                     [checkIn, checkOut, listing.name]
                 );
-                console.log(`✅ 예약 삽입됨: ${listing.name} | ${checkIn} ~ ${checkOut}`);
+                console.log(`예약 삽입됨: ${listing.name} | ${checkIn} ~ ${checkOut}`);
             }
         }
 
-        console.log("🎉 Airbnb 캘린더 동기화 완료!");
+        console.log("Airbnb 캘린더 동기화 완료!");
     } catch (error) {
-        console.error("❌ 오류 발생:", error);
+        console.error("오류 발생:", error);
     }
 };
 

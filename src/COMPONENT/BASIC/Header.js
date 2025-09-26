@@ -1,10 +1,9 @@
 import React from "react";
-import { Link  } from "react-router-dom";
+import { Link } from "react-router-dom";
 import '../../CSS/layout/Header.css';
 import i18n from "../../i18n";
 import logo from "../../resource/Noryangjin_logo.png"
 import earth from "../../resource/earthht.png"
-
 
 const Header = () => {
     return (

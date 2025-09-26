@@ -51,7 +51,7 @@ app.post("/send-reservation", async (req, res) => {
     const { name, phone, email, passport, checkInDate, checkOutDate, title, price } = req.body;
 
     if (!name || !phone || !email || !checkInDate || !checkOutDate || !title || !price) {
-        return res.status(400).json({ error: "🚨 필수 데이터가 누락되었습니다." });
+        return res.status(400).json({ error: " 필수 데이터가 누락되었습니다." });
     }
 
     const contractData = {
@@ -76,7 +76,7 @@ app.post("/send-reservation", async (req, res) => {
 
         res.status(200).json({ message: "이메일 전송 성공" });
     } catch (error) {
-        console.error("🚨 이메일 전송 실패:", error.message);
+        console.error(" 이메일 전송 실패:", error.message);
         res.status(500).json({ error: "이메일 전송 실패" });
     }
 });
@@ -93,7 +93,7 @@ app.post("/send-check-in-email", async (req, res) => {
 
         res.status(200).json({ message: "이메일 전송 성공" });
     } catch (error) {
-        console.error("🚨 이메일 전송 실패:", error.message);
+        console.error(" 이메일 전송 실패:", error.message);
         res.status(500).json({ error: "이메일 전송 실패" });
     }
 });

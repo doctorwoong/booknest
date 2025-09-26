@@ -97,7 +97,7 @@ const sendCheckInEmail = async (customerEmail, title) => {
                 path: path.join(checkInImageDir, file), // 전체 경로 설정
             }));
     } catch (error) {
-        console.error("📂 이미지 파일을 불러오는 중 오류 발생:", error);
+        console.error("이미지 파일을 불러오는 중 오류 발생:", error);
     }
 
     let contents = "";

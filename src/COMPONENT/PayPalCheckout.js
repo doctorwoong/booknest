@@ -21,7 +21,7 @@ const PayPalCheckout = ({ amount, onApprove }) => {
                 setLoading(false);
             } catch (e) {
                 console.error("Exchange rate fetch failed:", e);
-                alert("⚠️ Failed to load exchange rate information.");
+                alert("Failed to load exchange rate information.");
                 setUsdAmount(null);
                 setLoading(false);
             }
@@ -30,8 +30,8 @@ const PayPalCheckout = ({ amount, onApprove }) => {
         if (amount > 0) fetchExchangeRate();
     }, [amount]);
 
-    if (loading) return <div>💱 Calculating exchange rate...</div>;
-    if (!usdAmount) return <div>❌ Failed to calculate exchange rate.</div>;
+    if (loading) return <div>Calculating exchange rate...</div>;
+    if (!usdAmount) return <div>Failed to calculate exchange rate.</div>;
 
     return (
         <PayPalScriptProvider options={{ "client-id": "AaVfxIHKal2Y0szcuD8olAvBt7ak7cz-e66YgWqunWc7ZaD3e88G1hJjDkZOcdkEswFy6ORQhB4IpGe7", currency: "USD" }}>
@@ -48,13 +48,13 @@ const PayPalCheckout = ({ amount, onApprove }) => {
                 }}
                 onApprove={(data, actions) => {
                     return actions.order.capture().then((details) => {
-                        alert(`✅ Payment completed. Thank you, ${details.payer.name.given_name}!`);
+                        alert(`Payment completed. Thank you, ${details.payer.name.given_name}!`);
                         if (onApprove) onApprove(details);
                     });
                 }}
                 onError={(err) => {
                     console.error("Payment error:", err);
-                    alert("❌ An error occurred during the payment process.");
+                    alert("An error occurred during the payment process.");
                 }}
             />
         </PayPalScriptProvider>

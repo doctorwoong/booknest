@@ -99,7 +99,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
 
     const scrollRef = useRef(null);    // 가로 스크롤(달력)
     const wrapperRef = useRef(null);   // 세로 스크롤 주체
-    const headerRef  = useRef(null);   // ✅ 날짜 헤더
+    const headerRef  = useRef(null);   // 날짜 헤더
     const bodyRef    = useRef(null);
     const hasScrolledToToday = useRef(false);
     const getFooterEl = () =>
@@ -168,19 +168,6 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
         s.setDate(s.getDate() - 1); // check-in 하루 전부터
         const e = new Date(end);
         return Math.max((e - s) / (1000 * 60 * 60 * 24), 1);
-    };
-
-    const showTooltip = (e, content) => {
-        // 클릭/탭한 정확한 위치 사용
-        const x = e.clientX;
-        const y = e.clientY;
-        
-        setTooltip({
-            show: true,
-            x: x,
-            y: y - 15, // 클릭 위치에서 약간 위로
-            content: content
-        });
     };
 
     const hideTooltip = () => {
@@ -263,25 +250,6 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
         }
     };
 
-    // 화면 날짜에서 -1일 해서 원본 날짜 계산
-    const getOriginalDates = (booking, isExternal = false) => {
-        const checkInDate = new Date(booking.check_in);
-        const checkOutDate = new Date(booking.check_out);
-        
-        // 체크아웃에서 1일 빼기 (화면용 +1일을 되돌림)
-        checkOutDate.setDate(checkOutDate.getDate() - 1);
-        
-        // 외부 예약은 체크인에서도 1일 빼기
-        if (isExternal) {
-            checkInDate.setDate(checkInDate.getDate() - 1);
-        }
-        
-        return {
-            checkIn: isExternal ? checkInDate.toISOString().split('T')[0] : booking.check_in,
-            checkOut: checkOutDate.toISOString().split('T')[0]
-        };
-    };
-
     /** ----- 초기 today로 가로 스크롤 (1회) ----- */
     useEffect(() => {
         if (hasScrolledToToday.current) return;
@@ -322,81 +290,6 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
         el.addEventListener("scroll", onScroll);
         return () => el.removeEventListener("scroll", onScroll);
     }, [dateList, year, month]);
-
-    /** ----- 세로 높이 = min(컨텐츠높이, 가용높이) ----- */
-    const [wrapH, setWrapH] = useState(null);
-
-    const recomputeHeight = () => {
-        const wrap   = wrapperRef.current;
-        const header = headerRef.current;
-        const body   = bodyRef.current;
-        if (!wrap || !header || !body) return;
-
-        // ① 실제 테이블 높이
-        const headerH = header.offsetHeight || 0;
-        const bodyH   = body.scrollHeight || 0;
-        const tableH  = headerH + bodyH;
-        
-        // 방 개수에 따른 최소 높이 계산 (방당 40px + 헤더 + 여유)
-        const roomCount = rooms.length;
-        const minRequiredHeight = headerH + (roomCount * 40) + 100; // 방당 40px + 충분한 여유
-
-        // ② 화면 가용 높이를 크게 늘려서 내부 스크롤 방지
-        const top = wrap.getBoundingClientRect().top;
-
-        // 현재 뷰포트 하단에 겹쳐 보이는 푸터 높이만큼 차감
-        let footerOverlap = 0;
-        const footerEl = getFooterEl();
-        if (footerEl) {
-            const vb = window.innerHeight;                   // viewport bottom
-            const ft = footerEl.getBoundingClientRect().top; // footer top in viewport
-            if (ft < vb) {
-                // 푸터가 화면에 들어온 만큼(겹치는 영역)만 빼기
-                footerOverlap = vb - Math.max(ft, 0);
-                // margin-top이 있으면 포함
-                const mt = parseFloat(getComputedStyle(footerEl).marginTop || "0");
-                footerOverlap += Math.max(mt, 0);
-            }
-        }
-
-        // 테이블 전체를 담을 수 있는 컨테이너 높이 계산
-        const baseGap = 20; // 기본 여유
-        
-        // 테이블이 모두 보이려면 필요한 높이 = 실제 테이블 높이 또는 계산된 최소 높이
-        const requiredHeight = Math.max(tableH, minRequiredHeight);
-        
-        // ③ 최종 높이 - 테이블 전체가 스크롤 없이 보이도록 설정
-        const finalHeight = requiredHeight + 50; // 테이블 높이 + 여유
-        
-        setWrapH(finalHeight);
-    };
-
-    // 높이 자동 조정으로 변경 - JavaScript 높이 계산 비활성화
-    // useEffect(() => {
-    //     recomputeHeight();
-    //     const onResize = () => recomputeHeight();
-    //     window.addEventListener("resize", onResize);
-    //     window.addEventListener("orientationchange", onResize);
-
-    //     const ro = new ResizeObserver(recomputeHeight);
-    //     ro.observe(document.body);
-    //     // 푸터 자체 변화도 감시(선택)
-    //     const footerEl = getFooterEl();
-    //     let footerRO;
-    //     if (footerEl) {
-    //         footerRO = new ResizeObserver(recomputeHeight);
-    //         footerRO.observe(footerEl);
-    //     }
-
-    //     const t = setTimeout(recomputeHeight, 0);
-    //     return () => {
-    //         window.removeEventListener("resize", onResize);
-    //         window.removeEventListener("orientationchange", onResize);
-    //         ro.disconnect();
-    //         footerRO?.disconnect();
-    //         clearTimeout(t);
-    //     };
-    // }, [rooms.length]);
 
     /** ----- 휠 가로 전환: 개선된 휠 스크롤 ----- */
     useEffect(() => {
@@ -441,7 +334,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
             <div className="tab-search">
                 <div className="tab-search-area">
                     <select value={year} onChange={handleYearChange}>
-                        {[2024, 2025, 2026, 2027, 2028].map((y) => (
+                        {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map((y) => (
                             <option key={y} value={y}>{y}년</option>
                         ))}
                     </select>
@@ -477,7 +370,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
                 <span>배치 실행시간 : {airbookings[0]?.REG_DTM}</span>
             </div>
 
-            {/* ✅ 세로 스크롤 주체: 내용 넘치면 자동 스크롤, 다 보이면 없음 */}
+            {/* 세로 스크롤 주체: 내용 넘치면 자동 스크롤, 다 보이면 없음 */}
             <div
                 className="calendar-wrapper"
                 ref={wrapperRef}
