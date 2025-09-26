@@ -1,10 +1,101 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import "../CSS/style/CalendarTab.css";
+import ReservationStatusModal from "../COMPONENT/BASIC/ReservationStatusModal";
+import UnavailablePeriodModal from "../COMPONENT/BASIC/UnavailablePeriodModal";
+import { apiRequest } from "../Util/api";
 
-function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal }) {
+function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailablePeriods = [], onExportIcal, onRefresh }) {
+    console.log('CalendarTab 컴포넌트 렌더링됨');
+    
     const today = new Date();
     const [year, setYear] = useState(today.getFullYear());
     const [month, setMonth] = useState(today.getMonth());
+    const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, content: null });
+    const [reservationModal, setReservationModal] = useState({ isOpen: false, reservation: null });
+    const [unavailableModal, setUnavailableModal] = useState({ isOpen: false, room: '', date: '' });
+    const [allReservationsForUnavailable, setAllReservationsForUnavailable] = useState([]);
+    
+    // 자동 예약불가 계산용 데이터 가져오기
+    useEffect(() => {
+        const fetchAllReservations = async () => {
+            try {
+                const data = await apiRequest('/calendar-data-for-unavailable', 'POST');
+                setAllReservationsForUnavailable(data);
+            } catch (error) {
+                console.error('자동 예약불가 계산용 데이터 가져오기 오류:', error);
+            }
+        };
+        
+        fetchAllReservations();
+    }, [onRefresh, bookings, airbookings]); // 예약 데이터가 변경될 때마다 다시 실행
+    
+    // 모든 예약불가 기간 계산 (수동 + 자동)
+    const allUnavailablePeriods = useMemo(() => {
+        const autoPeriods = [];
+        
+        // 자동 예약불가 계산용 데이터 사용 (모든 예약 데이터 + 수동 예약불가 데이터)
+        const allReservations = allReservationsForUnavailable;
+        
+        // 수동 예약불가를 예약 데이터로 변환
+        const manualUnavailableAsReservations = unavailablePeriods.map(unavailable => ({
+            room: unavailable.room,
+            check_in: unavailable.start_date,
+            check_out: unavailable.end_date
+        }));
+        
+        // 모든 예약 데이터 + 수동 예약불가 데이터 합치기
+        const allData = [...allReservations, ...manualUnavailableAsReservations];
+        
+        // 객실별로 그룹화
+        const reservationsByRoom = {};
+        allData.forEach(reservation => {
+            if (!reservationsByRoom[reservation.room]) {
+                reservationsByRoom[reservation.room] = [];
+            }
+            reservationsByRoom[reservation.room].push(reservation);
+        });
+        
+        // 각 객실별로 예약 사이의 빈 기간 찾기
+        Object.keys(reservationsByRoom).forEach(roomName => {
+            const roomReservations = reservationsByRoom[roomName];
+            
+            if (roomReservations.length < 2) return;
+            
+            // 날짜순으로 정렬
+            roomReservations.sort((a, b) => new Date(a.check_in) - new Date(b.check_in));
+            
+            // 연속된 예약들 사이의 간격만 계산
+            for (let i = 0; i < roomReservations.length - 1; i++) {
+                const currentReservation = roomReservations[i];
+                const nextReservation = roomReservations[i + 1];
+                
+                const currentEnd = new Date(currentReservation.check_out);
+                const nextStart = new Date(nextReservation.check_in);
+                
+                // 예약 사이의 빈 기간 계산
+                const gapDays = Math.ceil((nextStart - currentEnd) / (1000 * 60 * 60 * 24));
+                
+                // 3일 미만인 경우만 자동 예약불가로 표시 (3박 가능하면 예약불가 아님)
+                if (gapDays > 0 && gapDays < 3) {
+                    const unavailableStart = new Date(currentEnd);
+                    unavailableStart.setDate(unavailableStart.getDate() - 1);
+                    
+                    autoPeriods.push({
+                        room: roomName,
+                        start_date: unavailableStart.toISOString().split('T')[0],
+                        end_date: nextStart.toISOString().split('T')[0],
+                        reason: '자동 예약불가 (3일 이하)',
+                        id: `AUTO_${roomName}_${unavailableStart.getTime()}`,
+                        unavailable_type: 'auto'
+                    });
+                }
+            }
+        });
+        
+        // 수동 예약불가와 자동 예약불가 합치기
+        const allPeriods = [...unavailablePeriods, ...autoPeriods];
+        return allPeriods;
+    }, [allReservationsForUnavailable, unavailablePeriods]);
 
     const scrollRef = useRef(null);    // 가로 스크롤(달력)
     const wrapperRef = useRef(null);   // 세로 스크롤 주체
@@ -79,6 +170,118 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
         return Math.max((e - s) / (1000 * 60 * 60 * 24), 1);
     };
 
+    const showTooltip = (e, content) => {
+        // 클릭/탭한 정확한 위치 사용
+        const x = e.clientX;
+        const y = e.clientY;
+        
+        setTooltip({
+            show: true,
+            x: x,
+            y: y - 15, // 클릭 위치에서 약간 위로
+            content: content
+        });
+    };
+
+    const hideTooltip = () => {
+        setTooltip({ show: false, x: 0, y: 0, content: null });
+    };
+
+    const handleBookingClick = async (booking, isExternal = false) => {
+        try {
+            // 모든 예약은 API를 통해 DB 원본 데이터 가져오기
+            if (!booking.customer_id) {
+                alert('예약 ID를 찾을 수 없습니다.');
+                return;
+            }
+            
+            const response = await apiRequest(`/reservation/${booking.customer_id}`, 'GET');
+            
+            if (response.success) {
+                setReservationModal({
+                    isOpen: true,
+                    reservation: response.data
+                });
+            } else {
+                alert('예약 정보를 가져올 수 없습니다.');
+            }
+        } catch (error) {
+            console.error('예약 정보 가져오기 실패:', error);
+            alert('예약 정보를 가져오는 중 오류가 발생했습니다.');
+        }
+    };
+
+    const handleReservationModalClose = () => {
+        setReservationModal({ isOpen: false, reservation: null });
+    };
+
+    const handleReservationUpdate = () => {
+        // 예약이 업데이트되면 캘린더 데이터만 다시 불러오기
+        if (onRefresh) {
+            onRefresh();
+        }
+    };
+
+    const handleEmptyCellClick = (room, date) => {
+        setUnavailableModal({
+            isOpen: true,
+            room: room,
+            date: date
+        });
+    };
+
+    const handleUnavailableModalClose = () => {
+        setUnavailableModal({ isOpen: false, room: '', date: '' });
+    };
+
+    const handleUnavailablePeriodAdd = () => {
+        // 예약불가 기간이 추가되면 부모 컴포넌트에 새로고침 요청
+        if (onRefresh) {
+            onRefresh();
+        }
+    };
+
+    const handleUnavailablePeriodDelete = async (customerId) => {
+        if (!window.confirm('이 예약불가 기간을 삭제하시겠습니까?')) {
+            return;
+        }
+
+        try {
+            const response = await apiRequest(`/delete-unavailable-period/${customerId}`, 'DELETE');
+            
+            if (response.success) {
+                alert('예약불가 기간이 삭제되었습니다.');
+                if (onRefresh) {
+                    onRefresh();
+                }
+            } else {
+                alert('예약불가 기간 삭제에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('예약불가 기간 삭제 오류:', error);
+            alert('예약불가 기간 삭제 중 오류가 발생했습니다.');
+        }
+    };
+
+    // 화면 날짜에서 -1일 해서 원본 날짜 계산
+    const getOriginalDates = (booking, isExternal = false) => {
+        const checkInDate = new Date(booking.check_in);
+        const checkOutDate = new Date(booking.check_out);
+        
+        // 체크아웃에서 1일 빼기 (화면용 +1일을 되돌림)
+        checkOutDate.setDate(checkOutDate.getDate() - 1);
+        
+        // 외부 예약은 체크인에서도 1일 빼기
+        if (isExternal) {
+            checkInDate.setDate(checkInDate.getDate() - 1);
+        }
+        
+        return {
+            checkIn: isExternal ? checkInDate.toISOString().split('T')[0] : booking.check_in,
+            checkOut: checkOutDate.toISOString().split('T')[0]
+        };
+    };
+
     /** ----- 초기 today로 가로 스크롤 (1회) ----- */
     useEffect(() => {
         if (hasScrolledToToday.current) return;
@@ -133,8 +336,12 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
         const headerH = header.offsetHeight || 0;
         const bodyH   = body.scrollHeight || 0;
         const tableH  = headerH + bodyH;
+        
+        // 방 개수에 따른 최소 높이 계산 (방당 40px + 헤더 + 여유)
+        const roomCount = rooms.length;
+        const minRequiredHeight = headerH + (roomCount * 40) + 100; // 방당 40px + 충분한 여유
 
-        // ② 화면 가용 높이(푸터/플로팅버튼 보정 포함)
+        // ② 화면 가용 높이를 크게 늘려서 내부 스크롤 방지
         const top = wrap.getBoundingClientRect().top;
 
         // 현재 뷰포트 하단에 겹쳐 보이는 푸터 높이만큼 차감
@@ -152,44 +359,44 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
             }
         }
 
-        // 하단 플로팅버튼(예: 채팅버튼) 같은 것도 보정하고 싶으면 높이 더해주기
-        const floatingGap = 0; // px 필요시 56 등으로 설정
-
-        const baseGap = 8; // 기본 여유
-        const avail = Math.max(
-            200,
-            window.innerHeight - top - baseGap - footerOverlap - floatingGap
-        );
-
-        // ③ 최종 높이
-        setWrapH(Math.min(tableH, avail));
+        // 테이블 전체를 담을 수 있는 컨테이너 높이 계산
+        const baseGap = 20; // 기본 여유
+        
+        // 테이블이 모두 보이려면 필요한 높이 = 실제 테이블 높이 또는 계산된 최소 높이
+        const requiredHeight = Math.max(tableH, minRequiredHeight);
+        
+        // ③ 최종 높이 - 테이블 전체가 스크롤 없이 보이도록 설정
+        const finalHeight = requiredHeight + 50; // 테이블 높이 + 여유
+        
+        setWrapH(finalHeight);
     };
 
-    useEffect(() => {
-        recomputeHeight();
-        const onResize = () => recomputeHeight();
-        window.addEventListener("resize", onResize);
-        window.addEventListener("orientationchange", onResize);
+    // 높이 자동 조정으로 변경 - JavaScript 높이 계산 비활성화
+    // useEffect(() => {
+    //     recomputeHeight();
+    //     const onResize = () => recomputeHeight();
+    //     window.addEventListener("resize", onResize);
+    //     window.addEventListener("orientationchange", onResize);
 
-        const ro = new ResizeObserver(recomputeHeight);
-        ro.observe(document.body);
-        // 푸터 자체 변화도 감시(선택)
-        const footerEl = getFooterEl();
-        let footerRO;
-        if (footerEl) {
-            footerRO = new ResizeObserver(recomputeHeight);
-            footerRO.observe(footerEl);
-        }
+    //     const ro = new ResizeObserver(recomputeHeight);
+    //     ro.observe(document.body);
+    //     // 푸터 자체 변화도 감시(선택)
+    //     const footerEl = getFooterEl();
+    //     let footerRO;
+    //     if (footerEl) {
+    //         footerRO = new ResizeObserver(recomputeHeight);
+    //         footerRO.observe(footerEl);
+    //     }
 
-        const t = setTimeout(recomputeHeight, 0);
-        return () => {
-            window.removeEventListener("resize", onResize);
-            window.removeEventListener("orientationchange", onResize);
-            ro.disconnect();
-            footerRO?.disconnect();
-            clearTimeout(t);
-        };
-    }, [rooms.length]);
+    //     const t = setTimeout(recomputeHeight, 0);
+    //     return () => {
+    //         window.removeEventListener("resize", onResize);
+    //         window.removeEventListener("orientationchange", onResize);
+    //         ro.disconnect();
+    //         footerRO?.disconnect();
+    //         clearTimeout(t);
+    //     };
+    // }, [rooms.length]);
 
     /** ----- 휠 가로 전환: 개선된 휠 스크롤 ----- */
     useEffect(() => {
@@ -274,7 +481,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
             <div
                 className="calendar-wrapper"
                 ref={wrapperRef}
-                style={wrapH ? { height: `${wrapH}px`, overflowY: 'auto' } : undefined}
+                onClick={hideTooltip}
             >
                 <div className="booking-container">
                     <div className="room-list">
@@ -295,27 +502,119 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
                                         const d = toLocalYMD(date);
                                         const roomBookings    = bookings.filter(b => b.room === room.name);
                                         const roomAirBookings = airbookings.filter(b => b.room === room.name);
+                                        const roomUnavailable = allUnavailablePeriods.filter(u => u.room === room.name);
+                                        
                                         const booking     = roomBookings.find(b => d >= b.check_in && d < b.check_out);
                                         const isCheckIn   = roomBookings.find(b => d === b.check_in);
                                         const airBooking  = roomAirBookings.find(b => d >= b.check_in && d < b.check_out);
                                         const isAirCheckIn= roomAirBookings.find(b => d === b.check_in);
+                                        const manualUnavailable = roomUnavailable.find(u => d >= u.start_date && d < u.end_date && u.unavailable_type !== 'auto');
+                                        const isManualUnavailableStart = roomUnavailable.find(u => d === u.start_date && u.unavailable_type !== 'auto');
+                                        const autoUnavailable = roomUnavailable.find(u => d >= u.start_date && d < u.end_date && u.unavailable_type === 'auto');
+                                        const isAutoUnavailableStart = roomUnavailable.find(u => d === u.start_date && u.unavailable_type === 'auto');
                                         return (
-                                            <div className="cell" key={`${room.id}-${d}`}>
+                                            <div 
+                                                className="cell" 
+                                                key={`${room.id}-${d}`}
+                                                onClick={(e) => {
+                                                    // 예약이나 수동 예약불가 기간이 없는 빈 칸인 경우에만 클릭 처리
+                                                    if (!booking && !airBooking && !manualUnavailable) {
+                                                        handleEmptyCellClick(room.name, d);
+                                                    }
+                                                }}
+                                                style={{
+                                                    cursor: (!booking && !airBooking && !manualUnavailable) ? 'pointer' : 'default'
+                                                }}
+                                            >
                                                 {isCheckIn && booking && (
-                                                    <div className="booking-bar" style={{
-                                                        width: `${(getBookingSpanInDates(booking.check_in, booking.check_out) - 2) * CELL_WIDTH}px`,
-                                                        backgroundColor: "#1E90FF", height: "70%",
-                                                        position: "absolute", top: "50%", transform: "translateY(-50%)",
-                                                        left: "40px", zIndex: 1, borderRadius: "5px"
-                                                    }}/>
+                                                    <div 
+                                                        className="booking-bar" 
+                                                        style={{
+                                                            width: `${(getBookingSpanInDates(booking.check_in, booking.check_out) - 2) * CELL_WIDTH}px`,
+                                                            backgroundColor: "#1E90FF", height: "70%",
+                                                            position: "absolute", top: "50%", transform: "translateY(-50%)",
+                                                            left: "40px", zIndex: 1, borderRadius: "5px",
+                                                            cursor: "pointer"
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // 이벤트 전파 막기
+                                                            handleBookingClick(booking, false);
+                                                        }}
+                                                    />
                                                 )}
                                                 {isAirCheckIn && airBooking && (
-                                                    <div className="booking-bar" style={{
-                                                        width: `${(getBookingSpanInDates(airBooking.check_in, airBooking.check_out) - 1) * CELL_WIDTH}px`,
-                                                        backgroundColor: "#F54D6E", height: "70%",
-                                                        position: "absolute", top: "50%", transform: "translateY(-50%)",
-                                                        left: "-40px", zIndex: 2, borderRadius: "5px"
-                                                    }}/>
+                                                    <div 
+                                                        className="booking-bar" 
+                                                        style={{
+                                                            width: `${(getBookingSpanInDates(airBooking.check_in, airBooking.check_out) - 1) * CELL_WIDTH}px`,
+                                                            backgroundColor: "#F54D6E", height: "70%",
+                                                            position: "absolute", top: "50%", transform: "translateY(-50%)",
+                                                            left: "-40px", zIndex: 2, borderRadius: "5px",
+                                                            cursor: "pointer"
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // 이벤트 전파 막기
+                                                            handleBookingClick(airBooking, true);
+                                                        }}
+                                                    />
+                                                )}
+                                                {/* 수동 예약불가 (예약과 함께 처리) */}
+                                                {isManualUnavailableStart && manualUnavailable && (
+                                                    <div 
+                                                        className="booking-bar manual-unavailable" 
+                                                        style={{
+                                                            width: `${(getBookingSpanInDates(manualUnavailable.start_date, manualUnavailable.end_date)) * CELL_WIDTH}px`,
+                                                            backgroundColor: "#FF9800", 
+                                                            height: "70%",
+                                                            position: "absolute", 
+                                                            top: "50%", 
+                                                            left: "-40px",
+                                                            transform: "translateY(-50%)",
+                                                            zIndex: 1, 
+                                                            borderRadius: "3px",
+                                                            opacity: 1,
+                                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                                            fontSize: "10px", color: "white", fontWeight: "bold",
+                                                            cursor: "pointer",
+                                                            border: "1px solidrgb(230, 81, 0)"
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            console.log('수동 예약불가 클릭:', manualUnavailable);
+                                                            console.log('ID:', manualUnavailable.id);
+                                                            console.log('원본 날짜:', manualUnavailable.original_date);
+                                                            handleUnavailablePeriodDelete(manualUnavailable.id);
+                                                        }}
+                                                        title="클릭하여 수동 예약불가 기간 삭제"
+                                                    >
+                                                        수동예약불가
+                                                    </div>
+                                                )}
+                                                
+                                                {/* 자동 예약불가 (별도 처리) */}
+                                                {isAutoUnavailableStart && autoUnavailable && (
+                                                    <div 
+                                                        className="booking-bar auto-unavailable" 
+                                                        style={{
+                                                            width: `${(getBookingSpanInDates(autoUnavailable.start_date, autoUnavailable.end_date) - 1) * CELL_WIDTH}px`,
+                                                            backgroundColor: "#9E9E9E", 
+                                                            height: "70%",
+                                                            position: "absolute", 
+                                                            top: "50%", 
+                                                            transform: "translateY(-50%)",
+                                                            left: "80px", 
+                                                            zIndex: 0, 
+                                                            borderRadius: "3px",
+                                                            opacity: 0.6,
+                                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                                            fontSize: "10px", color: "white", fontWeight: "bold",
+                                                            cursor: "default",
+                                                            border: "1px solid #757575"
+                                                        }}
+                                                        title="자동 예약불가 (3일 이하) - 삭제 불가"
+                                                    >
+                                                        예약불가
+                                                    </div>
                                                 )}
                                             </div>
                                         );
@@ -326,6 +625,23 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], onExportIcal
                     </div>
                 </div>
             </div>
+            
+            {/* 예약 현황 모달 */}
+            <ReservationStatusModal
+                isOpen={reservationModal.isOpen}
+                onClose={handleReservationModalClose}
+                reservation={reservationModal.reservation}
+                onUpdate={handleReservationUpdate}
+            />
+            
+            {/* 예약불가 기간 추가 모달 */}
+            <UnavailablePeriodModal
+                isOpen={unavailableModal.isOpen}
+                onClose={handleUnavailableModalClose}
+                selectedRoom={unavailableModal.room}
+                selectedDate={unavailableModal.date}
+                onAdd={handleUnavailablePeriodAdd}
+            />
         </div>
     );
 }

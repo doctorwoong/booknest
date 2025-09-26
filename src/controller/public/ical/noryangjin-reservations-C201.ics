@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Noryangjin Studio//Reservation System//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Noryangjin Studio Reservations
+X-WR-CALDESC:Reservation Calendar for Noryangjin Studio
+X-WR-TIMEZONE:Asia/Seoul
+BEGIN:VEVENT
+UID:reservation-7535@noryangjin.co.kr
+DTSTAMP:20250922T010007Z
+DTSTART;TZID=Asia/Seoul:20251026T000000
+DTEND;TZID=Asia/Seoul:20251124T000000
+SUMMARY:C201 - Jonatas Douglas Caresia
+DESCRIPTION:Guest: Jonatas Douglas Caresia\nEmail: jonatancaresia@gmail.com\nPhone: +8215998404103\nPrice: ₩813,450\nSource: admin
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+CREATED:20250922T010007Z
+LAST-MODIFIED:20250922T010007Z
+END:VEVENT
+END:VCALENDAR

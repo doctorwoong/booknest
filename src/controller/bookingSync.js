@@ -51,21 +51,21 @@ const ensureCacheDir = async () => {
 // ✅ Booking.com 숙소 리스트 (iCal URL만 사용)
 const bookingListings = [
     // 예시:
-    { id: 1, name: 'C106', bookingIcalUrl: "https://ical.booking.com/v1/export?t=51cb0da8-08b0-48d2-9c4f-3fca0c82d68a" },
-    { id: 2, name: 'C107', bookingIcalUrl: "https://ical.booking.com/v1/export?t=3b79344b-f655-431e-a242-e341d6687bff" },
-    { id: 3, name: 'C201', bookingIcalUrl: "https://ical.booking.com/v1/export?t=7ebb76a4-e64e-4aa8-b10f-f44563ddad77" },
-    { id: 4, name: 'C302', bookingIcalUrl: "https://ical.booking.com/v1/export?t=2c7fbc09-1679-4c98-841d-b36c8c812397" },
-    { id: 5, name: 'C305', bookingIcalUrl: "https://ical.booking.com/v1/export?t=78750e6c-6e83-4492-bc68-5d6ee839d94b" },
-    { id: 6, name: 'C402', bookingIcalUrl: "https://ical.booking.com/v1/export?t=a439a607-0b82-49f5-81ba-1300804f411a" },
-    { id: 8, name: 'N103', bookingIcalUrl: "https://ical.booking.com/v1/export?t=e2dc5702-7e08-4803-975b-055a9b4c1aa7" },
-    { id: 9, name: 'N202', bookingIcalUrl: "https://ical.booking.com/v1/export?t=76fa03f1-22fa-4947-9b10-8b4636a82858" },
-    { id: 10, name: 'R102', bookingIcalUrl: "https://ical.booking.com/v1/export?t=e544dbe8-c51f-4b7b-9738-5a7cb76a014e" },
-    { id: 11, name: 'N303', bookingIcalUrl: "https://ical.booking.com/v1/export?t=84c3f453-f96a-45b1-94f0-673f56424970" },
-    { id: 12, name: 'N306', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c669d6fe-66ae-4dbd-8e8a-5238c67dcaaf" },
-    { id: 13, name: 'N307', bookingIcalUrl: "https://ical.booking.com/v1/export?t=cb9785c5-513e-4588-8d9b-dc51eddca58e" },
-    { id: 14, name: 'N203', bookingIcalUrl: "https://ical.booking.com/v1/export?t=d140a2b7-b3f5-4148-b2d6-09b727dc9585" },
-    { id: 15, name: 'N207', bookingIcalUrl: "https://ical.booking.com/v1/export?t=6757631a-ce0c-4458-80f8-e286ecee7ca6" },
-    { id: 16, name: 'N301', bookingIcalUrl: "https://ical.booking.com/v1/export?t=be72ae8b-c9f8-4eef-8904-e9287d99e8ca" }
+    { id: 1, name: 'C106', bookingIcalUrl: "https://ical.booking.com/v1/export?t=5120ca8a-2302-456a-ab0d-41e3377e2bb2" },
+    { id: 2, name: 'C107', bookingIcalUrl: "https://ical.booking.com/v1/export?t=229cde29-1ca4-4942-8f07-948b89a167a0" },
+    { id: 3, name: 'C201', bookingIcalUrl: "https://ical.booking.com/v1/export?t=36a02f7d-32fe-4c79-bc31-6a6759a2cf64" },
+    { id: 4, name: 'C302', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c54da310-4974-4357-b3db-1ce8d8606462" },
+    { id: 5, name: 'C305', bookingIcalUrl: "https://ical.booking.com/v1/export?t=4439e712-56ea-46d1-ae4a-8f747604ad7d" },
+    { id: 6, name: 'C402', bookingIcalUrl: "https://ical.booking.com/v1/export?t=01675ad5-c9ae-46e0-be6d-2d55ee8d210f" },
+    { id: 8, name: 'N103', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c10c31a2-ca3b-4896-a838-4c751d990e01" },
+    { id: 9, name: 'N202', bookingIcalUrl: "https://ical.booking.com/v1/export?t=5c3ad545-f5cc-4ce8-8ac6-1e110f4f1b0c" },
+    { id: 10, name: 'R102', bookingIcalUrl: "https://ical.booking.com/v1/export?t=16714330-23ee-4cb9-8010-c98da5456252" },
+    { id: 11, name: 'N303', bookingIcalUrl: "https://ical.booking.com/v1/export?t=faf99c38-84e7-4590-8930-f86177fa0222" },
+    { id: 12, name: 'N306', bookingIcalUrl: "https://ical.booking.com/v1/export?t=bb6a7524-17a2-4f62-9ca9-e122721c8186" },
+    { id: 13, name: 'N307', bookingIcalUrl: "https://ical.booking.com/v1/export?t=dacc2722-ed53-4675-b9cc-5b62ff2e86db" },
+    { id: 14, name: 'N203', bookingIcalUrl: "https://ical.booking.com/v1/export?t=b4709d87-2fec-4d51-b96d-2d21822bb970" },
+    { id: 15, name: 'N207', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c2836cbb-b99e-48ec-a669-7e80b073278a" },
+    { id: 16, name: 'N301', bookingIcalUrl: "https://ical.booking.com/v1/export?t=e170891a-ed13-483f-b6ae-cca83405328e" }
     // 실제 booking.com iCal URL을 여기에 추가하세요
 ];
 
@@ -216,6 +216,7 @@ const createBackupTable = async () => {
 };
 
 // 🚨 오버부킹 방지 시스템
+// 🔍 단일 예약의 오버부킹 체크 (기존 함수 유지)
 const checkOverbooking = async (roomName, checkIn, checkOut) => {
     try {
         // 해당 객실의 모든 예약 조회 (우리 시스템 + Booking.com)
@@ -244,6 +245,270 @@ const checkOverbooking = async (roomName, checkIn, checkOut) => {
     } catch (error) {
         console.error(`❌ 오버부킹 체크 실패 (${roomName}):`, error);
         return { isOverbooked: false, conflictingReservations: [] };
+    }
+};
+
+// 🔍 전체 시스템 오버부킹 체크 및 관리
+const checkAllOverbookings = async () => {
+    try {
+        console.log('🔍 전체 오버부킹 체크를 시작합니다...');
+        
+        const query = `
+            SELECT 
+                c1.customer_id as booking1_id,
+                c1.name as booking1_name,
+                c1.reserved_room_number as room,
+                c1.check_in as booking1_checkin,
+                c1.check_out as booking1_checkout,
+                c1.MDFY_ID as booking1_type,
+                DATE_FORMAT(c1.REG_DTM, '%Y-%m-%d %H:%i:%s') as booking1_created,
+                c2.customer_id as booking2_id,
+                c2.name as booking2_name,
+                c2.check_in as booking2_checkin,
+                c2.check_out as booking2_checkout,
+                c2.MDFY_ID as booking2_type,
+                DATE_FORMAT(c2.REG_DTM, '%Y-%m-%d %H:%i:%s') as booking2_created,
+                CASE 
+                    WHEN c1.check_in <= c2.check_in AND c1.check_out > c2.check_in THEN 'OVERLAP_START'
+                    WHEN c1.check_in < c2.check_out AND c1.check_out >= c2.check_out THEN 'OVERLAP_END'
+                    WHEN c1.check_in >= c2.check_in AND c1.check_out <= c2.check_out THEN 'CONTAINED'
+                    WHEN c1.check_in <= c2.check_in AND c1.check_out >= c2.check_out THEN 'CONTAINS'
+                    ELSE 'OTHER'
+                END as conflict_type,
+                GREATEST(c1.check_in, c2.check_in) as conflict_start,
+                LEAST(c1.check_out, c2.check_out) as conflict_end,
+                DATEDIFF(STR_TO_DATE(LEAST(c1.check_out, c2.check_out), '%Y%m%d'), 
+                         STR_TO_DATE(GREATEST(c1.check_in, c2.check_in), '%Y%m%d')) as overlap_days
+            FROM CustomerInfo c1
+            JOIN CustomerInfo c2 ON 
+                c1.reserved_room_number = c2.reserved_room_number 
+                AND c1.customer_id < c2.customer_id
+            WHERE 
+                (
+                    (c1.check_in <= c2.check_in AND c1.check_out > c2.check_in)
+                    OR
+                    (c1.check_in < c2.check_out AND c1.check_out >= c2.check_out)
+                    OR
+                    (c1.check_in >= c2.check_in AND c1.check_out <= c2.check_out)
+                    OR
+                    (c1.check_in <= c2.check_in AND c1.check_out >= c2.check_out)
+                )
+            ORDER BY c1.reserved_room_number, c1.check_in, c2.check_in
+        `;
+        
+        const [conflicts] = await db.query(query);
+        
+        if (conflicts.length === 0) {
+            console.log('✅ 오버부킹이 발견되지 않았습니다!');
+            return { hasConflicts: false, conflicts: [], stats: null };
+        }
+
+        // 통계 생성
+        const stats = generateOverbookingStats(conflicts);
+        
+        console.log(`❌ ${conflicts.length}개의 오버부킹이 발견되었습니다!`);
+        printOverbookingTable(conflicts);
+        printOverbookingStats(stats);
+        
+        return { hasConflicts: true, conflicts, stats };
+        
+    } catch (error) {
+        console.error('❌ 전체 오버부킹 체크 중 오류:', error);
+        throw error;
+    }
+};
+
+// 🔍 특정 방의 오버부킹 체크
+const checkRoomOverbookings = async (roomNumber) => {
+    try {
+        const result = await checkAllOverbookings();
+        if (!result.hasConflicts) {
+            return { hasConflicts: false, conflicts: [] };
+        }
+        
+        const roomConflicts = result.conflicts.filter(conflict => conflict.room === roomNumber);
+        
+        if (roomConflicts.length === 0) {
+            console.log(`✅ ${roomNumber}호실은 오버부킹이 없습니다.`);
+            return { hasConflicts: false, conflicts: [] };
+        }
+        
+        console.log(`❌ ${roomNumber}호실에서 ${roomConflicts.length}개의 오버부킹 발견:`);
+        printOverbookingTable(roomConflicts);
+        
+        return { hasConflicts: true, conflicts: roomConflicts };
+        
+    } catch (error) {
+        console.error(`❌ ${roomNumber} 오버부킹 체크 중 오류:`, error);
+        throw error;
+    }
+};
+
+// 📊 오버부킹 통계 생성
+const generateOverbookingStats = (conflicts) => {
+    // 방별 통계
+    const roomStats = {};
+    conflicts.forEach(conflict => {
+        if (!roomStats[conflict.room]) {
+            roomStats[conflict.room] = {
+                count: 0,
+                totalOverlapDays: 0,
+                conflicts: []
+            };
+        }
+        roomStats[conflict.room].count++;
+        roomStats[conflict.room].totalOverlapDays += conflict.overlap_days;
+        roomStats[conflict.room].conflicts.push(conflict);
+    });
+
+    // 타입별 통계
+    const typeStats = {};
+    conflicts.forEach(conflict => {
+        const typeKey = `${conflict.booking1_type} vs ${conflict.booking2_type}`;
+        if (!typeStats[typeKey]) {
+            typeStats[typeKey] = 0;
+        }
+        typeStats[typeKey]++;
+    });
+
+    // 충돌 타입별 통계
+    const conflictTypeStats = {};
+    conflicts.forEach(conflict => {
+        conflictTypeStats[conflict.conflict_type] = (conflictTypeStats[conflict.conflict_type] || 0) + 1;
+    });
+
+    return {
+        totalConflicts: conflicts.length,
+        roomStats,
+        typeStats,
+        conflictTypeStats
+    };
+};
+
+// 📋 오버부킹을 테이블 형식으로 출력
+const printOverbookingTable = (conflicts) => {
+    console.log('\n📋 오버부킹 현황 테이블');
+    console.log('='.repeat(140));
+    console.log(sprintf('%-8s %-15s %-15s %-20s %-20s %-12s %-8s %-15s', 
+        '방호실', '예약1 ID', '예약2 ID', '예약1 기간', '예약2 기간', '충돌타입', '겹침일수', '생성일시'));
+    console.log('-'.repeat(140));
+
+    conflicts.forEach(conflict => {
+        const booking1Period = `${conflict.booking1_checkin}~${conflict.booking1_checkout}`;
+        const booking2Period = `${conflict.booking2_checkin}~${conflict.booking2_checkout}`;
+        
+        console.log(sprintf('%-8s %-15s %-15s %-20s %-20s %-12s %-8s %-15s',
+            conflict.room,
+            `${conflict.booking1_id}(${conflict.booking1_type})`,
+            `${conflict.booking2_id}(${conflict.booking2_type})`,
+            booking1Period,
+            booking2Period,
+            conflict.conflict_type,
+            `${conflict.overlap_days}일`,
+            conflict.booking1_created.split(' ')[0]
+        ));
+    });
+
+    console.log('='.repeat(140));
+};
+
+// 📊 오버부킹 통계 출력
+const printOverbookingStats = (stats) => {
+    console.log('\n📊 오버부킹 통계:');
+    console.log(`총 충돌 수: ${stats.totalConflicts}개\n`);
+    
+    console.log('방별 현황:');
+    Object.entries(stats.roomStats).forEach(([room, roomStat]) => {
+        console.log(`  ${room}: ${roomStat.count}개 충돌 (총 ${roomStat.totalOverlapDays}일 겹침)`);
+    });
+    
+    console.log('\n예약 타입별 충돌:');
+    Object.entries(stats.typeStats).forEach(([type, count]) => {
+        console.log(`  ${type}: ${count}개`);
+    });
+    
+    console.log('\n충돌 패턴별:');
+    Object.entries(stats.conflictTypeStats).forEach(([type, count]) => {
+        console.log(`  ${type}: ${count}개`);
+    });
+    console.log('');
+};
+
+// sprintf 함수 (간단한 구현)
+const sprintf = (format, ...args) => {
+    let i = 0;
+    return format.replace(/%-?(\d+)s/g, (match, width) => {
+        const arg = String(args[i++] || '');
+        const isLeftAlign = match.startsWith('%-');
+        const w = parseInt(width);
+        
+        if (isLeftAlign) {
+            return arg.padEnd(w);
+        } else {
+            return arg.padStart(w);
+        }
+    });
+};
+
+// 🔍 Express 컨트롤러 함수들
+const checkAllOverbookingsController = async (req, res) => {
+    try {
+        console.log(`🔍 전체 시스템 오버부킹 체크 요청`);
+        const result = await checkAllOverbookings();
+        
+        res.json({
+            success: true,
+            hasConflicts: result.hasConflicts,
+            totalConflicts: result.conflicts.length,
+            conflicts: result.conflicts,
+            stats: result.stats,
+            message: result.hasConflicts 
+                ? `${result.conflicts.length}개의 오버부킹이 발견되었습니다.`
+                : "오버부킹이 발견되지 않았습니다."
+        });
+        
+    } catch (error) {
+        console.error("❌ 전체 오버부킹 체크 실패:", error);
+        res.status(500).json({
+            success: false,
+            error: "전체 오버부킹 체크 중 오류가 발생했습니다.",
+            message: error.message
+        });
+    }
+};
+
+const checkRoomOverbookingsController = async (req, res) => {
+    try {
+        const { roomNumber } = req.params;
+        
+        if (!roomNumber) {
+            return res.status(400).json({
+                success: false,
+                error: "객실번호가 필요합니다."
+            });
+        }
+        
+        console.log(`🔍 ${roomNumber}호실 오버부킹 체크 요청`);
+        const result = await checkRoomOverbookings(roomNumber);
+        
+        res.json({
+            success: true,
+            room: roomNumber,
+            hasConflicts: result.hasConflicts,
+            totalConflicts: result.conflicts.length,
+            conflicts: result.conflicts,
+            message: result.hasConflicts 
+                ? `${roomNumber}호실에서 ${result.conflicts.length}개의 오버부킹이 발견되었습니다.`
+                : `${roomNumber}호실은 오버부킹이 없습니다.`
+        });
+        
+    } catch (error) {
+        console.error(`❌ ${req.params.roomNumber} 오버부킹 체크 실패:`, error);
+        res.status(500).json({
+            success: false,
+            error: "방별 오버부킹 체크 중 오류가 발생했습니다.",
+            message: error.message
+        });
     }
 };
 
@@ -309,7 +574,12 @@ const resolveSingleConflict = async (roomName, conflict) => {
                 try {
                     await db.query(`
                         INSERT INTO CustomerInfo_Backup 
-                        SELECT *, NOW() as cancelled_at, 'overbooking_resolved' as cancellation_reason
+                        (customer_id, name, email, phone_number, passport_number, check_in, check_out, 
+                         reserved_room_number, totalprice, MDFY_DTM, MDFY_ID, 
+                         REG_DTM, REG_ID, cancelled_at, cancellation_reason)
+                        SELECT customer_id, name, email, phone_number, passport_number, check_in, check_out, 
+                               reserved_room_number, totalprice, MDFY_DTM, MDFY_ID, 
+                               REG_DTM, REG_ID, NOW() as cancelled_at, 'overbooking_resolved' as cancellation_reason
                         FROM CustomerInfo 
                         WHERE customer_id = ?
                     `, [ourConflict.customer_id]);
@@ -455,8 +725,6 @@ const fetchAndStoreBookingBookings = async (useCache = true) => {
     try {
         console.log("🔄 Booking.com → 우리 시스템 동기화 시작...");
 
-        // 🗄️ 백업 테이블 생성 (취소된 예약 보관용)
-        await createBackupTable();
         
         const startTime = Date.now();
         const results = [];
@@ -536,7 +804,12 @@ const fetchAndStoreBookingBookings = async (useCache = true) => {
                                 // 취소된 예약을 백업 테이블로 이동
                                 await db.query(`
                                     INSERT INTO CustomerInfo_Backup 
-                                    SELECT *, NOW() as cancelled_at, 'booking_cancelled' as cancellation_reason
+                                    (customer_id, name, email, phone_number, passport_number, check_in, check_out, 
+                                     reserved_room_number, totalprice, MDFY_DTM, MDFY_ID, 
+                                     REG_DTM, REG_ID, cancelled_at, cancellation_reason)
+                                    SELECT customer_id, name, email, phone_number, passport_number, check_in, check_out, 
+                                           reserved_room_number, totalprice, MDFY_DTM, MDFY_ID, 
+                                           REG_DTM, REG_ID, NOW() as cancelled_at, 'booking_cancelled' as cancellation_reason
                                     FROM CustomerInfo 
                                     WHERE customer_id = ?
                                 `, [cancelledReservation.customer_id]);
@@ -594,7 +867,7 @@ const fetchAndStoreBookingBookings = async (useCache = true) => {
 
                                 if (existing.length === 0) {
                                     // 중복이 없으면 INSERT
-                await db.query(
+                                await db.query(
                     `INSERT INTO CustomerInfo (
                         name, email, phone_number, passport_number,
                         check_in, check_out,
@@ -747,6 +1020,7 @@ const generateAndSaveIcal = async (roomNumber = null) => {
             FROM CustomerInfo 
             WHERE check_in >= DATE_FORMAT(NOW(), '%Y%m%d')
             AND REG_ID != 'booking'
+            AND TYPE != 'UNAV'
             ORDER BY check_in, reserved_room_number
         `;
         
@@ -769,7 +1043,7 @@ const generateAndSaveIcal = async (roomNumber = null) => {
         // 파일 시스템에 저장 (public 폴더에)
         const fs = require('fs');
         const path = require('path');
-        const publicPath = path.join(__dirname, '../../public/ical');
+        const publicPath = path.join(__dirname, './public/ical');
         
         // ical 폴더가 없으면 생성
         if (!fs.existsSync(publicPath)) {
@@ -877,9 +1151,9 @@ const syncWithBookingCom = async () => {
     }
 };
 
-// 🕐 매일 새벽 1시에 자동 실행 설정 (UTC 기준 16:00)
-cron.schedule("0 16 * * *", () => {
-    console.log("⏰ Booking.com 양방향 동기화 배치 실행 중...");
+// 🕐 2시간마다 자동 실행 설정
+cron.schedule("0 */2 * * *", () => {
+    console.log("⏰ Booking.com 양방향 동기화 배치 실행 중... (2시간마다)");
     syncWithBookingCom();
 });
 
@@ -937,5 +1211,9 @@ module.exports = {
     manualBookingSync,
     roomList,
     checkOverbooking,
+    checkAllOverbookings,
+    checkRoomOverbookings,
+    checkAllOverbookingsController,
+    checkRoomOverbookingsController,
     resolveBookingConflicts
 };

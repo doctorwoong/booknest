@@ -9,7 +9,10 @@ const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
-    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb } = require('./controller/controller');
+    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods, getReservationById, updateReservation, addUnavailablePeriod, deleteUnavailablePeriod, updateExternalReservation, getCalendarDataForUnavailable } = require('./controller/controller');
+
+
+
 
     // ✅ 환경변수 설정 (서버 관리자 설정 없이 코드에서 직접)
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
@@ -142,6 +145,8 @@ app.post('/getReservation', getReservationCustomers);
 
 app.post('/calendar_admin', getCalendarAdmin);
 app.post('/calendar_airbnb', getCalendarAirbnb);
+app.post('/unavailable-periods', getUnavailablePeriods);
+app.post('/calendar-data-for-unavailable', getCalendarDataForUnavailable);
 
 app.get('/api/reviews/:roomNumber', getReviews);
 app.get('/review/:customer_id', getCustmerReview);
@@ -151,6 +156,15 @@ app.post('/updateReservationMailStatus', updateReservationMailStatus);
 
 app.post('/updateCheckInSmsStatus', updateCheckInSmsStatus);
 app.post('/updateCheckOutSmsStatus', updateCheckOutSmsStatus);
+
+// 예약 수정 관련 API
+app.get('/reservation/:customer_id', getReservationById);
+app.post('/update-reservation', updateReservation);
+app.post('/update-external-reservation', updateExternalReservation);
+
+// 예약불가 기간 관련 API
+app.post('/add-unavailable-period', addUnavailablePeriod);
+app.delete('/delete-unavailable-period/:customer_id', deleteUnavailablePeriod);
 
 // ✅ iCal 내보내기 엔드포인트
 const { generateAndSaveIcal, manualBookingSync } = require('./controller/bookingSync');
@@ -179,9 +193,9 @@ app.get('/export-ical/:roomNumber?', async (req, res) => {
 });
 
 // ✅ Booking.com 수동 전송 엔드포인트
-app.post('/manual-booking-sync', async (req, res) => {
+app.get('/manual-booking-sync', async (req, res) => {
     try {
-        const { action } = req.body;
+        const { action } = req.query;
         
         if (action === 'export_all') {
             const result = await manualBookingSync();
@@ -273,6 +287,13 @@ app.post("/check-overbooking", async (req, res) => {
         });
     }
 });
+
+// 오버부킹 체크 컨트롤러 함수들 import
+const { checkAllOverbookingsController, checkRoomOverbookingsController } = require('./controller/bookingSync');
+
+// 🔍 오버부킹 체크 API
+app.get('/check-all-overbookings', checkAllOverbookingsController);
+app.get('/check-room-overbookings/:roomNumber', checkRoomOverbookingsController);
 
 const PORT = 30022;
 app.listen(PORT, () => console.log(`🚀 Proxy server running on port ${PORT}`));

@@ -10,6 +10,7 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function Admin() {
     const [activeTab, setActiveTab] = useState("customer");
+    console.log('Admin 컴포넌트 렌더링됨, 현재 활성 탭:', activeTab);
     const [reservationCustomers, setreservationCustomers] = useState([]);
     const [checkInCustomers, setCheckInCustomers] = useState([]);
     const [checkOutCustomers, setCheckOutCustomers] = useState([]);
@@ -22,6 +23,7 @@ function Admin() {
 
     const [bookings ,setBookings] = useState([]);
     const [airbookings ,setAirbookings] = useState([]);
+    const [unavailablePeriods, setUnavailablePeriods] = useState([]);
     const [loading, setLoading] = useState(false);
     const [manualPhone, setManualPhone] = useState("");
 
@@ -97,6 +99,10 @@ function Admin() {
                         ...customer,
                     }));
                     setAirbookings(formattedData2);
+
+                    // 예약불가 기간 가져오기
+                    const data3 = await apiRequest("/unavailable-periods","POST");
+                    setUnavailablePeriods(data3);
                 }else{
                     const data = await apiRequest("/getReservation","POST");
 
@@ -305,7 +311,7 @@ function Admin() {
                     </div>
                 </div>
 
-                <div style={{overflowY: "auto", height: "77vh"}}>
+                <div style={{overflowY: "visible", height: "auto", minHeight: "85vh"}}>
                     <div className="tab-content">
                         {/* 고객관리 탭 */}
                         <div className={`tab-pane fade ${activeTab === "customer" ? "show active" : ""}`} id="customer" role="tabpanel">
@@ -461,28 +467,44 @@ function Admin() {
                                 rooms={rooms} 
                                 bookings={bookings} 
                                 airbookings={airbookings}
+                                unavailablePeriods={unavailablePeriods}
                                 onExportIcal={async () => {
                                     try {
                                         // Booking.com으로 예약정보 수동 전송
-                                        const response = await fetch('/manual-booking-sync', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            },
-                                            body: JSON.stringify({
-                                                action: 'export_all'
-                                            })
-                                        });
+                                        const response = await apiRequest('/manual-booking-sync', 'GET', { action: 'export_all' });
                                         
-                                        if (response.ok) {
-                                            const result = await response.json();
-                                            alert(`Booking.com으로 예약정보 전송 완료!\n전송된 파일: ${result.files?.length || 0}개`);
+                                        if (response.success) {
+                                            alert(`Booking.com으로 예약정보 전송 완료!\n전송된 파일: ${response.files?.length || 0}개`);
                                         } else {
                                             throw new Error('전송 실패');
                                         }
                                     } catch (error) {
                                         console.error('Booking.com 전송 오류:', error);
                                         alert('Booking.com으로 예약정보 전송 중 오류가 발생했습니다.');
+                                    }
+                                }}
+                                onRefresh={async () => {
+                                    // 캘린더 데이터만 새로고침
+                                    try {
+                                        const data = await apiRequest("/calendar_admin","POST");
+                                        const formattedData = data.map((customer) => ({
+                                            ...customer,
+                                        }));
+                                        setBookings(formattedData);
+
+                                        const data2 = await apiRequest("/calendar_airbnb","POST");
+                                        const formattedData2 = data2.map((customer) => ({
+                                            ...customer,
+                                        }));
+                                        setAirbookings(formattedData2);
+
+                                        const data3 = await apiRequest("/unavailable-periods","POST");
+                                        const formattedData3 = data3.map((period) => ({
+                                            ...period,
+                                        }));
+                                        setUnavailablePeriods(formattedData3);
+                                    } catch (error) {
+                                        console.error('캘린더 데이터 새로고침 오류:', error);
                                     }
                                 }}
                             />

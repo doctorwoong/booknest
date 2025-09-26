@@ -153,7 +153,8 @@ const getCheckInCustomers = async (req, res) => {
             FROM
                 CustomerInfo
             where 1=1
-              AND REG_ID != 'batch'
+              AND name != 'batch'
+              AND TYPE != 'UNAV'
             ORDER BY
                 CASE
                     WHEN STR_TO_DATE(check_in, '%Y%m%d') BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) THEN 1
@@ -187,7 +188,8 @@ const getCheckOutCustomers = async (req, res) => {
             FROM
                 CustomerInfo
             where 1=1
-              AND REG_ID != 'batch'
+              AND name != 'batch'
+              AND TYPE != 'UNAV'
             ORDER BY
                 CASE
                     WHEN STR_TO_DATE(check_out, '%Y%m%d') >= CURDATE() THEN 1
@@ -224,6 +226,7 @@ const getCheckCustomers = async (req, res) => {
                    (SELECT B.images FROM RoomInfo B WHERE A.reserved_room_number = B.room_number LIMIT 1) AS img
             FROM CustomerInfo A
             WHERE A.name like ?
+            AND A.TYPE != 'UNAV'
         `;
 
         const [rows] = await pool.query(query, [`%${name}%`]);
@@ -299,7 +302,8 @@ const getReviewCustomer = async (req, res) => {
             WHERE
                 STR_TO_DATE(A.check_out, '%Y%m%d') BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY)
               AND CURDATE()
-            AND REG_ID != 'batch';
+            AND REG_ID != 'batch'
+            AND TYPE != 'UNAV';
         `;
         const [rows] = await pool.query(query);
         res.json(rows);
@@ -425,6 +429,7 @@ const getReservationCustomers = async (req, res) => {
                 TYPE as type
             from CustomerInfo
             WHERE MDFY_ID NOT IN ('booking','batch')
+            AND TYPE != 'UNAV'
             order by customer_id desc
         `;
         const [rows] = await pool.query(query);
@@ -526,11 +531,16 @@ const getCalendarAdmin = async (req, res) => {
     try {
         const query = `
             SELECT
+                customer_id,
+                name,
                 reserved_room_number AS room,
                 DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
-                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out
+                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out,
+                MDFY_ID,
+                REG_ID,
+                TYPE
             FROM CustomerInfo
-            WHERE MDFY_ID != 'booking' OR MDFY_ID != 'batch'
+            WHERE REG_ID = 'admin' AND TYPE != 'UNAV'
         `;
         const [rows] = await pool.query(query);
         res.status(200).json(rows);
@@ -545,12 +555,17 @@ const getCalendarAirbnb = async (req, res) => {
     try {
         const query = `
             SELECT
+                customer_id,
+                name,
                 reserved_room_number AS room,
                 DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_in, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_in,
                 DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS check_out,
-                DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i') AS REG_DTM
+                DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i') AS REG_DTM,
+                MDFY_ID,
+                REG_ID,
+                TYPE
             FROM CustomerInfo
-            WHERE MDFY_ID = 'booking' OR MDFY_ID = 'batch'
+            WHERE REG_ID = 'booking' OR REG_ID = 'batch'
             order by customer_id desc
         `;
         const [rows] = await pool.query(query);
@@ -563,9 +578,279 @@ const getCalendarAirbnb = async (req, res) => {
     }
 };
 
+const getUnavailablePeriods = async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                reserved_room_number as room,
+                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS start_date,
+                DATE_FORMAT(DATE_ADD(STR_TO_DATE(check_out, '%Y%m%d'), INTERVAL 1 DAY), '%Y-%m-%d') AS end_date,
+                SUBSTRING(name, 9) as reason,
+                customer_id as id,
+                CASE 
+                    WHEN name LIKE 'MANUAL_%' THEN 'manual'
+                    ELSE 'auto'
+                END as unavailable_type,
+                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') as original_date
+            FROM CustomerInfo
+            WHERE TYPE = 'UNAV'
+            ORDER BY check_in ASC
+        `;
+        const [rows] = await pool.query(query);
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error('Error fetching unavailable periods:', err);
+        res.status(500).send('Error fetching unavailable periods');
+    }
+};
 
+// 자동 예약불가 계산용 데이터 (모든 예약 데이터 포함, 오버부킹 시 하나만 선택)
+const getCalendarDataForUnavailable = async (req, res) => {
+    try {
+        const query = `
+            SELECT DISTINCT
+                reserved_room_number AS room,
+                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out
+            FROM CustomerInfo
+            ORDER BY check_in, reserved_room_number
+        `;
+        const [rows] = await pool.query(query);
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error('Error fetching calendar data for unavailable calculation:', err);
+        res.status(500).send('Error fetching calendar data for unavailable calculation');
+    }
+};
+
+const getReservationById = async (req, res) => {
+    try {
+        const { customer_id } = req.params;
+        
+        const query = `
+            SELECT 
+                customer_id,
+                name,
+                email,
+                phone_number,
+                passport_number,
+                DATE_FORMAT(STR_TO_DATE(check_in, '%Y%m%d'), '%Y-%m-%d') AS check_in,
+                DATE_FORMAT(STR_TO_DATE(check_out, '%Y%m%d'), '%Y-%m-%d') AS check_out,
+                reserved_room_number,
+                totalprice,
+                TYPE as type,
+                REG_ID
+            FROM CustomerInfo 
+            WHERE customer_id = ?
+        `;
+        
+        const [rows] = await pool.query(query, [customer_id]);
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Reservation not found' 
+            });
+        }
+        
+        res.status(200).json({ 
+            success: true,
+            data: rows[0]
+        });
+    } catch (err) {
+        console.error('Error fetching reservation:', err);
+        res.status(500).json({ 
+            success: false,
+            error: 'Error fetching reservation',
+            message: err.message
+        });
+    }
+};
+
+const updateReservation = async (req, res) => {
+    try {
+        const {
+            customer_id,
+            check_in,
+            check_out
+        } = req.body;
+
+
+        // YYYY-MM-DD 형식을 YYYYMMDD 형식으로 변환
+        const formatDateToYYYYMMDD = (dateStr) => {
+            return dateStr.replace(/-/g, '');
+        };
+
+        const query = `
+            UPDATE CustomerInfo 
+            SET 
+                check_in = ?,
+                check_out = ?,
+                MDFY_DTM = NOW(),
+                MDFY_ID = 'admin'
+            WHERE customer_id = ? AND REG_ID = 'admin'
+        `;
+
+        const [result] = await pool.query(query, [
+            formatDateToYYYYMMDD(check_in),
+            formatDateToYYYYMMDD(check_out),
+            customer_id
+        ]);
+
+        
+        res.status(200).json({ 
+            success: true,
+            message: 'Reservation successfully updated!',
+            affectedRows: result.affectedRows
+        });
+    } catch (err) {
+        console.error('Database query error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: 'Error updating reservation',
+            message: err.message
+        });
+    }
+};
+
+const addUnavailablePeriod = async (req, res) => {
+    try {
+        const { room, start_date, end_date, reason } = req.body;
+
+
+        // 시작일부터 종료일까지 각 날짜별로 CustomerInfo에 삽입
+        const startDate = new Date(start_date);
+        const endDate = new Date(end_date);
+        const insertedIds = [];
+
+        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+            const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+            
+            const query = `
+                INSERT INTO CustomerInfo (
+                    name, 
+                    email, 
+                    phone_number, 
+                    passport_number, 
+                    check_in, 
+                    check_out, 
+                    check_in_message_status, 
+                    check_out_message_status, 
+                    reserved_room_number,
+                    totalprice,
+                    MDFY_DTM,
+                    MDFY_ID,
+                    REG_DTM,
+                    REG_ID,
+                    TYPE
+                ) VALUES (?, ?, ?, ?, ?, ?, 'N', 'N', ?, ?, NOW(), 'admin', NOW(), 'admin', ?)
+            `;
+
+            const [result] = await pool.query(query, [
+                `MANUAL_예약불가-${reason || '관리자설정'}`, // name (MANUAL_ 접두사 추가)
+                'unavailable@system.com', // email
+                '000-0000-0000', // phone_number
+                'UNAVAILABLE', // passport_number
+                dateStr, // check_in (원래 날짜)
+                dateStr, // check_out (같은 날짜)
+                room, // reserved_room_number
+                0, // totalprice
+                'UNAV' // TYPE (UNAVAILABLE을 UNAV로 단축)
+            ]);
+
+            insertedIds.push(result.insertId);
+        }
+
+        
+        res.status(200).json({ 
+            success: true,
+            message: 'Unavailable periods successfully added!',
+            insertedIds: insertedIds
+        });
+    } catch (err) {
+        console.error('Database query error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: 'Error adding unavailable periods',
+            message: err.message
+        });
+    }
+};
+
+const deleteUnavailablePeriod = async (req, res) => {
+    try {
+        const { customer_id } = req.params;
+
+
+        const query = `DELETE FROM CustomerInfo WHERE customer_id = ? AND TYPE = 'UNAV'`;
+
+        const [result] = await pool.query(query, [customer_id]);
+
+        
+        res.status(200).json({ 
+            success: true,
+            message: 'Unavailable period successfully deleted!',
+            affectedRows: result.affectedRows
+        });
+    } catch (err) {
+        console.error('Database query error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: 'Error deleting unavailable period',
+            message: err.message
+        });
+    }
+};
+
+const updateExternalReservation = async (req, res) => {
+    try {
+        const {
+            customer_id,
+            check_in,
+            check_out
+        } = req.body;
+
+        console.log("updateExternalReservation body:", req.body);
+
+        // YYYY-MM-DD 형식을 YYYYMMDD 형식으로 변환
+        const formatDateToYYYYMMDD = (dateStr) => {
+            return dateStr.replace(/-/g, '');
+        };
+
+        const query = `
+            UPDATE CustomerInfo 
+            SET 
+                check_in = ?,
+                check_out = ?,
+                MDFY_DTM = NOW(),
+                MDFY_ID = 'admin'
+            WHERE customer_id = ? AND (REG_ID = 'booking' OR REG_ID = 'batch')
+        `;
+
+        const [result] = await pool.query(query, [
+            formatDateToYYYYMMDD(check_in),
+            formatDateToYYYYMMDD(check_out),
+            customer_id
+        ]);
+
+        console.log('External reservation updated:', result);
+        
+        res.status(200).json({ 
+            success: true,
+            message: 'External reservation successfully updated!',
+            affectedRows: result.affectedRows
+        });
+    } catch (err) {
+        console.error('Database query error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: 'Error updating external reservation',
+            message: err.message
+        });
+    }
+};
 
 module.exports = {getMainRoom, insertReservation, getCheckInCustomers,getCheckOutCustomers,getCheckCustomers,
     getReviews ,deleteReservation ,getReviewCustomer, getCustmerReview,updateReview,writeReview ,deleteReview
     ,getReservationCustomers ,updateCheckInMailStatus ,updateCheckOutMailStatus ,updateReservationMailStatus, updateCheckInSmsStatus,updateCheckOutSmsStatus
-    ,getCalendarAdmin,getCalendarAirbnb };
+    ,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods, getCalendarDataForUnavailable, getReservationById, updateReservation, addUnavailablePeriod, deleteUnavailablePeriod, updateExternalReservation };
