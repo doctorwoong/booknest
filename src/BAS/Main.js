@@ -6,6 +6,7 @@ import { formatDate } from "../Util/utils";
 import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import channeltalk from '../resource/channeltalk.gif'
+import InquiryBoard from "./InquiryBoard";
 
 let url = "/resource/img/";
 
@@ -488,8 +489,7 @@ const Main = () => {
             )}
 
             {activeTab === "inquiry" && (
-                // <InquiryBoard/>
-                <span>문의 게시판</span>
+                 <InquiryBoard/>
             )}
 
 

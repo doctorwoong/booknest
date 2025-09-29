@@ -1,4 +1,4 @@
-import {db} from '../Util/dbconnect'
+const { db } = require('../Util/dbconnect');
 const { autoExportIcalAfterReservation } = require('./bookingSync');
 
 (async () => {
@@ -839,7 +839,123 @@ const updateExternalReservation = async (req, res) => {
     }
 };
 
+const getInquiry = async (req, res) => {
+    try {
+        const query = `
+            SELECT
+                ID,
+                TITLE,
+                CONTENT,
+                NAME,
+                EMAIL,
+                PHONE,
+                DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i:%s') AS REG_DTM
+            FROM QUESTIONS 
+        `;
+
+        const [rows] = await db.query(query);
+
+        res.status(200).json({success: true, data: rows});
+    } catch (err) {
+        console.error('Error fetching reservation:', err);
+        res.status(500).json({
+            success: false,
+            error: 'Error fetching reservation',
+            message: err.message
+        });
+    }
+};
+
+const insertInquiry = async (req, res) => {
+    try {
+        const { name, phone, email, title, content } = req.body;
+
+        if (!name && !phone && !email && !title && !content) {
+            return res.status(400).send("name, phone, email, title, content is required");
+        }
+        const query = `
+            insert into QUESTIONS (TITLE,CONTENT,NAME,EMAIL,PHONE)
+            values (?,?,?,?,?)
+        `;
+        const [rows] = await db.query(query, [title, content, name, email, phone]);
+        res.status(200).json({success: true, data: rows});
+    } catch (err) {
+        console.error("Error fetching check data:", err);
+        res.status(500).send("Error fetching check data");
+    }
+};
+const getInquiryDetail = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const query = `
+            SELECT
+                ID,
+                TITLE,
+                CONTENT,
+                NAME,
+                EMAIL,
+                PHONE,
+                DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i:%s') AS REG_DTM
+            FROM QUESTIONS 
+            WHERE ID = ?
+        `;
+
+        const [rows] = await db.query(query,[id]);
+
+        res.status(200).json({success: true, data: rows[0]});
+    } catch (err) {
+        console.error('Error fetching reservation:', err);
+        res.status(500).json({
+            success: false,
+            error: 'Error fetching reservation',
+            message: err.message
+        });
+    }
+};
+const getInquiryComment = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const query = `
+            SELECT
+                CONTENT,
+                TYPE,
+                DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i:%s') AS REG_DTM
+            FROM COMMENTS 
+            WHERE QUESTION_ID = ?
+        `;
+
+        const [rows] = await db.query(query,[id]);
+
+        res.status(200).json({success: true, data: rows});
+    } catch (err) {
+        console.error('Error fetching reservation:', err);
+        res.status(500).json({
+            success: false,
+            error: 'Error fetching reservation',
+            message: err.message
+        });
+    }
+};
+const insertInquiryComment = async (req, res) => {
+    try {
+        let { inquiry_id, CONTENT ,TYPE } = req.body;
+
+        inquiry_id = parseInt(inquiry_id, 10);
+
+        const query = `
+            insert into COMMENTS (QUESTION_ID,CONTENT,TYPE)
+            values (?,?,?)
+        `;
+        const [rows] = await db.query(query, [inquiry_id,CONTENT,TYPE]);
+        res.status(200).json({success: true, data: rows});
+    } catch (err) {
+        console.error("Error fetching check data:", err);
+        res.status(500).send("Error fetching check data");
+    }
+};
+
 module.exports = {getMainRoom, insertReservation, getCheckInCustomers,getCheckOutCustomers,getCheckCustomers,
     getReviews ,deleteReservation ,getReviewCustomer, getCustmerReview,updateReview,writeReview ,deleteReview
     ,getReservationCustomers ,updateCheckInMailStatus ,updateCheckOutMailStatus ,updateReservationMailStatus, updateCheckInSmsStatus,updateCheckOutSmsStatus
-    ,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods, getCalendarDataForUnavailable, getReservationById, updateReservation, addUnavailablePeriod, deleteUnavailablePeriod, updateExternalReservation };
+    ,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods, getCalendarDataForUnavailable, getReservationById, updateReservation, addUnavailablePeriod,
+    deleteUnavailablePeriod, updateExternalReservation,getInquiry,insertInquiry,getInquiryDetail,getInquiryComment,insertInquiryComment };

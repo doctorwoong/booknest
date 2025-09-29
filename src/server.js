@@ -9,11 +9,11 @@ const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
     deleteReview, getReservationCustomers, updateCheckInMailStatus, updateCheckOutMailStatus,
-    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb,getUnavailablePeriods, getReservationById, updateReservation, addUnavailablePeriod, deleteUnavailablePeriod, updateExternalReservation, getCalendarDataForUnavailable } = require('./controller/controller');
-const { checkAllOverbookingsController, checkRoomOverbookingsController,generateAndSaveIcal, manualBookingSync,
-    fetchAndStoreBookingBookings,
-    checkOverbooking
-} = require('./controller/bookingSync');
+    updateReservationMailStatus, updateCheckInSmsStatus, updateCheckOutSmsStatus,getCalendarAdmin,getCalendarAirbnb,
+    getUnavailablePeriods, getReservationById, updateReservation, addUnavailablePeriod, deleteUnavailablePeriod,
+    updateExternalReservation, getCalendarDataForUnavailable,getInquiry,insertInquiry,getInquiryDetail,getInquiryComment
+    ,insertInquiryComment} = require('./controller/controller');
+const { checkAllOverbookingsController, checkRoomOverbookingsController,generateAndSaveIcal, manualBookingSync,} = require('./controller/bookingSync');
 const fs = require("fs");
 
 // 환경변수 설정
@@ -257,7 +257,6 @@ app.post('/updateReview', updateReview);
 app.post('/writeReview', writeReview);
 app.post('/deleteReview', deleteReview);
 app.post('/getReservation', getReservationCustomers);
-
 app.post('/calendar_admin', getCalendarAdmin);
 app.post('/calendar_airbnb', getCalendarAirbnb);
 app.post('/unavailable-periods', getUnavailablePeriods);
@@ -284,6 +283,13 @@ app.delete('/delete-unavailable-period/:customer_id', deleteUnavailablePeriod);
 //  오버부킹 체크 API
 app.get('/check-all-overbookings', checkAllOverbookingsController);
 app.get('/check-room-overbookings/:roomNumber', checkRoomOverbookingsController);
+
+// 문의게시판 리스트
+app.get('/inquiry-list', getInquiry);
+app.post('/inquiry-insert', insertInquiry);
+app.get('/inquiry/:id', getInquiryDetail);
+app.get('/inquiry-comments/:id', getInquiryComment);
+app.post('/inquiry-comment-insert', insertInquiryComment);
 
 
 const PORT = 30022;

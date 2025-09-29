@@ -11,6 +11,7 @@ import Admin from "./SYS/Admin";
 import ReviewDetail from "./BAS/ReviewDetail";
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
+import InquiryDetail from "./BAS/InquiryDetail";
 
 function getAdminPasswordFromEnv() {
     const craVal = process.env.REACT_APP_ADMIN_PASSWORD;
@@ -50,6 +51,7 @@ function App() {
                     <Route path="/detail" element={<Detail/>}/>
                     <Route path="/review" element={<Review/>}/>
                     <Route path="/reviewWrite" element={<ReviewDetail/>}/>
+                    <Route path="/inquiry/:id" element={<InquiryDetail />} />
                     <Route
                         path="/admin-c1w4"
                         element={

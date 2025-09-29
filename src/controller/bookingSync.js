@@ -1,7 +1,6 @@
-import {db} from '../Util/dbconnect'
-import {roomList, bookingListings} from '../Util/data'
-import {delay} from '../Util/utils'
-
+const { db } = require('../Util/dbconnect');
+const { delay } = require('../Util/utils');
+const { roomList, bookingListings } = require('../Util/data');
 const path = require('path');
 require('dotenv').config({path: path.join(__dirname, '../../.env')});
 const cron = require("node-cron");

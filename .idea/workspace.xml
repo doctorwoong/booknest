@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="0910 서버세팅 수정">
-      <change afterPath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Util/data.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Util/dbconnect.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/BAS/InquiryDetail.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/CSS/style/inquiry.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/09bedcf0-a960-45f9-bb59-c7b886808c34.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/09bedcf0-a960-45f9-bb59-c7b886808c34.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/C106_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C106_cache.json" afterDir="false" />
@@ -27,30 +24,10 @@
       <change beforePath="$PROJECT_DIR$/cache/N306_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N306_cache.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/N307_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N307_cache.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/R102_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/R102_cache.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_back.js" beforeDir="false" afterPath="$PROJECT_DIR$/server_back.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BAS/Detail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/Detail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BAS/Main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/Main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BAS/ReservationCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/ReservationCalendar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BAS/ReservationForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/ReservationForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/COMPONENT/BASIC/Footer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/COMPONENT/BASIC/Footer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/COMPONENT/BASIC/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/COMPONENT/BASIC/Header.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/COMPONENT/PayPalCheckout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/COMPONENT/PayPalCheckout.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/layout/Header.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/layout/Header.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/layout/Header_old.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/layout/Header_old.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/style/CalendarStyles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/CalendarStyles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/style/CalendarTab.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/CalendarTab.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/style/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/style/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mail.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SYS/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/SYS/Admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SYS/CalendarTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/SYS/CalendarTab.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SYS/checkCale.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Util/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Util/utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/batch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/batch.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/batch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/batch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Util/dbconnect.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Util/dbconnect.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/bookingSync.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/bookingSync.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/controller.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" afterDir="false" />
@@ -61,13 +38,6 @@
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/i18n.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/i18n.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mail_remote2.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/mail_remote2.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/outputDocx/6mxqeiwu_2025-08-08.docx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/outputDocx/8hujteyg_2025-08-08.docx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/outputDocx/v6q80glo_2025-08-08.docx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/outputDocx/z7szxm1l_2025-08-08.docx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sendSMS.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/sendSMS.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/server.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -85,18 +55,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "doctorwoong"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;doctorwoong&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/doctorwoong/booknest.git",
-    "accountId": "7a92d5cc-427a-4ac5-a01c-56b735bd1fdf"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/doctorwoong/booknest.git&quot;,
+    &quot;accountId&quot;: &quot;7a92d5cc-427a-4ac5-a01c-56b735bd1fdf&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -113,8 +83,8 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
-    "javascript.nodejs.core.library.configured.version": "20.19.4",
-    "javascript.nodejs.core.library.typings.version": "20.19.9",
+    "javascript.nodejs.core.library.configured.version": "20.19.0",
+    "javascript.nodejs.core.library.typings.version": "20.19.17",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -182,6 +152,7 @@
       <workItem from="1755737157110" duration="1102000" />
       <workItem from="1755844193559" duration="1223000" />
       <workItem from="1758508354084" duration="9697000" />
+      <workItem from="1758951728829" duration="14727000" />
     </task>
     <task id="LOCAL-00001" summary="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중">
       <option name="closed" value="true" />
