@@ -1,48 +1,72 @@
-.inquiry-button {background-color: #F54D6E;color: white;border: none;padding: 10px 18px;border-radius: 6px;cursor: pointer;margin-bottom: 20px;font-size: 15px;font-weight: 600;transition: 0.2s;}
+.inquiry-button {background-color:#fff;color: #999;padding: 7px 10px;border-radius: 5px;cursor: pointer;font-size: 15px;border: 1px solid #ccc}
 
 /* Modal */
 .inquiry-modal-overlay {position: fixed;top: 0;left: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, 0.4);display: flex;justify-content: center;align-items: center;z-index: 1000;}
 .inquiry-modal {background: #fff;padding: 25px;border-radius: 10px;width: 400px;max-width: 90%;}
-.inquiry-form {display: flex;flex-direction: column;gap: 12px;}
+.inquiry-form {display: flex;flex-direction: column;gap: 10px;}
 .inquiry-form input,
-.inquiry-form textarea {padding: 10px;border: 1px solid #ddd;border-radius: 6px;font-size: 14px;margin-bottom: 10px}
+.inquiry-form textarea {padding: 10px;border: 1px solid #ddd;border-radius: 6px;font-size: 14px;}
 .inquiry-form textarea {min-height: 100px;resize: vertical;}
 .form-buttons {display: flex;justify-content: flex-end;gap: 10px;}
-.form-buttons button {color: white;border: none;padding: 8px 16px;border-radius: 6px;cursor: pointer;width: 49%;}
-.submit-btn {background-color: #F54D6E}
-.cancel-btn {background-color: #aaa}
-.pagination {display: flex;justify-content: center;gap: 8px;margin: 20px 0;}
-.page-btn {border: none;background: none;cursor: pointer;font-size: 14px;color:#777}
-.page-btn.active {color: #000;font-weight: bold;}
+.form-buttons button {border: none;padding: 8px 16px;border-radius: 6px;cursor: pointer;width: 49%;}
+.submit-btn {background-color: #F54D6E;color:#fff;font-weight: 500;font-size: 15px}
+.cancel-btn {background-color: #F4F5F6;color:#999;font-weight: 500;font-size: 15px}
+.pagination {display: flex;justify-content: center;gap: 10px;margin: 20px 0 50px 0;}
+.page-btn {border: none;background: #F4F5F6;cursor: pointer;font-size: 14px;color:#000;width: 30px;height: 30px;border-radius: 5px}
+.page-btn.active {color: #fff;font-weight: bold;background-color: #F54D6E;}
 
+.comment-container {padding: 0 25px}
 .comment-list {margin: 20px 0;display: flex;flex-direction: column;gap: 10px;width: 100%;max-height: 300px;overflow-y: auto;padding-right: 5px;}
-.comment-bubble {padding: 10px 15px;border-radius: 15px;max-width: 70%;word-break: break-word;font-size: 14px;line-height: 1.4;}
-.comment-bubble.user {background-color: #F54D6E;color: white;align-self: flex-start;margin-left: 10px;}
-.comment-bubble.admin2 {background-color: #4cafef;color: white;align-self: flex-end;margin-right: 10px;}
-.comment-form {margin-top: 20px;display: flex;flex-direction: column;gap: 10px;}
-.comment-form textarea {resize: none;height: 80px;padding: 10px;}
-.comment-form.user button {align-self: flex-end;padding: 6px 14px;background: #F54D6E;color: white;border: none;border-radius: 6px;cursor: pointer;}
-.comment-form.admin2 button {align-self: flex-end;padding: 6px 14px;background: #4cafef;color: white;border: none;border-radius: 6px;cursor: pointer;}
+
+.comment-form {margin-top: 20px;display: flex;flex-direction: column;gap: 10px;padding: 0 25px;overflow: auto;scrollbar-width: none;-ms-overflow-style: none;}
+.comment-form::-webkit-scrollbar {display: none;}
+.comment-form textarea {resize: none;height: 80px;padding: 10px;border: 1px solid #ccc}
+
+.comment-form .answer2   {align-self: flex-end;padding: 6px 14px;background: #F4F5F6;color: #999;border: none;border-radius: 6px;cursor: pointer;}
+.comment-form .answer {align-self: flex-end;padding: 6px 14px;background: #F54D6E;color: white;border: none;border-radius: 6px;cursor: pointer;}
 
 .comment-title {margin: 20px 0 10px;font-size: 16px;font-weight: bold;color: #444;}
 .inquiry-detail {margin: 80px 0}
 
 /* 상세 카드 */
 .inquiry-card {background: #fff;border-radius: 12px;padding: 20px 25px;margin-bottom: 30px;}
-.inquiry-title {font-size: 20px;font-weight: bold;margin-bottom: 15px;color: #F54D6E;}
+.inquiry-title {font-size: 20px;font-weight: bold;margin-bottom: 15px;color: #222;}
 .inquiry-meta p {margin: 4px 0;font-size: 14px;color: #555;}
 .inquiry-content-box {margin-top: 15px;padding: 15px;background: #fafafa;border-radius: 8px;font-size: 15px;line-height: 1.6;color: #333;}
 
-.inquiry-list {list-style: none;padding: 0;margin: 0;border-top: 2px solid #F54D6E;border-bottom: 1px solid #ddd;}
-.inquiry-list-header {display: flex;font-weight: bold;background: #fafafa;border-bottom: 1px solid #ddd;padding: 10px;color: #333;}
+.inquiry-list {list-style: none;padding: 0;margin: 0;border-bottom: 1px solid #ddd;}
+.inquiry-list-header {display: flex;font-weight: bold;background: #fafafa;border-bottom: 1px solid #ddd;padding: 15px 10px;color: #333;}
 .inquiry-item {display: flex;padding: 10px;border-bottom: 1px solid #eee;cursor: pointer;transition: background 0.2s;}
 .inquiry-item:hover {background: #fff6f8;}
 .inquiry-list-header span,
-.inquiry-item span {display: inline-block;font-size: 14px;}
+.inquiry-item span {display: inline-block;font-size: 16px;}
 .col-num {width: 10%;text-align: center;}
-.col-title {width: 50%;padding-left: 10px;text-align: left;}
-.col-writer {width: 20%;text-align: center;}
-.col-date {width: 20%;text-align: center;color: #777;font-size: 13px;}
+.col-title {width: 50%;padding-left: 10px;text-align: left;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+.col-writer {width: 20%;padding-left: 10px;text-align: center;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+.col-date {width: 20%;text-align: center;font-size: 16px;}
+
+.inquiry-head {display: flex;justify-content: space-between;align-items: center;margin: 40px 0 30px 0}
+.inquiry-head h3 {margin: 0}
+.inquiry-modal h3 {font-weight: 700;font-size: 30px;color:#222;margin-bottom: 20px}
+
+.comment-item {display: flex;align-items: flex-start;gap: 8px;}
+.comment-item.admin2 {justify-content: flex-start;}
+.comment-item.user {justify-content: flex-end;}
+.comment-avatar {width: 40px;height: 40px;border-radius: 50%;background: #FFE7EC;display: flex;align-items: center;justify-content: center;font-size: 14px;color: #fff;}
+.comment-content {display: flex;flex-direction: column;max-width: 70%;}
+.comment-author {font-size: 13px;font-weight: bold;margin-bottom: 4px;color: #444;}
+
+.comment-bubble {background: #f4f5f6;color: #222;padding: 10px 14px;border-radius: 10px;font-size: 14px;line-height: 1.5;}
+.comment-bubble.user {background-color: #F54D6E;color: white;align-self: flex-end;margin-left: 10px;}
+.comment-bubble.admin2 {background-color: #F4F5F6;color: #222;align-self: flex-start;margin-right: 10px;}
+.comment-item.user .comment-bubble {background: #f54d6e;color: #fff;border-radius: 10px;}
+
+@media (max-width:768px){
+    .inquiry-card {padding: 0}
+    .comment-container {padding: 0}
+    .comment-form {padding: 0}
+}
+
 
 
 

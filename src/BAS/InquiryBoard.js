@@ -99,12 +99,15 @@ const InquiryBoard = () => {
 
     return (
         <div className="inquiry-board">
-            <h3><b>문의게시판</b></h3>
-            <div style={{textAlign: "right", marginBottom: "20px"}}>
-                <button className="inquiry-button" onClick={() => setModalOpen(true)}>
-                    문의하기
-                </button>
+            <div className="inquiry-head">
+                <h3><b>문의게시판</b></h3>
+                <div>
+                    <button className="inquiry-button" onClick={() => setModalOpen(true)}>
+                        문의하기
+                    </button>
+                </div>
             </div>
+
 
             <ul className="inquiry-list">
                 <li className="inquiry-list-header">
@@ -182,12 +185,13 @@ const InquiryBoard = () => {
                                 placeholder="전화번호 뒷자리 4자리"
                                 value={authInput}
                                 onChange={(e) => setAuthInput(e.target.value)}
+                                style={{marginBottom:'10px'}}
                             />
                         </div>
 
                         <div className="form-buttons">
-                            <button className="submit-btn" onClick={handleAuthSubmit}>확인</button>
                             <button className="cancel-btn" onClick={() => setAuthModal(false)}>취소</button>
+                            <button className="submit-btn" onClick={handleAuthSubmit}>확인</button>
                         </div>
                     </div>
                 </div>

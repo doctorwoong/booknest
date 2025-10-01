@@ -849,8 +849,9 @@ const getInquiry = async (req, res) => {
                 NAME,
                 EMAIL,
                 PHONE,
-                DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i:%s') AS REG_DTM
-            FROM QUESTIONS 
+                DATE_FORMAT(DATE_ADD(REG_DTM, INTERVAL 9 HOUR), '%Y-%m-%d') AS REG_DTM
+            FROM QUESTIONS
+            ORDER BY REG_DTM DESC
         `;
 
         const [rows] = await db.query(query);

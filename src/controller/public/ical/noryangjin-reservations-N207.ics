@@ -8,14 +8,14 @@ BEGIN:VCALENDAR
                               X-WR-TIMEZONE:Asia/Seoul
                               BEGIN:VEVENT
                         UID:reservation-27822@noryangjin.co.kr
-                        DTSTAMP:20250929T094329Z
+                        DTSTAMP:20251001T070002Z
                         DTSTART;TZID=Asia/Seoul:20260314T000000
                         DTEND;TZID=Asia/Seoul:20260330T000000
                         SUMMARY:N207 - Azusa Nishimura
                         DESCRIPTION:Guest: Azusa Nishimura\nEmail: azusa_nsmr@yahoo.co.jp\nPhone: +8108025010545\nPrice: ₩408,000\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20250929T094329Z
-                        LAST-MODIFIED:20250929T094329Z
+                        CREATED:20251001T070002Z
+                        LAST-MODIFIED:20251001T070002Z
                         END:VEVENT
                         END:VCALENDAR

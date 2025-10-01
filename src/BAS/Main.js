@@ -270,12 +270,12 @@ const Main = () => {
                     문의
                 </button>
             </div>
-            <div className="channelTalk">
-                <b>{t("152")}<img src={channeltalk}/></b>
-            </div>
 
             {activeTab === "reservation" && (
                 <>
+                    <div className="channelTalk">
+                        <b>{t("152")}<img src={channeltalk}/></b>
+                    </div>
                     <h3 style={{marginBottom: "10px"}}><b>{t("1")}</b></h3>
                     <p style={{color: "#5A5A5A", marginBottom: "30px"}}>{t("2")}</p>
                     <div style={{overflowY: "hidden"}}>
@@ -489,7 +489,7 @@ const Main = () => {
             )}
 
             {activeTab === "inquiry" && (
-                 <InquiryBoard/>
+                <InquiryBoard/>
             )}
 
 

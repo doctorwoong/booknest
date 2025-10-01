@@ -70,9 +70,9 @@
 .phone-input-group .country-code {flex: 0 0 100px;max-width: 100px;}
 .phone-input-group .phone-number {flex: 1;}
 
-.tabs {display: flex;gap: 10px;margin: 80px 0 20px 0;}
-.tabs button {padding: 10px 20px;border: 1px solid #ccc;background: none;cursor: pointer;}
-.tabs button.active {background: #F54D6E;color: #fff;font-weight: bold;}
+.tabs {display: flex;gap: 30px;margin: 80px 0 20px 0;border-bottom: 1px solid #CCC}
+.tabs button {padding:10px 0;border: none;background: none;cursor: pointer;color:#777}
+.tabs button.active {color: #F54D6E;font-weight: bold;border-bottom: 1px solid #F54D6E}
 
 
 

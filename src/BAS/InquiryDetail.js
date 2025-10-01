@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { apiRequest } from "../Util/api";
 import "../CSS/style/inquiry.css";
+import adminLogo from "../resource/admin_noyang.png";
 
 const InquiryDetail = () => {
     const { id } = useParams();
@@ -70,13 +71,26 @@ const InquiryDetail = () => {
             </div>
 
             {/* 댓글 */}
-            <h4 className="comment-title">댓글</h4>
-            <div className="comment-list">
-                {comments.map((c, idx) => (
-                    <div key={idx} className={`comment-bubble ${c.TYPE}`}>
-                        {c.CONTENT}
-                    </div>
-                ))}
+            <div className="comment-container">
+                <h4 className="comment-title">댓글</h4>
+                <div className="comment-list">
+                    {comments.map((c, idx) => (
+                        <div key={idx} className={`comment-item ${c.TYPE}`}>
+                            {c.TYPE === "admin2" && (
+                                <div className="comment-avatar">
+                                    <span className="admin-icon"><img alt="admin Logo" src={adminLogo}
+                                                                      style={{width: '23px', height: '24px'}}/></span>
+                                </div>
+                            )}
+                            <div className="comment-content">
+                                {c.TYPE === "admin2" ? (
+                                    <div className="comment-author">관리자</div>
+                                ) : null}
+                                <div className="comment-bubble">{c.CONTENT}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* 댓글 작성 */}
@@ -86,7 +100,12 @@ const InquiryDetail = () => {
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                 />
-                <button type="submit">등록</button>
+                <button
+                    type="submit"
+                    className={commentText.trim() ? "answer" : "answer2"}
+                >
+                    등록
+                </button>
             </form>
         </div>
     );

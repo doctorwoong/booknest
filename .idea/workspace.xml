@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="0910 서버세팅 수정">
-      <change afterPath="$PROJECT_DIR$/src/BAS/InquiryDetail.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/CSS/style/inquiry.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/09bedcf0-a960-45f9-bb59-c7b886808c34.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/09bedcf0-a960-45f9-bb59-c7b886808c34.xml" afterDir="false" />
+    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="0910 문의 게시판 기능 완료">
+      <change afterPath="$PROJECT_DIR$/src/resource/admin_noyang.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/C106_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C106_cache.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/C107_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C107_cache.json" afterDir="false" />
@@ -24,11 +22,11 @@
       <change beforePath="$PROJECT_DIR$/cache/N306_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N306_cache.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/N307_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/N307_cache.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/R102_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/R102_cache.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BAS/InquiryDetail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/InquiryDetail.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BAS/Main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/Main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Util/dbconnect.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Util/dbconnect.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/bookingSync.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/bookingSync.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CSS/style/inquiry.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/inquiry.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CSS/style/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/controller.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" afterDir="false" />
@@ -38,7 +36,6 @@
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/server.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,6 +79,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
     "git-widget-placeholder": "main",
     "javascript.nodejs.core.library.configured.version": "20.19.0",
     "javascript.nodejs.core.library.typings.version": "20.19.17",
@@ -100,6 +98,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/resource" />
       <recent name="C:\Users\user\Desktop\workspace\booknest\src\template" />
     </key>
   </component>
@@ -152,7 +151,8 @@
       <workItem from="1755737157110" duration="1102000" />
       <workItem from="1755844193559" duration="1223000" />
       <workItem from="1758508354084" duration="9697000" />
-      <workItem from="1758951728829" duration="14727000" />
+      <workItem from="1758951728829" duration="25786000" />
+      <workItem from="1759295328174" duration="3691000" />
     </task>
     <task id="LOCAL-00001" summary="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중">
       <option name="closed" value="true" />
@@ -210,7 +210,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757492616583</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="0910 문의 게시판 기능 완료">
+      <option name="closed" value="true" />
+      <created>1759140788773</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1759140788773</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -246,7 +254,8 @@
     <MESSAGE value="2025.08.22 예약 취소 조건 변경 (전화번호 비교 -&gt; 전화번호 뒷 4자리 비교)" />
     <MESSAGE value="0908 수정" />
     <MESSAGE value="0910 서버세팅 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="0910 서버세팅 수정" />
+    <MESSAGE value="0910 문의 게시판 기능 완료" />
+    <option name="LAST_COMMIT_MESSAGE" value="0910 문의 게시판 기능 완료" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
