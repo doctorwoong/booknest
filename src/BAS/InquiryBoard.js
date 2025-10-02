@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { apiRequest } from "../Util/api";
 import { useNavigate } from "react-router-dom";
 import "../CSS/style/inquiry.css";
+import {useTranslation} from "react-i18next";
 
 const InquiryBoard = () => {
     const [inquiries, setInquiries] = useState([]);
@@ -13,7 +14,7 @@ const InquiryBoard = () => {
         title: "",
         content: "",
     });
-
+    const { t } = useTranslation();
     const [authModal, setAuthModal] = useState(false); // 인증 모달
     const [selectedInquiry, setSelectedInquiry] = useState(null);
     const [authInput, setAuthInput] = useState("");
@@ -50,7 +51,7 @@ const InquiryBoard = () => {
         try {
             const res = await apiRequest("/inquiry-insert", "POST", form);
             if (res.success) {
-                alert("문의가 등록되었습니다!");
+                alert(t("179"));
                 setModalOpen(false);
                 setForm({ name: "", phone: "", email: "", title: "", content: "" });
 
@@ -92,7 +93,7 @@ const InquiryBoard = () => {
         } else if (authInput === last4) {
             navigate(`/inquiry/${selectedInquiry.ID}`, { state: { isAdmin1231: "user" } });
         }else {
-            alert("전화번호 뒷자리가 일치하지 않습니다.");
+            alert(t("180"));
         }
 
     };
@@ -100,10 +101,10 @@ const InquiryBoard = () => {
     return (
         <div className="inquiry-board">
             <div className="inquiry-head">
-                <h3><b>문의게시판</b></h3>
+                <h3><b>{t("164")}</b></h3>
                 <div>
                     <button className="inquiry-button" onClick={() => setModalOpen(true)}>
-                        문의하기
+                        {t("165")}
                     </button>
                 </div>
             </div>
@@ -112,9 +113,9 @@ const InquiryBoard = () => {
             <ul className="inquiry-list">
                 <li className="inquiry-list-header">
                     <span className="col-num">No</span>
-                    <span className="col-title">제목</span>
-                    <span className="col-writer">작성자</span>
-                    <span className="col-date">등록일</span>
+                    <span className="col-title">{t("166")}</span>
+                    <span className="col-writer">{t("167")}</span>
+                    <span className="col-date">{t("168")}</span>
                 </li>
 
                 {currentItems.map((inq, idx) => (
@@ -152,21 +153,21 @@ const InquiryBoard = () => {
             {modalOpen && (
                 <div className="inquiry-modal-overlay">
                     <div className="inquiry-modal">
-                        <h3>문의 작성</h3>
+                        <h3>{t("177")}</h3>
                         <form onSubmit={handleSubmit} className="inquiry-form">
-                            <input type="text" name="name" placeholder="이름" value={form.name} onChange={handleChange}
+                            <input type="text" name="name" placeholder={t("167")} value={form.name} onChange={handleChange}
                                    required/>
-                            <input type="text" name="phone" placeholder="전화번호" value={form.phone}
+                            <input type="text" name="phone" placeholder={t("172")} value={form.phone}
                                    onChange={handleChange} required/>
-                            <input type="email" name="email" placeholder="이메일" value={form.email}
+                            <input type="email" name="email" placeholder={t("171")} value={form.email}
                                    onChange={handleChange} required/>
-                            <input type="text" name="title" placeholder="제목" value={form.title} onChange={handleChange}
+                            <input type="text" name="title" placeholder={t("166")} value={form.title} onChange={handleChange}
                                    required/>
-                            <textarea name="content" placeholder="내용" value={form.content} onChange={handleChange}
+                            <textarea name="content" placeholder={t("178")} value={form.content} onChange={handleChange}
                                       required/>
                             <div className="form-buttons">
-                                <button type="submit" className="submit-btn">등록</button>
-                                <button type="button" className="cancel-btn" onClick={() => setModalOpen(false)}>닫기
+                                <button type="submit" className="submit-btn">{t("175")}</button>
+                                <button type="button" className="cancel-btn" onClick={() => setModalOpen(false)}>{t("108")}
                                 </button>
                             </div>
                         </form>
@@ -178,11 +179,11 @@ const InquiryBoard = () => {
             {authModal && (
                 <div className="inquiry-modal-overlay">
                     <div className="inquiry-modal">
-                        <h3>접근 인증</h3>
+                        <h3>{t("169")}</h3>
                         <div className="inquiry-form">
                             <input
                                 type="password"
-                                placeholder="전화번호 뒷자리 4자리"
+                                placeholder={t("170")}
                                 value={authInput}
                                 onChange={(e) => setAuthInput(e.target.value)}
                                 style={{marginBottom:'10px'}}
@@ -190,8 +191,8 @@ const InquiryBoard = () => {
                         </div>
 
                         <div className="form-buttons">
-                            <button className="cancel-btn" onClick={() => setAuthModal(false)}>취소</button>
-                            <button className="submit-btn" onClick={handleAuthSubmit}>확인</button>
+                            <button className="cancel-btn" onClick={() => setAuthModal(false)}>{t("108")}</button>
+                            <button className="submit-btn" onClick={handleAuthSubmit}>{t("14")}</button>
                         </div>
                     </div>
                 </div>

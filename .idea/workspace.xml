@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="0910 문의 게시판 기능 완료">
-      <change afterPath="$PROJECT_DIR$/src/resource/admin_noyang.png" afterDir="false" />
+    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="1001 문의 게시판 디자인 완료">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/C106_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C106_cache.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cache/C107_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/cache/C107_cache.json" afterDir="false" />
@@ -25,9 +24,6 @@
       <change beforePath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BAS/InquiryDetail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/InquiryDetail.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BAS/Main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/Main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/style/inquiry.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/inquiry.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/style/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/controller.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" afterDir="false" />
@@ -36,6 +32,9 @@
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/locales/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/locales/italy.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/locales/italy.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/locales/ko.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/locales/ko.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +151,7 @@
       <workItem from="1755844193559" duration="1223000" />
       <workItem from="1758508354084" duration="9697000" />
       <workItem from="1758951728829" duration="25786000" />
-      <workItem from="1759295328174" duration="3691000" />
+      <workItem from="1759295328174" duration="7278000" />
     </task>
     <task id="LOCAL-00001" summary="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중">
       <option name="closed" value="true" />
@@ -218,7 +217,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759140788773</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="1001 문의 게시판 디자인 완료">
+      <option name="closed" value="true" />
+      <created>1759307981479</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1759307981479</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -255,7 +262,8 @@
     <MESSAGE value="0908 수정" />
     <MESSAGE value="0910 서버세팅 수정" />
     <MESSAGE value="0910 문의 게시판 기능 완료" />
-    <option name="LAST_COMMIT_MESSAGE" value="0910 문의 게시판 기능 완료" />
+    <MESSAGE value="1001 문의 게시판 디자인 완료" />
+    <option name="LAST_COMMIT_MESSAGE" value="1001 문의 게시판 디자인 완료" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

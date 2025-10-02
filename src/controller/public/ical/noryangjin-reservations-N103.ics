@@ -8,14 +8,14 @@ BEGIN:VCALENDAR
                               X-WR-TIMEZONE:Asia/Seoul
                               BEGIN:VEVENT
                         UID:reservation-7662@noryangjin.co.kr
-                        DTSTAMP:20251001T070002Z
+                        DTSTAMP:20251002T050009Z
                         DTSTART;TZID=Asia/Seoul:20251109T000000
                         DTEND;TZID=Asia/Seoul:20251214T000000
                         SUMMARY:N103 - Gilvaneide Gomes da Rocha 
                         DESCRIPTION:Guest: Gilvaneide Gomes da Rocha \nEmail: lovegilvaneide@gmail.com\nPhone: +8261992829502\nPrice: ₩808,500\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251001T070002Z
-                        LAST-MODIFIED:20251001T070002Z
+                        CREATED:20251002T050009Z
+                        LAST-MODIFIED:20251002T050009Z
                         END:VEVENT
                         END:VCALENDAR

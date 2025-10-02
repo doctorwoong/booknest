@@ -3,12 +3,13 @@ import { useParams, useLocation } from "react-router-dom";
 import { apiRequest } from "../Util/api";
 import "../CSS/style/inquiry.css";
 import adminLogo from "../resource/admin_noyang.png";
+import {useTranslation} from "react-i18next";
 
 const InquiryDetail = () => {
     const { id } = useParams();
     const location = useLocation();
     const isAdmin = location.state?.isAdmin1231;
-
+    const { t } = useTranslation();
     const [inquiry, setInquiry] = useState(null);
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
@@ -60,10 +61,10 @@ const InquiryDetail = () => {
             <div className="inquiry-card">
                 <h2 className="inquiry-title">{inquiry.TITLE}</h2>
                 <div className="inquiry-meta">
-                    <p><b>작성자:</b> {inquiry.NAME}</p>
-                    <p><b>이메일:</b> {inquiry.EMAIL}</p>
-                    <p><b>전화번호:</b> {inquiry.PHONE}</p>
-                    <p><b>작성일:</b> {inquiry.REG_DTM}</p>
+                    <p><b>{t("167")}:</b> {inquiry.NAME}</p>
+                    <p><b>{t("171")}:</b> {inquiry.EMAIL}</p>
+                    <p><b>{t("172")}:</b> {inquiry.PHONE}</p>
+                    <p><b>{t("168")}:</b> {inquiry.REG_DTM}</p>
                 </div>
                 <div className="inquiry-content-box">
                     <p>{inquiry.CONTENT}</p>
@@ -72,7 +73,7 @@ const InquiryDetail = () => {
 
             {/* 댓글 */}
             <div className="comment-container">
-                <h4 className="comment-title">댓글</h4>
+                <h4 className="comment-title">{t("173")}</h4>
                 <div className="comment-list">
                     {comments.map((c, idx) => (
                         <div key={idx} className={`comment-item ${c.TYPE}`}>
@@ -84,7 +85,7 @@ const InquiryDetail = () => {
                             )}
                             <div className="comment-content">
                                 {c.TYPE === "admin2" ? (
-                                    <div className="comment-author">관리자</div>
+                                    <div className="comment-author">{t("176")}</div>
                                 ) : null}
                                 <div className="comment-bubble">{c.CONTENT}</div>
                             </div>
@@ -96,7 +97,7 @@ const InquiryDetail = () => {
             {/* 댓글 작성 */}
             <form onSubmit={handleCommentSubmit} className={`comment-form ${isAdmin}`}>
                 <textarea
-                    placeholder="댓글을 입력하세요"
+                    placeholder={t("174")}
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                 />
@@ -104,7 +105,7 @@ const InquiryDetail = () => {
                     type="submit"
                     className={commentText.trim() ? "answer" : "answer2"}
                 >
-                    등록
+                    {t("175")}
                 </button>
             </form>
         </div>

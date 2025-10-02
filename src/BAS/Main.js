@@ -261,13 +261,13 @@ const Main = () => {
                     className={activeTab === "reservation" ? "active" : ""}
                     onClick={() => setActiveTab("reservation")}
                 >
-                    예약
+                    {t("162")}
                 </button>
                 <button
                     className={activeTab === "inquiry" ? "active" : ""}
                     onClick={() => setActiveTab("inquiry")}
                 >
-                    문의
+                    {t("163")}
                 </button>
             </div>
 
