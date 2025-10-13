@@ -6,7 +6,8 @@ function UnavailablePeriodModal({
     onClose, 
     selectedRoom, 
     selectedDate,
-    onAdd 
+    onAdd,
+    readOnly = false
 }) {
     const [formData, setFormData] = useState({
         room: '',
@@ -137,21 +138,34 @@ function UnavailablePeriodModal({
                         </div>
                         
                         <div className="modal-footer">
-                            <button 
-                                type="button" 
-                                className="btn btn-secondary" 
-                                onClick={onClose}
-                                disabled={loading}
-                            >
-                                취소
-                            </button>
-                            <button 
-                                type="submit" 
-                                className="btn btn-warning"
-                                disabled={loading}
-                            >
-                                {loading ? '추가 중...' : '예약불가 추가'}
-                            </button>
+                            {!readOnly ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={onClose}
+                                        disabled={loading}
+                                    >
+                                        취소
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-warning"
+                                        disabled={loading}
+                                    >
+                                        {loading ? '추가 중...' : '예약불가 추가'}
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={onClose}
+                                    disabled={loading}
+                                >
+                                    취소
+                                </button>
+                            )}
                         </div>
                     </form>
                 </div>

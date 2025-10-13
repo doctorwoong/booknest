@@ -4,7 +4,8 @@ import ReservationStatusModal from "../COMPONENT/BASIC/ReservationStatusModal";
 import UnavailablePeriodModal from "../COMPONENT/BASIC/UnavailablePeriodModal";
 import { apiRequest } from "../Util/api";
 
-function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailablePeriods = [], onExportIcal, onRefresh }) {
+function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailablePeriods = [], onExportIcal, onRefresh,
+                         readOnly = false}) {
     console.log('CalendarTab 컴포넌트 렌더링됨');
     
     const today = new Date();
@@ -525,6 +526,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
                 onClose={handleReservationModalClose}
                 reservation={reservationModal.reservation}
                 onUpdate={handleReservationUpdate}
+                readOnly={readOnly}
             />
             
             {/* 예약불가 기간 추가 모달 */}
@@ -534,6 +536,7 @@ function CalendarTab({ rooms = [], bookings = [], airbookings = [], unavailableP
                 selectedRoom={unavailableModal.room}
                 selectedDate={unavailableModal.date}
                 onAdd={handleUnavailablePeriodAdd}
+                readOnly={readOnly}
             />
         </div>
     );

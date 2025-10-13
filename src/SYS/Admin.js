@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import CalendarTab from "./CalendarTab";
 import Spinner from 'react-bootstrap/Spinner';
 import {isWithinAWeek,isWithinAWeek2} from "../Util/utils"
-import {paymentTypeMap,rooms} from "../Util/data"
+import {paymentTypeMap,rooms2} from "../Util/data"
 
 
 function Admin() {
@@ -327,7 +327,7 @@ function Admin() {
                         <div className={`tab-pane fade ${activeTab === "calendar" ? "show active" : ""}`} id="calendar"
                              role="tabpanel">
                             <CalendarTab 
-                                rooms={rooms} 
+                                rooms={rooms2}
                                 bookings={bookings} 
                                 airbookings={airbookings}
                                 unavailablePeriods={unavailablePeriods}
@@ -370,6 +370,7 @@ function Admin() {
                                         console.error('캘린더 데이터 새로고침 오류:', error);
                                     }
                                 }}
+                                readOnly={false}
                             />
                         </div>
                     </div>

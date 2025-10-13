@@ -3,7 +3,7 @@ export const paymentTypeMap = {
     cash: '현장결제',
 };
 
-export const rooms = [
+export const rooms2 = [
     {id : 1, name: 'C106'},
     {id : 2, name: 'C107'},
     {id : 3, name: 'C201'},

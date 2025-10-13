@@ -7,6 +7,8 @@ import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import channeltalk from '../resource/channeltalk.gif'
 import InquiryBoard from "./InquiryBoard";
+import {rooms2} from "../Util/data"
+import CalendarTab from "../SYS/CalendarTab";
 
 let url = "/resource/img/";
 
@@ -34,7 +36,10 @@ const Main = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [isCancelling, setIsCancelling] = useState(false);
 
-    const [activeTab, setActiveTab] = useState("reservation"); // reservation | inquiry
+    const [activeTab, setActiveTab] = useState("reservation"); // reservation | inquiry | calendar
+    const [bookings ,setBookings] = useState([]);
+    const [airbookings ,setAirbookings] = useState([]);
+    const [unavailablePeriods, setUnavailablePeriods] = useState([]);
 
 
     const [filters, setFilters] = useState({
@@ -59,6 +64,21 @@ const Main = () => {
                     setShowContainer3(true);
                 }
                 setReviews(data); // 상태 업데이트
+                const data1 = await apiRequest("/calendar_admin","POST");
+                const formattedData = data1.map((customer) => ({
+                    ...customer,
+                }));
+                setBookings(formattedData);
+
+                const data2 = await apiRequest("/calendar_airbnb","POST");
+                const formattedData2 = data2.map((customer) => ({
+                    ...customer,
+                }));
+                setAirbookings(formattedData2);
+
+                // 예약불가 기간 가져오기
+                const data3 = await apiRequest("/unavailable-periods","POST");
+                setUnavailablePeriods(data3);
             };
             fetchData();
         } catch (error) {
@@ -268,6 +288,12 @@ const Main = () => {
                     onClick={() => setActiveTab("inquiry")}
                 >
                     {t("163")}
+                </button>
+                <button
+                    className={activeTab === "calendar" ? "active" : ""}
+                    onClick={() => setActiveTab("calendar")}
+                >
+                    {t("56")}
                 </button>
             </div>
 
@@ -491,6 +517,17 @@ const Main = () => {
             {activeTab === "inquiry" && (
                 <InquiryBoard/>
             )}
+
+            {activeTab === "calendar" && (
+                <CalendarTab
+                    rooms={rooms2}
+                    bookings={bookings}
+                    airbookings={airbookings}
+                    unavailablePeriods={unavailablePeriods}
+                    readOnly={true}
+                />
+            )}
+
 
 
         </>

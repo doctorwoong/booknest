@@ -5,7 +5,8 @@ function ReservationStatusModal({
     isOpen, 
     onClose, 
     reservation, 
-    onUpdate 
+    onUpdate,
+    readOnly = false
 }) {
     const [formData, setFormData] = useState({
         customer_id: '',
@@ -193,21 +194,34 @@ function ReservationStatusModal({
                         </div>
                         
                         <div className="modal-footer">
-                            <button 
-                                type="button" 
-                                className="btn btn-secondary" 
-                                onClick={onClose}
-                                disabled={loading}
-                            >
-                                취소
-                            </button>
-                            <button 
-                                type="submit" 
-                                className="btn btn-primary"
-                                disabled={loading}
-                            >
-                                {loading ? '수정 중...' : '수정하기'}
-                            </button>
+                            {!readOnly ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={onClose}
+                                        disabled={loading}
+                                    >
+                                        취소
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        disabled={loading}
+                                    >
+                                        {loading ? '수정 중...' : '수정하기'}
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={onClose}
+                                    disabled={loading}
+                                >
+                                    취소
+                                </button>
+                            )}
                         </div>
                     </form>
                 </div>

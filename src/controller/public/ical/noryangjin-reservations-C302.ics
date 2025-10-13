@@ -1,21 +1,21 @@
 BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Noryangjin Studio//Reservation System//EN
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-X-WR-CALNAME:Noryangjin Studio Reservations
-X-WR-CALDESC:Reservation Calendar for Noryangjin Studio
-X-WR-TIMEZONE:Asia/Seoul
-BEGIN:VEVENT
-UID:reservation-35296@noryangjin.co.kr
-DTSTAMP:20250912T095002Z
-DTSTART;TZID=Asia/Seoul:20250913T000000
-DTEND;TZID=Asia/Seoul:20251222T000000
-SUMMARY:C302 - 김형태
-DESCRIPTION:Guest: 김형태\nEmail: bakho2@naver.com\nPhone: +821082227855\nPrice: ₩2,100,000\nSource: admin
-STATUS:CONFIRMED
-TRANSP:OPAQUE
-CREATED:20250912T095002Z
-LAST-MODIFIED:20250912T095002Z
-END:VEVENT
-END:VCALENDAR
+                              VERSION:2.0
+                              PRODID:-//Noryangjin Studio//Reservation System//EN
+                              CALSCALE:GREGORIAN
+                              METHOD:PUBLISH
+                              X-WR-CALNAME:Noryangjin Studio Reservations
+                              X-WR-CALDESC:Reservation Calendar for Noryangjin Studio
+                              X-WR-TIMEZONE:Asia/Seoul
+                              BEGIN:VEVENT
+                        UID:reservation-35296@noryangjin.co.kr
+                        DTSTAMP:20251013T062917Z
+                        DTSTART;TZID=Asia/Seoul:20251223T000000
+                        DTEND;TZID=Asia/Seoul:20260105T000000
+                        SUMMARY:C302 - 김형태
+                        DESCRIPTION:Guest: 김형태\nEmail: bakho2@naver.com\nPhone: +821082227855\nPrice: ₩2,100,000\nSource: admin
+                        STATUS:CONFIRMED
+                        TRANSP:OPAQUE
+                        CREATED:20251013T062917Z
+                        LAST-MODIFIED:20251013T062917Z
+                        END:VEVENT
+                        END:VCALENDAR
