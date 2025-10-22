@@ -90,15 +90,15 @@ app.post("/send-check-in-email", async (req, res) => {
 });
 
 app.post("/send-check-in-sms", async (req, res) => {
-    const { phone, message, imgUrl } = req.body;
+    const { message, imgUrl } = req.body;
+    console.log("### 문자 전송 시작 ###")
 
     try {
         const result = await sendSMS({
-            to: phone,
             content: message,
             imgUrl : imgUrl
         });
-
+        console.log("### 문자 전송 성공 ###")
         res.json({ success: true, result });
     } catch (error) {
         console.error("SMS 전송 실패:", error.response?.data || error.message);

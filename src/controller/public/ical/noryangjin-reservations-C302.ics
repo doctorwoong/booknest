@@ -8,14 +8,26 @@ BEGIN:VCALENDAR
                               X-WR-TIMEZONE:Asia/Seoul
                               BEGIN:VEVENT
                         UID:reservation-35296@noryangjin.co.kr
-                        DTSTAMP:20251013T062917Z
+                        DTSTAMP:20251022T020031Z
                         DTSTART;TZID=Asia/Seoul:20251223T000000
                         DTEND;TZID=Asia/Seoul:20260105T000000
                         SUMMARY:C302 - 김형태
                         DESCRIPTION:Guest: 김형태\nEmail: bakho2@naver.com\nPhone: +821082227855\nPrice: ₩2,100,000\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251013T062917Z
-                        LAST-MODIFIED:20251013T062917Z
+                        CREATED:20251022T020031Z
+                        LAST-MODIFIED:20251022T020031Z
+                        END:VEVENT
+                        BEGIN:VEVENT
+                        UID:reservation-80411@noryangjin.co.kr
+                        DTSTAMP:20251022T020031Z
+                        DTSTART;TZID=Asia/Seoul:20261027T000000
+                        DTEND;TZID=Asia/Seoul:20261031T000000
+                        SUMMARY:C302 - 박천웅
+                        DESCRIPTION:Guest: 박천웅\nEmail: showth1720@naver.com\nPhone: +821022041720\nPrice: ₩120,000\nSource: admin
+                        STATUS:CONFIRMED
+                        TRANSP:OPAQUE
+                        CREATED:20251022T020031Z
+                        LAST-MODIFIED:20251022T020031Z
                         END:VEVENT
                         END:VCALENDAR

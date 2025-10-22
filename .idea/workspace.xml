@@ -4,26 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="1002 문의 게시판 다국어작업완료">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="1013 캘린더 사용자들도 보기">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_back.js" beforeDir="false" afterPath="$PROJECT_DIR$/server_back.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BAS/Detail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/Detail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/InquiryBoard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BAS/Main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/BAS/Main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/COMPONENT/BASIC/ReservationStatusModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/COMPONENT/BASIC/ReservationStatusModal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/COMPONENT/BASIC/UnavailablePeriodModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/COMPONENT/BASIC/UnavailablePeriodModal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SYS/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/SYS/Admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SYS/CalendarTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/SYS/CalendarTab.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Util/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Util/data.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C302.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C302.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C305.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C305.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C402.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C402.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N103.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N103.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N202.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N202.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N207.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N207.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N306.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N306.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-R102.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-R102.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sendSMS.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/sendSMS.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/server.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,7 +143,8 @@
       <workItem from="1758951728829" duration="25786000" />
       <workItem from="1759295328174" duration="8815000" />
       <workItem from="1760059878843" duration="2004000" />
-      <workItem from="1760318664409" duration="2619000" />
+      <workItem from="1760318664409" duration="6711000" />
+      <workItem from="1760923681234" duration="9959000" />
     </task>
     <task id="LOCAL-00001" summary="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중">
       <option name="closed" value="true" />
@@ -224,7 +226,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759381552780</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="1013 캘린더 사용자들도 보기">
+      <option name="closed" value="true" />
+      <created>1760338434109</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1760338434109</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -263,7 +273,8 @@
     <MESSAGE value="0910 문의 게시판 기능 완료" />
     <MESSAGE value="1001 문의 게시판 디자인 완료" />
     <MESSAGE value="1002 문의 게시판 다국어작업완료" />
-    <option name="LAST_COMMIT_MESSAGE" value="1002 문의 게시판 다국어작업완료" />
+    <MESSAGE value="1013 캘린더 사용자들도 보기" />
+    <option name="LAST_COMMIT_MESSAGE" value="1013 캘린더 사용자들도 보기" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

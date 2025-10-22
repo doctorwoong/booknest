@@ -51,6 +51,31 @@ const InquiryBoard = () => {
         try {
             const res = await apiRequest("/inquiry-insert", "POST", form);
             if (res.success) {
+
+                try {
+                    const message = `[문의등록]\n이름: ${form.name}\n제목: ${form.title}\n내용: ${form.content.slice(0, 50)}...`;
+
+                    // 환경에 따라 관리자 번호 불러오기
+                    const adminPhonesEnv = process.env.NODE_ENV === "production"
+                        ? process.env.REACT_APP_ADMIN_PHONES
+                        : process.env.REACT_APP_ADMIN_PHONES_DEV;
+
+                    const recipients = adminPhonesEnv
+                        ? adminPhonesEnv.split(",").map(p => p.trim())
+                        : ["01022041720","01082227855","01062776765"]; // 기본값
+
+                    for (const phone of recipients) {
+                        await apiRequest("/send-check-in-sms", "POST", {
+                            phone: phone,
+                            message: message,
+                        });
+                    }
+
+                    console.log("문의 등록 SMS 전송 완료");
+                } catch (smsError) {
+                    console.error("문의 등록 SMS 전송 실패:", smsError);
+                }
+
                 alert(t("179"));
                 setModalOpen(false);
                 setForm({ name: "", phone: "", email: "", title: "", content: "" });

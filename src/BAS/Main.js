@@ -183,11 +183,37 @@ const Main = () => {
 
             // 2) 관리자에게 취소 문자 (선택적)
             try {
-                const smsOk = await apiRequest("/send-cancel-sms", "POST", selectedReservation);
-                if (!smsOk) throw new Error("cancel sms failed");
+                const formatFullDate = (dateStr) => {
+                    const year = dateStr.substring(0, 4);
+                    const month = dateStr.substring(4, 6);
+                    const day = dateStr.substring(6, 8);
+                    return `${year}-${month}-${day}`;
+                };
+                console.log("selectedReservation ? ",selectedReservation)
+
+                const message = `[예약취소]\n객실: ${selectedReservation.reserved_room_number}\n` +
+                    `고객: ${selectedReservation.name}\n` +
+                    `체크인: ${formatFullDate(selectedReservation.check_in)}\n` +
+                    `체크아웃: ${formatFullDate(selectedReservation.check_out)}`;
+
+                const adminPhonesEnv = process.env.NODE_ENV === 'production'
+                    ? process.env.REACT_APP_ADMIN_PHONES
+                    : process.env.REACT_APP_ADMIN_PHONES_DEV;
+
+                const recipients = adminPhonesEnv
+                    ? adminPhonesEnv.split(',').map(phone => phone.trim())
+                    : ["01022041720","01082227855","01062776765"]; // 기본값
+
+                for (const phone of recipients) {
+                    await apiRequest("/send-check-in-sms", "POST", {
+                        phone: phone,
+                        message: message,
+                    });
+                }
+
+                console.log("예약 취소 SMS 전송 완료");
             } catch (smsError) {
-                console.error("취소 SMS 전송 실패:", smsError);
-                // SMS 실패해도 예약 취소는 계속 진행
+                console.error("예약 취소 SMS 전송 실패:", smsError);
             }
 
             // 3) 예약 삭제 (핵심 기능)

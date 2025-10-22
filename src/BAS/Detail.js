@@ -228,7 +228,7 @@ const Detail = () => {
                     
                     const recipients = adminPhonesEnv 
                         ? adminPhonesEnv.split(',').map(phone => phone.trim())
-                        : ["01022041720"]; // 기본값
+                        : ["01022041720","01082227855","01062776765"]; // 기본값
                     
                     // 번호 배열을 돌면서 문자 보내기
                     for (const phone of recipients) {
