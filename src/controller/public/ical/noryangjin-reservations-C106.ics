@@ -8,14 +8,14 @@ BEGIN:VCALENDAR
                               X-WR-TIMEZONE:Asia/Seoul
                               BEGIN:VEVENT
                         UID:reservation-7407@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20251109T000000
                         DTEND;TZID=Asia/Seoul:20251214T000000
                         SUMMARY:C106 - Angelina silva
                         DESCRIPTION:Guest: Angelina silva\nEmail: linnasilvaaa@gmail.com\nPhone: +82931362942\nPrice: ₩808,500\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         END:VCALENDAR

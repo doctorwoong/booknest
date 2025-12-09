@@ -7,195 +7,99 @@ BEGIN:VCALENDAR
                               X-WR-CALDESC:Reservation Calendar for Noryangjin Studio
                               X-WR-TIMEZONE:Asia/Seoul
                               BEGIN:VEVENT
-                        UID:reservation-7535@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
-                        DTSTART;TZID=Asia/Seoul:20251026T000000
-                        DTEND;TZID=Asia/Seoul:20251124T000000
-                        SUMMARY:C201 - Jonatas Douglas Caresia
-                        DESCRIPTION:Guest: Jonatas Douglas Caresia\nEmail: jonatancaresia@gmail.com\nPhone: +8215998404103\nPrice: ₩813,450\nSource: admin
-                        STATUS:CONFIRMED
-                        TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
-                        END:VEVENT
-                        BEGIN:VEVENT
-                        UID:reservation-30942@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
-                        DTSTART;TZID=Asia/Seoul:20251029T000000
-                        DTEND;TZID=Asia/Seoul:20251102T000000
-                        SUMMARY:N307 - 김형태
-                        DESCRIPTION:Guest: 김형태\nEmail: bakho2@naver.com\nPhone: +821082227855\nPrice: ₩120,000\nSource: admin
-                        STATUS:CONFIRMED
-                        TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
-                        END:VEVENT
-                        BEGIN:VEVENT
                         UID:reservation-7407@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20251109T000000
                         DTEND;TZID=Asia/Seoul:20251214T000000
                         SUMMARY:C106 - Angelina silva
                         DESCRIPTION:Guest: Angelina silva\nEmail: linnasilvaaa@gmail.com\nPhone: +82931362942\nPrice: ₩808,500\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         BEGIN:VEVENT
                         UID:reservation-7536@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20251109T000000
                         DTEND;TZID=Asia/Seoul:20251214T000000
                         SUMMARY:C107 - FRANCISCA ELENICE SALDANHA DA SILVA
                         DESCRIPTION:Guest: FRANCISCA ELENICE SALDANHA DA SILVA\nEmail: nice016889@gmail.com\nPhone: +82939431460\nPrice: ₩808,500\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         BEGIN:VEVENT
                         UID:reservation-7662@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20251109T000000
                         DTEND;TZID=Asia/Seoul:20251214T000000
                         SUMMARY:N103 - Gilvaneide Gomes da Rocha 
                         DESCRIPTION:Guest: Gilvaneide Gomes da Rocha \nEmail: lovegilvaneide@gmail.com\nPhone: +8261992829502\nPrice: ₩808,500\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         BEGIN:VEVENT
                         UID:reservation-7663@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20251109T000000
                         DTEND;TZID=Asia/Seoul:20251214T000000
                         SUMMARY:N307 - Gabrielle das Neves
                         DESCRIPTION:Guest: Gabrielle das Neves\nEmail: nevesgabrielle930@gmail.com\nPhone: +82912019310\nPrice: ₩808,500\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         BEGIN:VEVENT
                         UID:reservation-35296@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20251223T000000
                         DTEND;TZID=Asia/Seoul:20260105T000000
                         SUMMARY:C302 - 김형태
                         DESCRIPTION:Guest: 김형태\nEmail: bakho2@naver.com\nPhone: +821082227855\nPrice: ₩2,100,000\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         BEGIN:VEVENT
                         UID:reservation-31479@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20260203T000000
                         DTEND;TZID=Asia/Seoul:20260220T000000
                         SUMMARY:C107 - 박상준
                         DESCRIPTION:Guest: 박상준\nEmail: qkrtkdwns06@naver.com\nPhone: +8201027083969\nPrice: ₩476,850\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         BEGIN:VEVENT
                         UID:reservation-30162@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20260313T000000
                         DTEND;TZID=Asia/Seoul:20260601T000000
                         SUMMARY:N303 - 김형태
                         DESCRIPTION:Guest: 김형태\nEmail: bakho2@naver.com\nPhone: +821082227855\nPrice: ₩1,680,000\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         BEGIN:VEVENT
                         UID:reservation-27822@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
+                        DTSTAMP:20251106T062404Z
                         DTSTART;TZID=Asia/Seoul:20260314T000000
                         DTEND;TZID=Asia/Seoul:20260330T000000
                         SUMMARY:N207 - Azusa Nishimura
                         DESCRIPTION:Guest: Azusa Nishimura\nEmail: azusa_nsmr@yahoo.co.jp\nPhone: +8108025010545\nPrice: ₩408,000\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
-                        END:VEVENT
-                        BEGIN:VEVENT
-                        UID:reservation-80411@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
-                        DTSTART;TZID=Asia/Seoul:20261027T000000
-                        DTEND;TZID=Asia/Seoul:20261031T000000
-                        SUMMARY:C302 - 박천웅
-                        DESCRIPTION:Guest: 박천웅\nEmail: showth1720@naver.com\nPhone: +821022041720\nPrice: ₩120,000\nSource: admin
-                        STATUS:CONFIRMED
-                        TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
-                        END:VEVENT
-                        BEGIN:VEVENT
-                        UID:reservation-80413@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
-                        DTSTART;TZID=Asia/Seoul:20261027T000000
-                        DTEND;TZID=Asia/Seoul:20261031T000000
-                        SUMMARY:C305 - 박천웅
-                        DESCRIPTION:Guest: 박천웅\nEmail: showth1720@naver.com\nPhone: +821022041720\nPrice: ₩120,000\nSource: admin
-                        STATUS:CONFIRMED
-                        TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
-                        END:VEVENT
-                        BEGIN:VEVENT
-                        UID:reservation-80410@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
-                        DTSTART;TZID=Asia/Seoul:20261027T000000
-                        DTEND;TZID=Asia/Seoul:20261031T000000
-                        SUMMARY:C402 - 박천웅
-                        DESCRIPTION:Guest: 박천웅\nEmail: showth1720@naver.com\nPhone: +821022041720\nPrice: ₩120,000\nSource: admin
-                        STATUS:CONFIRMED
-                        TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
-                        END:VEVENT
-                        BEGIN:VEVENT
-                        UID:reservation-80412@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
-                        DTSTART;TZID=Asia/Seoul:20261027T000000
-                        DTEND;TZID=Asia/Seoul:20261031T000000
-                        SUMMARY:N103 - 박천웅
-                        DESCRIPTION:Guest: 박천웅\nEmail: showth1720@naver.com\nPhone: +821022041720\nPrice: ₩120,000\nSource: admin
-                        STATUS:CONFIRMED
-                        TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
-                        END:VEVENT
-                        BEGIN:VEVENT
-                        UID:reservation-80414@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
-                        DTSTART;TZID=Asia/Seoul:20261027T000000
-                        DTEND;TZID=Asia/Seoul:20261031T000000
-                        SUMMARY:N202 - 박천웅
-                        DESCRIPTION:Guest: 박천웅\nEmail: showth1720@naver.com\nPhone: +821022041720\nPrice: ₩120,000\nSource: admin
-                        STATUS:CONFIRMED
-                        TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
-                        END:VEVENT
-                        BEGIN:VEVENT
-                        UID:reservation-82451@noryangjin.co.kr
-                        DTSTAMP:20251022T020031Z
-                        DTSTART;TZID=Asia/Seoul:20261027T000000
-                        DTEND;TZID=Asia/Seoul:20261031T000000
-                        SUMMARY:R102 - 박천웅
-                        DESCRIPTION:Guest: 박천웅\nEmail: showth1720@naver.com\nPhone: +821022041720\nPrice: ₩120,000\nSource: admin
-                        STATUS:CONFIRMED
-                        TRANSP:OPAQUE
-                        CREATED:20251022T020031Z
-                        LAST-MODIFIED:20251022T020031Z
+                        CREATED:20251106T062404Z
+                        LAST-MODIFIED:20251106T062404Z
                         END:VEVENT
                         END:VCALENDAR

@@ -65,13 +65,14 @@ export const bookingListings = [
     { id: 4, name: 'C302', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c54da310-4974-4357-b3db-1ce8d8606462" },
     { id: 5, name: 'C305', bookingIcalUrl: "https://ical.booking.com/v1/export?t=4439e712-56ea-46d1-ae4a-8f747604ad7d" },
     { id: 6, name: 'C402', bookingIcalUrl: "https://ical.booking.com/v1/export?t=01675ad5-c9ae-46e0-be6d-2d55ee8d210f" },
-    { id: 8, name: 'N103', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c10c31a2-ca3b-4896-a838-4c751d990e01" },
-    { id: 9, name: 'N202', bookingIcalUrl: "https://ical.booking.com/v1/export?t=5c3ad545-f5cc-4ce8-8ac6-1e110f4f1b0c" },
-    { id: 10, name: 'R102', bookingIcalUrl: "https://ical.booking.com/v1/export?t=16714330-23ee-4cb9-8010-c98da5456252" },
-    { id: 11, name: 'N303', bookingIcalUrl: "https://ical.booking.com/v1/export?t=faf99c38-84e7-4590-8930-f86177fa0222" },
-    { id: 12, name: 'N306', bookingIcalUrl: "https://ical.booking.com/v1/export?t=bb6a7524-17a2-4f62-9ca9-e122721c8186" },
-    { id: 13, name: 'N307', bookingIcalUrl: "https://ical.booking.com/v1/export?t=dacc2722-ed53-4675-b9cc-5b62ff2e86db" },
-    { id: 14, name: 'N203', bookingIcalUrl: "https://ical.booking.com/v1/export?t=b4709d87-2fec-4d51-b96d-2d21822bb970" },
-    { id: 15, name: 'N207', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c2836cbb-b99e-48ec-a669-7e80b073278a" },
-    { id: 16, name: 'N301', bookingIcalUrl: "https://ical.booking.com/v1/export?t=e170891a-ed13-483f-b6ae-cca83405328e" }
+
+    { id: 8, name: 'N103', bookingIcalUrl: "https://ical.booking.com/v1/export?t=2b67a2a4-674e-4eb3-8bd9-dd329949a81e" },
+    { id: 9, name: 'N202', bookingIcalUrl: "https://ical.booking.com/v1/export?t=eb586f4b-7000-43e5-89c6-c81d80ffc612" },
+    { id: 10, name: 'R102', bookingIcalUrl: "https://ical.booking.com/v1/export?t=a623c3f2-a70e-49dd-afa6-a88347caf87e" },
+    { id: 11, name: 'N303', bookingIcalUrl: "https://ical.booking.com/v1/export?t=ada5a803-86fd-41d3-a363-95126af41f26" },
+    { id: 12, name: 'N306', bookingIcalUrl: "https://ical.booking.com/v1/export?t=c676dbf3-e1d3-4447-b767-c262a18cb766" },
+    { id: 13, name: 'N307', bookingIcalUrl: "https://ical.booking.com/v1/export?t=dc9ef4da-f05a-4bd4-b7d2-a15cb6762274" },
+    { id: 14, name: 'N203', bookingIcalUrl: "https://ical.booking.com/v1/export?t=b80ee4ff-d0fe-41f0-b976-c16f63f93574" },
+    { id: 15, name: 'N207', bookingIcalUrl: "https://ical.booking.com/v1/export?t=394eed22-a619-4568-b36d-e929d4c2b07d" },
+    { id: 16, name: 'N301', bookingIcalUrl: "https://ical.booking.com/v1/export?t=ba32d046-1a42-49d1-8e7b-1c54eb76b311" }
 ];

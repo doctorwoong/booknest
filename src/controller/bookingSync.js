@@ -1053,7 +1053,8 @@ const autoExportIcalAfterReservation = async (reservationData) => {
 
 //  iCal URL 생성 함수
 const generateIcalUrls = () => {
-    const baseUrl = process.env.NODE_ENV === 'production'
+    const
+        baseUrl = process.env.NODE_ENV === 'production'
         ? 'https://airbnbnoryangjin.co.kr'
         : 'http://localhost:30021';
 
