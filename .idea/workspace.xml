@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="1022 노량진 문자서비스 등록">
-      <change afterPath="$PROJECT_DIR$/src/sendSMS_backup.js" afterDir="false" />
+    <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="1222 노량진 문자서비스 뿌리오 변경">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C302.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C302.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N207.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N207.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sendSMS.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/sendSMS.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/server.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,7 +137,7 @@
       <workItem from="1763347587230" duration="599000" />
       <workItem from="1765272827119" duration="561000" />
       <workItem from="1765274087707" duration="598000" />
-      <workItem from="1766388298592" duration="4608000" />
+      <workItem from="1766388298592" duration="6997000" />
     </task>
     <task id="LOCAL-00001" summary="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중">
       <option name="closed" value="true" />
@@ -243,7 +235,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761101156820</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="1222 노량진 문자서비스 뿌리오 변경">
+      <option name="closed" value="true" />
+      <created>1766456806235</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1766456806235</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -284,7 +284,8 @@
     <MESSAGE value="1002 문의 게시판 다국어작업완료" />
     <MESSAGE value="1013 캘린더 사용자들도 보기" />
     <MESSAGE value="1022 노량진 문자서비스 등록" />
-    <option name="LAST_COMMIT_MESSAGE" value="1022 노량진 문자서비스 등록" />
+    <MESSAGE value="1222 노량진 문자서비스 뿌리오 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value="1222 노량진 문자서비스 뿌리오 변경" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
