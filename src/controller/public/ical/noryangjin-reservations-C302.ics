@@ -7,15 +7,15 @@ BEGIN:VCALENDAR
                               X-WR-CALDESC:Reservation Calendar for Noryangjin Studio
                               X-WR-TIMEZONE:Asia/Seoul
                               BEGIN:VEVENT
-                        UID:reservation-35296@noryangjin.co.kr
-                        DTSTAMP:20251106T062404Z
-                        DTSTART;TZID=Asia/Seoul:20251223T000000
-                        DTEND;TZID=Asia/Seoul:20260105T000000
-                        SUMMARY:C302 - 김형태
-                        DESCRIPTION:Guest: 김형태\nEmail: bakho2@naver.com\nPhone: +821082227855\nPrice: ₩2,100,000\nSource: admin
+                        UID:reservation-102095@noryangjin.co.kr
+                        DTSTAMP:20251223T022212Z
+                        DTSTART;TZID=Asia/Seoul:20261223T000000
+                        DTEND;TZID=Asia/Seoul:20261226T000000
+                        SUMMARY:C302 - 박천웅
+                        DESCRIPTION:Guest: 박천웅\nEmail: showth1720@naver.com\nPhone: +821022041720\nPrice: ₩90,000\nSource: admin
                         STATUS:CONFIRMED
                         TRANSP:OPAQUE
-                        CREATED:20251106T062404Z
-                        LAST-MODIFIED:20251106T062404Z
+                        CREATED:20251223T022212Z
+                        LAST-MODIFIED:20251223T022212Z
                         END:VEVENT
                         END:VCALENDAR

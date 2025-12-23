@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const { generateContract, sendEmails , sendCheckInEmail, sendCancelEmail} = require("./Mail"); // mail.js 호출
-const { sendSMS, sendCancelSMS } = require("./sendSMS");
+const { sendSMS } = require("./sendSMS");
 const app = express();
 const { getMainRoom, insertReservation, getCheckInCustomers, getCheckOutCustomers, getCheckCustomers,
     getReviews, deleteReservation, getReviewCustomer, getCustmerReview, updateReview, writeReview,
@@ -95,6 +95,7 @@ app.post("/send-check-in-sms", async (req, res) => {
 
     try {
         const result = await sendSMS({
+            to : '01082227855',
             content: message,
             imgUrl : imgUrl
         });
@@ -108,6 +109,7 @@ app.post("/send-check-in-sms", async (req, res) => {
 
 // 예약 취소 이메일 전송
 app.post("/send-cancel-email", async (req, res) => {
+    console.log("예약취소 ? ",req.body)
     try {
         await sendCancelEmail(req.body);
         res.json({ success: true });
@@ -120,7 +122,7 @@ app.post("/send-cancel-email", async (req, res) => {
 // 예약 취소 SMS 전송
 app.post("/send-cancel-sms", async (req, res) => {
     try {
-        await sendCancelSMS(req.body);
+        await sendSMS(req.body);
         res.json({ success: true });
     } catch (err) {
         console.error(err);

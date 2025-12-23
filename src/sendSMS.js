@@ -1,68 +1,53 @@
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
-const axios = require("axios");
+import axios from 'axios';
+const API_URL = "https://message.ppurio.com";
+const USER_NAME = "airbnb12";
+const TOKEN = "1b923c26a27bb2de6db4e593a464b2f8a0834729147ea8c34cd6017ecee1b407";
 
-/**
- * 비즈고 SMS 전송 함수
- * @param {Object} param
- * @param {string|string[]} param.to - 수신자 번호(문자열 또는 배열)
- * @param {string} [param.from] - 발신 번호 (기본: .env의 SMS_FROM_NUMBER)
- * @param {string} param.content - 메시지 내용
- */
-async function sendSMS({ to, from = process.env.SMS_FROM_NUMBER, content }) {
-    const url = `${process.env.SMS_API_BASE_URL}/v1/send/omni`;
+export const getAccessToken = async () => {
+    const response = await axios.post(`${API_URL}/v1/token`, null, {
+        auth: {
+            username: USER_NAME,
+            password: TOKEN,
+        },
+    });
 
-    //수신자 배열 처리
-    const adminPhonesRaw =
-        process.env.NODE_ENV === 'production'
-            ? process.env.ADMIN_PHONES
-            : process.env.ADMIN_PHONES_DEV;
-
-    const adminPhones = adminPhonesRaw
-        ? adminPhonesRaw.split(',').map((p) => p.trim())
-        : [];
-
-    const recipients = Array.isArray(to)
-        ? to
-        : to
-            ? [to]
-            : adminPhones;
-
-    //destinations 배열 생성
-    const destinations = recipients.map((num) => ({ to: num }));
-
-    //BizGow 전송 스펙 구조
-    const payload = {
-        messageFlow: [
-            {
-                sms: {
-                    from,
-                    text: content,
-                },
-            },
-        ],
-        destinations,
-    };
-
-    console.log("📨 [발신번호]:", from);
-    console.log("📨 [수신번호]:", recipients);
-    console.log("📨 [전송 Payload]:", JSON.stringify(payload, null, 2));
-
-    try {
-        const res = await axios.post(url, payload, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": process.env.SMS_TOKEN
-            },
-        });
-
-        console.log("[BIZGOW SMS 응답 - 전체]", JSON.stringify(res.data, null, 2));
-
-        return res.data;
-    } catch (err) {
-        console.error("[BIZGOW SMS 오류]", err.response?.data || err.message);
-        throw err;
-    }
+    return response.data.token;
 }
 
-module.exports = { sendSMS };
+/**
+ * LMS 문자 전송
+ * @param {Object} param0
+ * @param {string} param0.to 수신자 전화번호
+ * @param {string} param0.content 메시지 내용
+ * @param {string} [param0.refKey] 참조 키 (중복 방지)
+ * @param {string} [param0.sendTime] 예약 전송 시간 (yyyyMMddHHmmss 형식)
+ */
+export const sendSMS = async ({ to, content, refKey = "ref_key", sendTime = null }) => {
+    const token = await getAccessToken();
+
+    const payload = {
+        account: USER_NAME,
+        messageType: "SMS",
+        content,
+        from: "01082227855",
+        duplicateFlag: "N",
+        rejectType: "AD",
+        refKey,
+        targetCount: 1,
+        targets: [
+            { to, name: "고객" },
+        ],
+    };
+
+    if (sendTime) {
+        payload.sendTime = sendTime;
+    }
+
+    const response = await axios.post(`${API_URL}/v1/message`, payload, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+    });
+    return response.data;
+}

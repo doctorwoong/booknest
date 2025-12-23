@@ -5,19 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6dd4e165-1aac-413b-8122-4d72f45e8bbb" name="변경" comment="1022 노량진 문자서비스 등록">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sendSMS_backup.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CSS/style/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/CSS/style/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Util/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Util/data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/bookingSync.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/bookingSync.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C106.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C107.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C201.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C302.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-C302.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N103.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N103.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N207.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N207.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N303.ics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations-N307.ics" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/public/ical/noryangjin-reservations.ics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sendSMS.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/sendSMS.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/server.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,31 +52,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Node.js.ReservationCalendar.js.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;database.data.extractors.current.export.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;20.19.0&quot;,
-    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;20.19.17&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.start.executor&quot;: &quot;Run&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/admin/workspace/booknest/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Node.js.ReservationCalendar.js.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
+    "git-widget-placeholder": "main",
+    "javascript.nodejs.core.library.configured.version": "20.19.0",
+    "javascript.nodejs.core.library.typings.version": "20.19.17",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/admin/workspace/booknest/src",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "npm",
+    "npm.start.executor": "Run",
+    "settings.editor.selected.configurable": "terminal",
+    "ts.external.directory.path": "/Users/admin/workspace/booknest/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/resource" />
       <recent name="C:\Users\user\Desktop\workspace\booknest\src\template" />
@@ -141,6 +143,9 @@
       <workItem from="1762132009408" duration="3451000" />
       <workItem from="1762737175818" duration="4719000" />
       <workItem from="1763347587230" duration="599000" />
+      <workItem from="1765272827119" duration="561000" />
+      <workItem from="1765274087707" duration="598000" />
+      <workItem from="1766388298592" duration="4608000" />
     </task>
     <task id="LOCAL-00001" summary="2025.08.07 금액 및 핸드폰 번호 양식 수정 // 이메일 전송 문자 전송 수정 중">
       <option name="closed" value="true" />
